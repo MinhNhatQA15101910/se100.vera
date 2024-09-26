@@ -17,8 +17,9 @@ public class AppUser
     public required string LastName { get; set; }
     public string? ArtistName { get; set; }
     public required string Gender { get; set; }
-    public DateOnly DateOfBirth { get; set; } = new DateOnly(2003, 1, 1);
+    public DateOnly DateOfBirth { get; set; } = new DateOnly(2000, 1, 1);
     public string? About { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
+    public Role Role { get; set; }
     public List<Photo> Photos { get; set; } = [];
 }

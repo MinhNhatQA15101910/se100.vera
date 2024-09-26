@@ -2,7 +2,6 @@
   {
     "FirstName": "Bruce",
     "LastName": "Hale",
-    "ArtistName": "",
     "Email": "brucehale@gmail.com",
     "Gender": "male",
     "About": "Incididunt nisi proident in veniam eiusmod. Do aute duis sunt eu. Aute exercitation eu consectetur magna enim non anim deserunt in.\r\n",
@@ -16,7 +15,6 @@
   {
     "FirstName": "Coleen",
     "LastName": "Brewer",
-    "ArtistName": "",
     "Email": "coleenbrewer@gmail.com",
     "Gender": "female",
     "About": "Eiusmod consequat ullamco magna officia labore dolor dolor voluptate voluptate fugiat reprehenderit minim duis. Ipsum non consectetur incididunt ad magna do duis excepteur. Aute laboris nulla officia aute officia non proident tempor. Ut ex aliquip eu reprehenderit amet eiusmod qui magna Lorem.\r\n",
@@ -114,7 +112,6 @@
   {
     "FirstName": "Admin",
     "LastName": "Miller",
-    "ArtistName": "",
     "Email": "milleradmin@gmail.com",
     "Gender": "male",
     "About": "In consequat veniam in eu excepteur minim sint minim nostrud voluptate ut irure ex do. Reprehenderit eu commodo in enim nostrud occaecat culpa adipisicing. Magna veniam ad eiusmod sint consectetur id. Labore aliqua esse culpa occaecat adipisicing anim id.\r\n",
