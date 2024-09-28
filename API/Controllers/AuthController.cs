@@ -1,26 +1,22 @@
-using API.Data;
 using API.DTOs.Users;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class AuthController(DataContext dataContext, IMapper mapper) : BaseApiController
+public class AuthController(IUserRepository userRepository) : BaseApiController
 {
     // Testing
-    [HttpGet] // /api/users
-    public async Task<ActionResult<UserDto>> GetFirstUser()
+    [HttpPost("signup")] // /api/auth/signup
+    public async Task<ActionResult<UserDto>> Signup(RegisterDto registerDto)
     {
-        var user = await dataContext.Users.ProjectTo<UserDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync();
+        var existingUser = await userRepository.GetUserByEmailAsync(registerDto.Email);
+        if (existingUser != null)
+        {
+            return BadRequest("Email already exists.");
+        }
 
-        return Ok(user);
+        var user = await userRepository.CreateUserAsync(registerDto);
+        return user;
     }
-
-    // [HttpPost("signup")]
-    // public async Task<ActionResult<UserDto>> Signup(RegisterDto registerDto)
-    // {
-
-    // }
 }

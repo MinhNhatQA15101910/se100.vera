@@ -20,6 +20,6 @@ public class AppUser
     public DateOnly DateOfBirth { get; set; } = new DateOnly(2000, 1, 1);
     public string? About { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
-    public Role Role { get; set; }
+    public Role Role { get; set; } = Role.User;
     public List<Photo> Photos { get; set; } = [];
 }

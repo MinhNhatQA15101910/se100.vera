@@ -1,4 +1,6 @@
 using API.Data;
+using API.Interfaces;
+using API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions;
@@ -13,6 +15,7 @@ public static class ApplicationServiceExtensions
             opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
         });
         services.AddCors();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         return services;
