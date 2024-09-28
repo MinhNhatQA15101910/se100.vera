@@ -1,15 +1,11 @@
 using API.Data;
+using API.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddDbContext<DataContext>(opt =>
-{
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-builder.Services.AddCors();
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 
