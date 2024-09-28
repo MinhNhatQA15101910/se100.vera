@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using API.Entities;
 
 namespace API.DTOs.Users;
 
@@ -21,5 +22,6 @@ public class RegisterDto
     [StringLength(50, MinimumLength = 8)]
     public string Password { get; set; } = string.Empty;
 
+    [EnumDataType(typeof(Role))]
     public string? Role { get; set; }
 }

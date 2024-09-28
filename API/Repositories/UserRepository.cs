@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using API.Data;
 using API.DTOs.Users;
 using API.Entities;
@@ -12,6 +14,13 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public async Task<UserDto> CreateUserAsync(RegisterDto registerDto)
     {
         var registerUser = mapper.Map<AppUser>(registerDto);
+
+        using var hmac = new HMACSHA512();
+
+        registerUser.PasswordHashed = hmac.ComputeHash(
+            Encoding.UTF8.GetBytes(registerDto.Password)
+            );
+        registerUser.PasswordSalt = hmac.Key;
 
         var user = await context.Users.AddAsync(registerUser);
         await context.SaveChangesAsync();
