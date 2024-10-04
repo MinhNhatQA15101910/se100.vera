@@ -1,8 +1,4 @@
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using API.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
@@ -25,6 +21,19 @@ public class Seed
 
         foreach (var user in users)
         {
+            if (user.FirstName == "Admin")
+            {
+                user.Role = Role.Admin;
+            }
+            else if (user.ArtistName != null)
+            {
+                user.Role = Role.Artist;
+            }
+            else
+            {
+                user.Role = Role.User;
+            }
+
             using var hmac = new HMACSHA512();
 
             user.PasswordHashed = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
