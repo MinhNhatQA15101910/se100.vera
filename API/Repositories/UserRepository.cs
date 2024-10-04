@@ -1,11 +1,7 @@
-using System.Security.Cryptography;
-using System.Text;
 using API.Data;
 using API.DTOs.Users;
 using API.Entities;
 using API.Interfaces;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories;
 

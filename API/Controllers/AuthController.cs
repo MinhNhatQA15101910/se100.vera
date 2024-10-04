@@ -1,9 +1,5 @@
-using System.Security.Cryptography;
-using System.Text;
 using API.DTOs.Users;
 using API.Interfaces;
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 

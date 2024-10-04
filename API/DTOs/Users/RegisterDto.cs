@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using API.Entities;
 
 namespace API.DTOs.Users;

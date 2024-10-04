@@ -1,6 +1,5 @@
 using API.DTOs.Users;
 using API.Entities;
-using AutoMapper;
 
 namespace API.Helpers;
 

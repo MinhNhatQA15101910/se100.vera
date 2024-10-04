@@ -1,4 +1,3 @@
-using System;
 using API.DTOs.Users;
 using API.Entities;
 
