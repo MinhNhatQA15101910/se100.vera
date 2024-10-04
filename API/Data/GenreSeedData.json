@@ -1,0 +1,64 @@
+[
+    {
+    "Id": 1,
+    "GenreName": "Rock"
+    },
+    {
+    "Id": 2,
+    "GenreName": "Pop"
+    },
+    {
+    "Id": 3,
+    "GenreName": "Jazz"
+    },
+    {
+    "Id": 4,
+    "GenreName": "Classical"
+    },
+    {
+    "Id": 5,
+    "GenreName": "Hip Hop"
+    },
+    {
+    "Id": 6,
+    "GenreName": "Country"
+    },
+    {
+    "Id": 7,
+    "GenreName": "Electronic"
+    },
+    {
+    "Id": 8,
+    "GenreName": "Blues"
+    },
+    {
+    "Id": 9,
+    "GenreName": "Reggae"
+    },
+    {
+    "Id": 10,
+    "GenreName": "Folk"
+    },
+    {
+    "Id": 11,
+    "GenreName": "Metal"
+    },
+    {
+    "Id": 12,
+    "GenreName": "R&B"
+    },
+    {
+    "Id": 13,
+    "GenreName": "Punk"
+    },
+    {
+    "Id": 14,
+    "GenreName": "Soul"
+    },
+    {
+    "Id": 15,
+    "GenreName": "Disco"
+    }
+]
+  
+  

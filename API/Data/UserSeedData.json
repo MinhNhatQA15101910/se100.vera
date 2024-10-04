@@ -1,0 +1,125 @@
+[
+  {
+    "FirstName": "Bruce",
+    "LastName": "Hale",
+    "Email": "brucehale@gmail.com",
+    "Gender": "male",
+    "About": "Incididunt nisi proident in veniam eiusmod. Do aute duis sunt eu. Aute exercitation eu consectetur magna enim non anim deserunt in.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/men/20.jpg",
+        "IsMain": true
+      }
+    ]
+  },
+  {
+    "FirstName": "Coleen",
+    "LastName": "Brewer",
+    "Email": "coleenbrewer@gmail.com",
+    "Gender": "female",
+    "About": "Eiusmod consequat ullamco magna officia labore dolor dolor voluptate voluptate fugiat reprehenderit minim duis. Ipsum non consectetur incididunt ad magna do duis excepteur. Aute laboris nulla officia aute officia non proident tempor. Ut ex aliquip eu reprehenderit amet eiusmod qui magna Lorem.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/women/50.jpg",
+        "IsMain": true
+      }
+    ]
+  },
+  {
+    "FirstName": "Bertie",
+    "LastName": "Keller",
+    "ArtistName": "Melissa",
+    "Email": "bertiekeller@gmail.com",
+    "Gender": "female",
+    "About": "Nisi tempor cupidatat duis sit nisi nisi fugiat. Non nisi ex dolor ex reprehenderit veniam nostrud tempor eu. Esse eu ad cupidatat irure velit anim non amet.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/women/40.jpg",
+        "IsMain": true
+      }
+    ]
+  },
+  {
+    "FirstName": "Susan",
+    "LastName": "Sweet",
+    "ArtistName": "Rhoda",
+    "Email": "susansweet@gmail.com",
+    "Gender": "female",
+    "About": "Est eu Lorem adipisicing consequat velit irure ad dolore cillum enim. Elit sunt ullamco occaecat reprehenderit ut non ad laboris fugiat labore ea non aute. Exercitation adipisicing mollit enim ullamco nulla irure aliqua magna sit esse esse aute labore labore. Non exercitation excepteur est dolor pariatur consequat tempor exercitation ea velit adipisicing. Adipisicing anim sint labore do mollit minim aliquip ipsum dolor exercitation Lorem aliqua. Est commodo eu labore non. Enim consectetur esse pariatur amet dolore nulla.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/women/70.jpg",
+        "IsMain": true
+      }
+    ]
+  },
+  {
+    "FirstName": "Corrine",
+    "LastName": "Lewis",
+    "ArtistName": "Patricia",
+    "Email": "corrinelewis@gmail.com",
+    "Gender": "female",
+    "About": "Ut ut cillum in incididunt veniam fugiat dolor. Ex magna eiusmod eiusmod mollit Lorem commodo laboris anim cupidatat dolore est in Lorem minim. Officia commodo aliquip veniam adipisicing sunt eiusmod sint.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/women/36.jpg",
+        "IsMain": true
+      }
+    ]
+  },
+  {
+    "FirstName": "Goodman",
+    "LastName": "Duncan",
+    "ArtistName": "Blake",
+    "Email": "goodmanduncan@gmail.com",
+    "Gender": "male",
+    "About": "Consequat quis dolor in irure. Est aliqua eu irure occaecat cupidatat anim est pariatur tempor esse sunt. Qui duis mollit id fugiat ullamco consequat consectetur nostrud in consectetur aliquip exercitation irure deserunt. Ex fugiat velit officia proident magna nulla. Consequat reprehenderit qui aute labore laborum est quis consequat cillum elit eu qui.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/men/65.jpg",
+        "IsMain": true
+      }
+    ]
+  },
+  {
+    "FirstName": "Mack",
+    "LastName": "York",
+    "ArtistName": "Moran",
+    "Email": "mackyork@gmail.com",
+    "Gender": "male",
+    "About": "Nisi veniam irure aliqua laboris qui magna elit incididunt proident labore aliquip anim mollit ipsum. Tempor occaecat proident adipisicing nulla et do commodo Lorem. Non non do magna culpa proident id ut. Est id reprehenderit duis cupidatat et anim minim. Amet qui tempor et tempor sit consequat cupidatat voluptate excepteur pariatur quis sit nisi.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/men/16.jpg",
+        "IsMain": true
+      }
+    ]
+  },
+  {
+    "FirstName": "Delacruz",
+    "LastName": "Day",
+    "ArtistName": "Swanson",
+    "Email": "delacruzday@gmail.com",
+    "Gender": "male",
+    "About": "Ullamco mollit adipisicing laboris incididunt ea ipsum tempor qui magna dolor tempor culpa ipsum cillum. Laboris amet proident irure adipisicing ullamco incididunt. Sunt aliquip fugiat dolor eu aute aliquip.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/men/75.jpg",
+        "IsMain": true
+      }
+    ]
+  },
+  {
+    "FirstName": "Admin",
+    "LastName": "Miller",
+    "Email": "milleradmin@gmail.com",
+    "Gender": "male",
+    "About": "In consequat veniam in eu excepteur minim sint minim nostrud voluptate ut irure ex do. Reprehenderit eu commodo in enim nostrud occaecat culpa adipisicing. Magna veniam ad eiusmod sint consectetur id. Labore aliqua esse culpa occaecat adipisicing anim id.\r\n",
+    "Photos": [
+      {
+        "Url": "https://randomuser.me/api/portraits/men/32.jpg",
+        "IsMain": true
+      }
+    ]
+  }
+]
