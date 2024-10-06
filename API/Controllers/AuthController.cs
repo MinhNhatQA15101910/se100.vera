@@ -9,7 +9,7 @@ public class AuthController(
     ITokenService tokenService,
     IUserRepository userRepository,
     IMapper mapper
-    ) : BaseApiController
+) : BaseApiController
 {
     [HttpPost("signup")]
     public async Task<ActionResult<UserDto>> Signup(RegisterDto registerDto)
@@ -21,7 +21,13 @@ public class AuthController(
         }
 
         var user = await userRepository.CreateUserAsync(registerDto);
-        return user;
+
+        if (!await userRepository.SaveAllAsync())
+        {
+            return BadRequest("Failed to create user.");
+        }
+
+        return mapper.Map<UserDto>(user);
     }
 
     [HttpPost("login")]
@@ -76,6 +82,26 @@ public class AuthController(
 
         return Ok();
     }
+
+    [HttpPatch("change-password/{email:regex(^\\S+@\\S+\\.\\S+$)}")]
+    public async Task<ActionResult> ChangePassword(string email, ChangePasswordDto changePasswordDto)
+    {
+        var existingUser = await userRepository.GetUserByEmailAsync(email);
+        if (existingUser == null)
+        {
+            return Unauthorized("User with this email does not exist.");
+        }
+
+        userRepository.ChangePasswordAsync(existingUser, changePasswordDto);
+
+        if (!await userRepository.SaveAllAsync())
+        {
+            return BadRequest("Failed to change password.");
+        }
+
+        return NoContent();
+    }
+
 
     private static string HideEmail(string email)
     {
