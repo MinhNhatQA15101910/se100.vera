@@ -1,6 +1,6 @@
-namespace API.Entities;
+namespace API.DTOs.Songs;
 
-public class AppSong
+public class SongDto
 {
     public int Id { get; set; }
     public required string SongName { get; set; }
@@ -8,6 +8,6 @@ public class AppSong
     public int TotalView { get; set; } = 0;
     public required string MusicUrl { get; set; }
     public string? LyricUrl { get; set; }
-    public List<Photo> SongImages { get; set; } = [];
+    public string? SongImageUrl { get; set; }
     public DateTime UploadDate { get; set; } = DateTime.UtcNow;
 }

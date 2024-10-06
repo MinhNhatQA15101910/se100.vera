@@ -12,4 +12,7 @@ public class Photo
     // Navigation properties
     public int AppUserId { get; set; }
     public AppUser AppUser { get; set; } = null!;
+
+    public int AppSongId { get; set; }
+    public AppSong AppSong { get; set; } = null!;
 }
