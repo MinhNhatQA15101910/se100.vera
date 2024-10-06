@@ -1,9 +1,11 @@
 using API.DTOs.Users;
+using API.Helpers;
 using API.Interfaces;
 
 namespace API.Controllers;
 
 public class AuthController(
+    IEmailService emailService,
     ITokenService tokenService,
     IUserRepository userRepository,
     IMapper mapper
@@ -54,5 +56,39 @@ public class AuthController(
     {
         var existingUser = await userRepository.GetUserByEmailAsync(validateEmailDto.Email);
         return existingUser != null;
+    }
+
+    [HttpPost("send-email")]
+    public async Task<ActionResult> SendEmail(SendPincodeEmailDto sendPincodeEmailDto)
+    {
+        var displayName = sendPincodeEmailDto.DisplayName;
+        var email = sendPincodeEmailDto.Email;
+        var pincode = sendPincodeEmailDto.Pincode;
+        var subject = "VERA ACCOUNT VERIFICATION CODE";
+
+        var message = await System.IO.File.ReadAllTextAsync("./Assets/EmailContent.html");
+
+        message = message.Replace("{{hideEmail}}", HideEmail(email));
+        message = message.Replace("{{pincode}}", pincode);
+
+        await emailService.SendEmailAsync(
+            new EmailMessage(displayName, email, subject, message));
+
+        return Ok();
+    }
+
+    private static string HideEmail(string email)
+    {
+        var emailParts = email.Split('@');
+        var emailName = emailParts[0];
+        var emailDomain = emailParts[1];
+
+        var emailNameLength = emailName.Length;
+        var emailNameFirstChar = emailName[0];
+        var emailNameLastChar = emailName[emailNameLength - 1];
+
+        var hiddenEmailName = emailNameFirstChar + new string('*', emailNameLength - 2) + emailNameLastChar;
+
+        return $"{hiddenEmailName}@{emailDomain}";
     }
 }

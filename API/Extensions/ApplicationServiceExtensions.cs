@@ -1,4 +1,5 @@
 using API.Data;
+using API.Helpers;
 using API.Interfaces;
 using API.Repositories;
 using API.Services;
@@ -15,9 +16,11 @@ public static class ApplicationServiceExtensions
             opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
         });
         services.AddCors();
+        services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.Configure<EmailSenderSettings>(config.GetSection("EmailSenderSettings"));
 
         return services;
     }
