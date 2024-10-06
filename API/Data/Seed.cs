@@ -62,7 +62,6 @@ public class Seed
 
         foreach (var song in songs)
         {
-
             context.Songs.Add(song);
         }
 
@@ -86,7 +85,6 @@ public class Seed
 
         foreach (var album in albums)
         {
-
             context.Albums.Add(album);
         }
 
@@ -110,7 +108,6 @@ public class Seed
 
         foreach (var playlist in playlists)
         {
-
             context.Playlists.Add(playlist);
         }
 
@@ -134,7 +131,6 @@ public class Seed
 
         foreach (var genre in genres)
         {
-
             context.Genres.Add(genre);
         }
 

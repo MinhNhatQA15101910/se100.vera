@@ -48,4 +48,11 @@ public class AuthController(
 
         return userDto;
     }
+
+    [HttpPost("email-exists")]
+    public async Task<ActionResult<bool>> EmailExists(ValidateEmailDto validateEmailDto)
+    {
+        var existingUser = await userRepository.GetUserByEmailAsync(validateEmailDto.Email);
+        return existingUser != null;
+    }
 }
