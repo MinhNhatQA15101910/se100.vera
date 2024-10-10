@@ -1,3 +1,5 @@
+using API.DTOs.Files;
+
 namespace API.DTOs.Users;
 
 public class UserDto
@@ -11,6 +13,6 @@ public class UserDto
     public DateOnly DateOfBirth { get; set; }
     public string? About { get; set; }
     public DateTime Created { get; set; }
-    public List<PhotoDto>? Photos { get; set; }
+    public List<FileDto>? Photos { get; set; }
     public string? Token { get; set; }
 }

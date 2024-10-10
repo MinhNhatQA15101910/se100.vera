@@ -1,6 +1,7 @@
 using API.DTOs.Users;
 using API.DTOs.Songs;
 using API.Entities;
+using API.DTOs.Files;
 
 namespace API.Helpers;
 
@@ -15,7 +16,7 @@ public class AutoMapperProfiles : Profile
                     s => s.Photos.FirstOrDefault(x => x.IsMain)!.Url
                 )
             );
-        CreateMap<Photo, PhotoDto>();
+        CreateMap<UserPhoto, FileDto>();
         CreateMap<RegisterDto, AppUser>();
 
         CreateMap<AppSong, SongDto>()
@@ -25,7 +26,7 @@ public class AutoMapperProfiles : Profile
                     s => s.SongPhotos == null ? null : s.SongPhotos.FirstOrDefault(x => x.IsMain)!.Url
                 )
             );
-        CreateMap<SongPhoto, SongPhotoDto>();
+        CreateMap<SongPhoto, FileDto>();
         CreateMap<NewSongDto, AppSong>();
     }
 }

@@ -1,6 +1,6 @@
-namespace API.DTOs.Users;
+namespace API.DTOs.Files;
 
-public class PhotoDto
+public class FileDto
 {
     public int Id { get; set; }
     public string? Url { get; set; }
