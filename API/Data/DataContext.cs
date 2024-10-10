@@ -19,7 +19,7 @@ public class DataContext(DbContextOptions options) : DbContext(options)
         .Property(u => u.Role)
         .HasConversion(
             v => v.ToString(),
-            v => (Role)Enum.Parse(typeof(Role), v)
+            v => (Entities.Role)Enum.Parse(typeof(Entities.Role), v)
             );
     }
 

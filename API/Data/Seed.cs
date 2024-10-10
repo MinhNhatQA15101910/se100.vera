@@ -23,15 +23,15 @@ public class Seed
         {
             if (user.FirstName == "Admin")
             {
-                user.Role = Role.Admin;
+                user.Role = Entities.Role.Admin;
             }
             else if (user.ArtistName != null)
             {
-                user.Role = Role.Artist;
+                user.Role = Entities.Role.Artist;
             }
             else
             {
-                user.Role = Role.User;
+                user.Role = Entities.Role.User;
             }
 
             using var hmac = new HMACSHA512();

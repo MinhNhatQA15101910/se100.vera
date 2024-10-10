@@ -17,9 +17,12 @@ public static class ApplicationServiceExtensions
         });
         services.AddCors();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IFileService, FileService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ISongRepository, SongRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         services.Configure<EmailSenderSettings>(config.GetSection("EmailSenderSettings"));
 
         return services;
