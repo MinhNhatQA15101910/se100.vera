@@ -2,13 +2,16 @@ using API.Entities;
 
 namespace API.DTOs.Songs;
 
-public class SongDto
+public class NewSongDto
 {
-    public int Id { get; set; }
+    [Required]
     public required string SongName { get; set; }
+
+    [Required]
     public required string ArtistName { get; set; }
-    public int TotalView { get; set; }
+
+    [Required]
     public required string MusicUrl { get; set; }
+
     public string? LyricUrl { get; set; }
-    public List<SongPhoto>? SongPhotoUrl { get; set; }
 }

@@ -20,10 +20,12 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<AppSong, SongDto>()
             .ForMember(
-                d => d.SongImageUrl,
+                d => d.SongPhotoUrl,
                 o => o.MapFrom(
-                    s => s.SongImages == null ? null : s.SongImages.FirstOrDefault(x => x.IsMain)!.Url
+                    s => s.SongPhotos == null ? null : s.SongPhotos.FirstOrDefault(x => x.IsMain)!.Url
                 )
             );
+        CreateMap<SongPhoto, SongPhotoDto>();
+        CreateMap<NewSongDto, AppSong>();
     }
 }

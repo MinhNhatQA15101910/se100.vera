@@ -8,6 +8,6 @@ public class AppSong
     public int TotalView { get; set; } = 0;
     public required string MusicUrl { get; set; }
     public string? LyricUrl { get; set; }
-    public List<Photo> SongImages { get; set; } = [];
+    public List<SongPhoto> SongPhotos { get; set; } = [];
     public DateTime UploadDate { get; set; } = DateTime.UtcNow;
 }
