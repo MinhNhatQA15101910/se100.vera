@@ -4,9 +4,11 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-partial class DataContextModelSnapshot : ModelSnapshot
+[Migration("20241005035414_AddMoreEntities")]
+partial class AddMoreEntities
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
@@ -34,6 +36,9 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Property<string>("Description")
                     .IsRequired()
                     .HasColumnType("text");
+
+                b.Property<int>("PublisherId")
+                    .HasColumnType("integer");
 
                 b.Property<int>("TotalSong")
                     .HasColumnType("integer");
@@ -86,6 +91,9 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("text");
 
+                b.Property<int>("PublisherId")
+                    .HasColumnType("integer");
+
                 b.Property<int>("TotalSong")
                     .HasColumnType("integer");
 
@@ -113,9 +121,17 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .HasColumnType("text");
 
                 b.Property<string>("LyricUrl")
+                    .IsRequired()
                     .HasColumnType("text");
 
                 b.Property<string>("MusicUrl")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<int>("PublisherId")
+                    .HasColumnType("integer");
+
+                b.Property<string>("SongImageUrl")
                     .IsRequired()
                     .HasColumnType("text");
 
@@ -187,35 +203,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.ToTable("Users");
             });
 
-        modelBuilder.Entity("API.Entities.SongPhoto", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
-
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<int>("AppSongId")
-                    .HasColumnType("integer");
-
-                b.Property<bool>("IsMain")
-                    .HasColumnType("boolean");
-
-                b.Property<string>("PublicId")
-                    .HasColumnType("text");
-
-                b.Property<string>("Url")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.HasKey("Id");
-
-                b.HasIndex("AppSongId");
-
-                b.ToTable("SongPhotos");
-            });
-
-        modelBuilder.Entity("API.Entities.UserPhoto", b =>
+        modelBuilder.Entity("API.Entities.Photo", b =>
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
@@ -240,21 +228,10 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
                 b.HasIndex("AppUserId");
 
-                b.ToTable("UserPhotos");
+                b.ToTable("Photos");
             });
 
-        modelBuilder.Entity("API.Entities.SongPhoto", b =>
-            {
-                b.HasOne("API.Entities.AppSong", "AppSong")
-                    .WithMany("SongPhotos")
-                    .HasForeignKey("AppSongId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("AppSong");
-            });
-
-        modelBuilder.Entity("API.Entities.UserPhoto", b =>
+        modelBuilder.Entity("API.Entities.Photo", b =>
             {
                 b.HasOne("API.Entities.AppUser", "AppUser")
                     .WithMany("Photos")
@@ -263,11 +240,6 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .IsRequired();
 
                 b.Navigation("AppUser");
-            });
-
-        modelBuilder.Entity("API.Entities.AppSong", b =>
-            {
-                b.Navigation("SongPhotos");
             });
 
         modelBuilder.Entity("API.Entities.AppUser", b =>

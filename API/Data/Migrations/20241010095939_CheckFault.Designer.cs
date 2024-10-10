@@ -4,9 +4,11 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-partial class DataContextModelSnapshot : ModelSnapshot
+[Migration("20241010095939_CheckFault")]
+partial class CheckFault
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
@@ -187,6 +189,34 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.ToTable("Users");
             });
 
+        modelBuilder.Entity("API.Entities.Photo", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
+
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                b.Property<int>("AppUserId")
+                    .HasColumnType("integer");
+
+                b.Property<bool>("IsMain")
+                    .HasColumnType("boolean");
+
+                b.Property<string>("PublicId")
+                    .HasColumnType("text");
+
+                b.Property<string>("Url")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.HasKey("Id");
+
+                b.HasIndex("AppUserId");
+
+                b.ToTable("Photos");
+            });
+
         modelBuilder.Entity("API.Entities.SongPhoto", b =>
             {
                 b.Property<int>("Id")
@@ -215,32 +245,15 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.ToTable("SongPhotos");
             });
 
-        modelBuilder.Entity("API.Entities.UserPhoto", b =>
+        modelBuilder.Entity("API.Entities.Photo", b =>
             {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
+                b.HasOne("API.Entities.AppUser", "AppUser")
+                    .WithMany("Photos")
+                    .HasForeignKey("AppUserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<int>("AppUserId")
-                    .HasColumnType("integer");
-
-                b.Property<bool>("IsMain")
-                    .HasColumnType("boolean");
-
-                b.Property<string>("PublicId")
-                    .HasColumnType("text");
-
-                b.Property<string>("Url")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.HasKey("Id");
-
-                b.HasIndex("AppUserId");
-
-                b.ToTable("UserPhotos");
+                b.Navigation("AppUser");
             });
 
         modelBuilder.Entity("API.Entities.SongPhoto", b =>
@@ -252,17 +265,6 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .IsRequired();
 
                 b.Navigation("AppSong");
-            });
-
-        modelBuilder.Entity("API.Entities.UserPhoto", b =>
-            {
-                b.HasOne("API.Entities.AppUser", "AppUser")
-                    .WithMany("Photos")
-                    .HasForeignKey("AppUserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("AppUser");
             });
 
         modelBuilder.Entity("API.Entities.AppSong", b =>

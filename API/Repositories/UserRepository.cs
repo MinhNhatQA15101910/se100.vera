@@ -7,7 +7,17 @@ namespace API.Repositories;
 
 public class UserRepository(DataContext context, IMapper mapper) : IUserRepository
 {
-    public async Task<UserDto> CreateUserAsync(RegisterDto registerDto)
+    public void ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto)
+    {
+        using var hmac = new HMACSHA512();
+
+        user.PasswordHashed = hmac.ComputeHash(
+            Encoding.UTF8.GetBytes(changePasswordDto.NewPassword)
+            );
+        user.PasswordSalt = hmac.Key;
+    }
+
+    public async Task<AppUser> CreateUserAsync(RegisterDto registerDto)
     {
         var registerUser = mapper.Map<AppUser>(registerDto);
 
@@ -19,13 +29,22 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         registerUser.PasswordSalt = hmac.Key;
 
         var user = await context.Users.AddAsync(registerUser);
-        await context.SaveChangesAsync();
 
-        return mapper.Map<UserDto>(user.Entity);
+        return user.Entity;
     }
 
     public async Task<AppUser?> GetUserByEmailAsync(string email)
     {
         return await context.Users.SingleOrDefaultAsync(x => x.Email == email);
+    }
+
+    public async Task<bool> SaveAllAsync()
+    {
+        return await context.SaveChangesAsync() > 0;
+    }
+
+    public void Update(AppUser user)
+    {
+        context.Entry(user).State = EntityState.Modified;
     }
 }

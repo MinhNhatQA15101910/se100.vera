@@ -21,5 +21,5 @@ public class AppUser
     public string? About { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public Role Role { get; set; } = Role.User;
-    public List<Photo> Photos { get; set; } = [];
+    public List<UserPhoto> Photos { get; set; } = [];
 }
