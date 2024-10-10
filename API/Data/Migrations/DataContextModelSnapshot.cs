@@ -22,6 +22,125 @@ namespace API.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("API.Entities.AppAlbum", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AlbumImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AlbumName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TotalSong")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalView")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Albums");
+                });
+
+            modelBuilder.Entity("API.Entities.AppGenre", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("GenreName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("API.Entities.AppPlaylist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AlbumImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlaylistName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TotalSong")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalView")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Playlists");
+                });
+
+            modelBuilder.Entity("API.Entities.AppSong", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ArtistName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LyricUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MusicUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SongName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TotalView")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Songs");
+                });
+
             modelBuilder.Entity("API.Entities.AppUser", b =>
                 {
                     b.Property<int>("Id")
@@ -83,6 +202,9 @@ namespace API.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AppSongId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("AppUserId")
                         .HasColumnType("integer");
 
@@ -98,6 +220,8 @@ namespace API.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppSongId");
+
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Photos");
@@ -105,13 +229,26 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.Photo", b =>
                 {
+                    b.HasOne("API.Entities.AppSong", "AppSong")
+                        .WithMany("SongImages")
+                        .HasForeignKey("AppSongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Entities.AppUser", "AppUser")
                         .WithMany("Photos")
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("AppSong");
+
                     b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("API.Entities.AppSong", b =>
+                {
+                    b.Navigation("SongImages");
                 });
 
             modelBuilder.Entity("API.Entities.AppUser", b =>

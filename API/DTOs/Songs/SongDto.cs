@@ -1,13 +1,14 @@
-namespace API.Entities;
+using API.Entities;
 
-public class AppSong
+namespace API.DTOs.Songs;
+
+public class SongDto
 {
     public int Id { get; set; }
     public required string SongName { get; set; }
     public required string ArtistName { get; set; }
-    public int TotalView { get; set; } = 0;
+    public int TotalView { get; set; }
     public required string MusicUrl { get; set; }
     public string? LyricUrl { get; set; }
-    public List<SongPhoto> SongPhotos { get; set; } = [];
-    public DateTime UploadDate { get; set; } = DateTime.UtcNow;
+    public List<SongPhoto>? SongPhotoUrl { get; set; }
 }
