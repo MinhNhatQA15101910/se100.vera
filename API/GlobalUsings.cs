@@ -1,4 +1,6 @@
 global using AutoMapper;
+global using CloudinaryDotNet;
+global using CloudinaryDotNet.Actions;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,3 @@ global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using System.Text;
 global using System.Text.Json;
-global using CloudinaryDotNet.Actions;
-global using CloudinaryDotNet;
-global using Microsoft.Extensions.Options;
