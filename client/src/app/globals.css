@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --separator-color: #D9DADC
-  --general-pink: #EE10B0
+  --separator-color: #D9DADC;
+  --general-pink: #EE10B0;
 }
 
 .app-background {

@@ -1,9 +1,17 @@
+"use client"
+
 import React from "react";
-import Login from "./(auth)/login/page";
+
+import { useUser } from "@/contexts/UserContext";
+
+import Sidebar from "@/components/Sidebar";
 
 const MainApp = () => {
+  const { logout } = useUser();
+
   return (
-    <div className="flex flex-col items-center justify-center h-full min-h-screen app-background">
+    <div className="flex flex-row  h-full min-h-screen app-background">
+      <Sidebar />
     </div>
   );
 };

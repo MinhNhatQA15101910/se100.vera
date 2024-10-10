@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 
+import { useUser } from "@/contexts/UserContext";
+
 import Image from "next/image";
 import Link from "next/link";
 import FormContainer from "@/components/FormContainer";
@@ -13,6 +15,9 @@ import { AppButton } from "@/components/ui/AppButton";
 import { CheckedState } from "@radix-ui/react-checkbox";
 
 const Login = () => {
+  const { login } = useUser();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [isRememberMe, setIsRememberMe] = useState<boolean | "indeterminate">(
     false
   );
@@ -29,6 +34,17 @@ const Login = () => {
 
   const handleRememberMe = (checked: CheckedState) => {
     setIsRememberMe(checked === true);
+  };
+
+  const handleLogin = () => {
+    try {
+      setIsLoading(true);
+      login("helloworld!");
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+    }
   };
 
   return (
@@ -105,9 +121,13 @@ const Login = () => {
               Remember me
             </label>
           </div>
-          <AppButton className="bg-general-pink hover:bg-general-pink-hover rounded-full h-12 w-[120px] group" type="submit">
+          <AppButton
+            onClick={handleLogin}
+            className="bg-general-pink hover:bg-general-pink-hover rounded-full h-12 w-[120px] group"
+            type="button"
+          >
             <p className="font-bold text-[14px] text-gray-950  group-hover:text-gray-700 transition-colors duration-200">
-              LOG IN
+              {isLoading ? "..." : "LOG IN"}
             </p>
           </AppButton>
         </div>

@@ -22,16 +22,13 @@ const ProtectedRoute: React.FC<IProtectedRoute> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const publicRoutes = [
-    "/login",
-    "/signup",
-    "/verify-code",
-    "/reset-password",
-  ];
+  const publicRoutes = ["/login", "/signup", "/verify-code", "/reset-password"];
 
   useEffect(() => {
     if (!isAuthenticated && !publicRoutes.includes(pathname)) {
       router.push("/login");
+    } else if (isAuthenticated) {
+      router.push("/");
     }
   }, [isAuthenticated, pathname, router]);
 
