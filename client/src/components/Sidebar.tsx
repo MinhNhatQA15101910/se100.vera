@@ -27,7 +27,7 @@ const Sidebar = () => {
         <ul>
           <li className="mb-4">
             <a
-              href="/"
+              href="/home"
               className="flex items-center space-x-3 text-white hover:text-pink-500 transition-colors"
             >
               <FaHome className="text-lg" />
