@@ -11,8 +11,9 @@ public class AppSong
     public string? MusicPublicId { get; set; }
     public required string LyricUrl { get; set; }
     public string? LyricPublicId { get; set; }
-    public List<SongPhoto> SongPhotos { get; set; } = [];
+    public List<SongPhoto> Photos { get; set; } = [];
     public List<ArtistSong> Artists { get; set; } = [];
+    public List<AlbumSong> Albums { get; set; } = [];
 
     // Navigation properties
     public int PublisherId { get; set; }

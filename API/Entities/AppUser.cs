@@ -12,5 +12,4 @@ public class AppUser : IdentityUser<int>
     public List<UserPhoto> Photos { get; set; } = [];
     public List<ArtistSong> Songs { get; set; } = [];
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
-
 }

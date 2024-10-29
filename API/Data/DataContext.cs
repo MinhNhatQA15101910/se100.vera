@@ -49,5 +49,20 @@ IdentityDbContext<
             .WithMany(x => x.Songs)
             .HasForeignKey(x => x.ArtistId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AlbumSong>()
+            .HasKey(x => new { x.AlbumId, x.SongId });
+
+        modelBuilder.Entity<AlbumSong>()
+            .HasOne(x => x.Album)
+            .WithMany(x => x.Songs)
+            .HasForeignKey(x => x.AlbumId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AlbumSong>()
+            .HasOne(x => x.Song)
+            .WithMany(x => x.Albums)
+            .HasForeignKey(x => x.SongId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
