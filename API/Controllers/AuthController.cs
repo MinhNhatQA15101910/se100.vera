@@ -1,4 +1,5 @@
 using API.DTOs.Users;
+using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 
@@ -8,6 +9,7 @@ public class AuthController(
     IEmailService emailService,
     ITokenService tokenService,
     IUserRepository userRepository,
+    UserManager<AppUser> userManager,
     IMapper mapper
 ) : BaseApiController
 {
@@ -20,11 +22,12 @@ public class AuthController(
             return BadRequest("Email already exists.");
         }
 
-        var user = await userRepository.CreateUserAsync(registerDto);
+        var user = mapper.Map<AppUser>(registerDto);
 
-        if (!await userRepository.SaveAllAsync())
+        var result = await userManager.CreateAsync(user, registerDto.Password);
+        if (!result.Succeeded)
         {
-            return BadRequest("Failed to create user.");
+            return BadRequest(result.Errors);
         }
 
         return mapper.Map<UserDto>(user);
