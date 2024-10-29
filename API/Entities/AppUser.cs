@@ -10,5 +10,7 @@ public class AppUser : IdentityUser<int>
     public string? About { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public List<UserPhoto> Photos { get; set; } = [];
+    public List<ArtistSong> Songs { get; set; } = [];
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
+
 }

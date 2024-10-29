@@ -3,7 +3,7 @@ using API.Interfaces;
 
 namespace API.Controllers;
 
-public class SongsController(ISongRepository songRepository, IFileService fileService, IMapper mapper): BaseApiController
+public class SongsController(ISongRepository songRepository, IMapper mapper): BaseApiController
 {
     [HttpGet("{id:int}")]
     public async Task<ActionResult<SongDto>> GetSongById(int id)

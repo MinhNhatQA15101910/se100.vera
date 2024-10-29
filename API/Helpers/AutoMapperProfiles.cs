@@ -17,7 +17,11 @@ public class AutoMapperProfiles : Profile
                 )
             );
         CreateMap<UserPhoto, FileDto>();
-        CreateMap<RegisterDto, AppUser>();
+        CreateMap<RegisterDto, AppUser>()
+            .ForMember(
+                u => u.UserName,
+                r => r.MapFrom(x => x.FirstName.ToLower() + x.LastName.ToLower())
+            );
 
         CreateMap<AppSong, SongDto>()
             .ForMember(

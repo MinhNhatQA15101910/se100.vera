@@ -24,15 +24,30 @@ IdentityDbContext<
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<AppUser>()
-            .HasMany(ur => ur.UserRoles)
-            .WithOne(u => u.User)
-            .HasForeignKey(ur => ur.UserId)
+            .HasMany(x => x.UserRoles)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId)
             .IsRequired();
 
         modelBuilder.Entity<AppRole>()
-            .HasMany(ur => ur.UserRoles)
-            .WithOne(r => r.Role)
-            .HasForeignKey(ur => ur.RoleId)
+            .HasMany(x => x.UserRoles)
+            .WithOne(x => x.Role)
+            .HasForeignKey(x => x.RoleId)
             .IsRequired();
+
+        modelBuilder.Entity<ArtistSong>()
+            .HasKey(x => new { x.ArtistId, x.SongId });
+
+        modelBuilder.Entity<ArtistSong>()
+            .HasOne(x => x.Song)
+            .WithMany(x => x.Artists)
+            .HasForeignKey(x => x.SongId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ArtistSong>()
+            .HasOne(x => x.Artist)
+            .WithMany(x => x.Songs)
+            .HasForeignKey(x => x.ArtistId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

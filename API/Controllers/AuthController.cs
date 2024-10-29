@@ -29,6 +29,10 @@ public class AuthController(
         {
             return BadRequest(result.Errors);
         }
+        else
+        {
+            await userManager.AddToRoleAsync(user, registerDto.Role ?? "Listener");
+        }
 
         return mapper.Map<UserDto>(user);
     }
