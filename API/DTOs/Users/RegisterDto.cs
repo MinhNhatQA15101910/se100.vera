@@ -1,6 +1,10 @@
-using API.Entities;
-
 namespace API.DTOs.Users;
+
+enum RegisterRole
+{
+    Listener,
+    Artist
+}
 
 public class RegisterDto
 {

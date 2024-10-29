@@ -4,9 +4,9 @@ namespace API.Data;
 
 public class Seed
 {
-    public static async Task SeedUsers(DataContext context)
+    public static async Task SeedUsers(UserManager<AppUser> userManager)
     {
-        if (await context.Users.AnyAsync()) return;
+        if (await userManager.Users.AnyAsync()) return;
 
         var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
 
@@ -21,28 +21,8 @@ public class Seed
 
         foreach (var user in users)
         {
-            // if (user.FirstName == "Admin")
-            // {
-            //     user.Role = Entities.Role.Admin;
-            // }
-            // else if (user.ArtistName != null)
-            // {
-            //     user.Role = Entities.Role.Artist;
-            // }
-            // else
-            // {
-            //     user.Role = Entities.Role.User;
-            // }
-
-            // using var hmac = new HMACSHA512();
-
-            // user.PasswordHashed = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
-            // user.PasswordSalt = hmac.Key;
-
-            // context.Users.Add(user);
+            await userManager.CreateAsync(user, "Pa$$w0rd");
         }
-
-        await context.SaveChangesAsync();
     }
 
     public static async Task SeedSongs(DataContext context)

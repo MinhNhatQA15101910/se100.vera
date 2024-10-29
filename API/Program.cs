@@ -1,4 +1,5 @@
 using API.Data;
+using API.Entities;
 using API.Extensions;
 using API.Middleware;
 
@@ -25,8 +26,9 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
     await context.Database.MigrateAsync();
-    await Seed.SeedUsers(context);
+    await Seed.SeedUsers(userManager);
     await Seed.SeedSongs(context);
     await Seed.SeedAlbums(context);
     await Seed.SeedPlaylists(context);
