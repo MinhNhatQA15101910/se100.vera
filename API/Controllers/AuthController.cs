@@ -43,7 +43,7 @@ public class AuthController(
         }
 
         var userDto = mapper.Map<UserDto>(existingUser);
-        userDto.Token = tokenService.CreateToken(existingUser);
+        userDto.Token = await tokenService.CreateTokenAsync(existingUser);
 
         return userDto;
     }
