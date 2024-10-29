@@ -21,25 +21,25 @@ public class Seed
 
         foreach (var user in users)
         {
-            if (user.FirstName == "Admin")
-            {
-                user.Role = Entities.Role.Admin;
-            }
-            else if (user.ArtistName != null)
-            {
-                user.Role = Entities.Role.Artist;
-            }
-            else
-            {
-                user.Role = Entities.Role.User;
-            }
+            // if (user.FirstName == "Admin")
+            // {
+            //     user.Role = Entities.Role.Admin;
+            // }
+            // else if (user.ArtistName != null)
+            // {
+            //     user.Role = Entities.Role.Artist;
+            // }
+            // else
+            // {
+            //     user.Role = Entities.Role.User;
+            // }
 
-            using var hmac = new HMACSHA512();
+            // using var hmac = new HMACSHA512();
 
-            user.PasswordHashed = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
-            user.PasswordSalt = hmac.Key;
+            // user.PasswordHashed = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
+            // user.PasswordSalt = hmac.Key;
 
-            context.Users.Add(user);
+            // context.Users.Add(user);
         }
 
         await context.SaveChangesAsync();

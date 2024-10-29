@@ -39,18 +39,6 @@ public class AuthController(
             return Unauthorized("User with this email does not exist.");
         }
 
-        using var hmac = new HMACSHA512(existingUser.PasswordSalt);
-
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-
-        for (int i = 0; i < computedHash.Length; i++)
-        {
-            if (computedHash[i] != existingUser.PasswordHashed[i])
-            {
-                return Unauthorized("Incorrect password.");
-            }
-        }
-
         var userDto = mapper.Map<UserDto>(existingUser);
         userDto.Token = tokenService.CreateToken(existingUser);
 
@@ -101,7 +89,6 @@ public class AuthController(
 
         return NoContent();
     }
-
 
     private static string HideEmail(string email)
     {

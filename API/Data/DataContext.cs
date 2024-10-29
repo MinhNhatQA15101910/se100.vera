@@ -2,9 +2,18 @@ using API.Entities;
 
 namespace API.Data;
 
-public class DataContext(DbContextOptions options) : DbContext(options)
+public class DataContext(DbContextOptions options) :
+IdentityDbContext<
+    AppUser,
+    AppRole,
+    string,
+    IdentityUserClaim<string>,
+    AppUserRole,
+    IdentityUserLogin<string>,
+    IdentityRoleClaim<string>,
+    IdentityUserToken<string>
+>(options)
 {
-    public DbSet<AppUser> Users { get; set; }
     public DbSet<AppSong> Songs { get; set; }
     public DbSet<AppAlbum> Albums { get; set; }
     public DbSet<AppPlaylist> Playlists { get; set; }
@@ -12,12 +21,18 @@ public class DataContext(DbContextOptions options) : DbContext(options)
 
     override protected void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AppUser>()
-        .Property(u => u.Role)
-        .HasConversion(
-            v => v.ToString(),
-            v => (Entities.Role)Enum.Parse(typeof(Entities.Role), v)
-            );
-    }
+        base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<AppUser>()
+            .HasMany(ur => ur.UserRoles)
+            .WithOne(u => u.User)
+            .HasForeignKey(ur => ur.UserId)
+            .IsRequired();
+
+        modelBuilder.Entity<AppRole>()
+            .HasMany(ur => ur.UserRoles)
+            .WithOne(r => r.Role)
+            .HasForeignKey(ur => ur.RoleId)
+            .IsRequired();
+    }
 }
