@@ -21,6 +21,6 @@ public class RegisterDto
     [StringLength(50, MinimumLength = 8)]
     public string Password { get; set; } = string.Empty;
 
-    [EnumDataType(typeof(Entities.Role))]
+    [EnumDataType(typeof(RegisterRole))]
     public string? Role { get; set; }
 }

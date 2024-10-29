@@ -6,12 +6,12 @@ public class DataContext(DbContextOptions options) :
 IdentityDbContext<
     AppUser,
     AppRole,
-    string,
-    IdentityUserClaim<string>,
+    int,
+    IdentityUserClaim<int>,
     AppUserRole,
-    IdentityUserLogin<string>,
-    IdentityRoleClaim<string>,
-    IdentityUserToken<string>
+    IdentityUserLogin<int>,
+    IdentityRoleClaim<int>,
+    IdentityUserToken<int>
 >(options)
 {
     public DbSet<AppSong> Songs { get; set; }

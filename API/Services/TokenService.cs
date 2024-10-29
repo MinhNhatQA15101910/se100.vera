@@ -11,6 +11,8 @@ public class TokenService(IConfiguration config) : ITokenService
         if (tokenKey.Length < 64) throw new Exception("Your tokenKey needs to be longer");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
 
+        if (user.Email == null) throw new Exception("No email for user");
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.Email, user.Email),

@@ -10,6 +10,6 @@ public class UserPhoto
     public string? PublicId { get; set; }
 
     // Navigation properties
-    public int AppUserId { get; set; }
-    public AppUser AppUser { get; set; } = null!;
+    public int UserId { get; set; }
+    public AppUser User { get; set; } = null!;
 }
