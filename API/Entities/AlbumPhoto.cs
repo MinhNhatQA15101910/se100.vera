@@ -1,8 +1,7 @@
 namespace API.Entities;
 
-
-[Table("UserPhotos")]
-public class UserPhoto
+[Table("AlbumPhotos")]
+public class AlbumPhoto
 {
     public int Id { get; set; }
     public required string Url { get; set; }
@@ -10,6 +9,6 @@ public class UserPhoto
     public string? PublicId { get; set; }
 
     // Navigation properties
-    public int UserId { get; set; }
-    public AppUser User { get; set; } = null!;
+    public int AlbumId { get; set; }
+    public AppAlbum Album { get; set; } = null!;
 }

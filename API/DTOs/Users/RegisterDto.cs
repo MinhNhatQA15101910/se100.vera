@@ -1,6 +1,10 @@
-using API.Entities;
-
 namespace API.DTOs.Users;
+
+enum RegisterRole
+{
+    Listener,
+    Artist
+}
 
 public class RegisterDto
 {
@@ -21,6 +25,6 @@ public class RegisterDto
     [StringLength(50, MinimumLength = 8)]
     public string Password { get; set; } = string.Empty;
 
-    [EnumDataType(typeof(Entities.Role))]
+    [EnumDataType(typeof(RegisterRole))]
     public string? Role { get; set; }
 }

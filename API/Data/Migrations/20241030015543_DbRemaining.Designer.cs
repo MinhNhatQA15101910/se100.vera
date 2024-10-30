@@ -4,9 +4,11 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-partial class DataContextModelSnapshot : ModelSnapshot
+[Migration("20241030015543_DbRemaining")]
+partial class DbRemaining
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder

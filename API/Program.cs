@@ -1,4 +1,5 @@
 using API.Data;
+using API.Entities;
 using API.Extensions;
 using API.Middleware;
 
@@ -25,12 +26,14 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
-    await Seed.SeedUsers(context);
-    await Seed.SeedSongs(context);
-    await Seed.SeedAlbums(context);
-    await Seed.SeedPlaylists(context);
-    await Seed.SeedGenres(context);
+    await Seed.SeedUsers(userManager, roleManager);
+    // await Seed.SeedSongs(context);
+    // await Seed.SeedAlbums(context);
+    // await Seed.SeedPlaylists(context);
+    // await Seed.SeedGenres(context);
 }
 catch (Exception ex)
 {

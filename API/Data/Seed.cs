@@ -4,9 +4,12 @@ namespace API.Data;
 
 public class Seed
 {
-    public static async Task SeedUsers(DataContext context)
+    public static async Task SeedUsers(
+        UserManager<AppUser> userManager,
+        RoleManager<AppRole> roleManager
+    )
     {
-        if (await context.Users.AnyAsync()) return;
+        if (await userManager.Users.AnyAsync()) return;
 
         var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
 
@@ -19,30 +22,38 @@ public class Seed
 
         if (users == null) return;
 
+        if (!await roleManager.Roles.AnyAsync())
+        {
+            var roles = new List<AppRole>
+            {
+                new() { Name = "Listener" },
+                new() { Name = "Artist" },
+                new() { Name = "Admin" }
+            };
+
+            foreach (var role in roles)
+            {
+                await roleManager.CreateAsync(role);
+            }
+        }
+
         foreach (var user in users)
         {
+            await userManager.CreateAsync(user);
+
             if (user.FirstName == "Admin")
             {
-                user.Role = Entities.Role.Admin;
+                await userManager.AddToRoleAsync(user, "Admin");
             }
             else if (user.ArtistName != null)
             {
-                user.Role = Entities.Role.Artist;
+                await userManager.AddToRoleAsync(user, "Artist");
             }
             else
             {
-                user.Role = Entities.Role.User;
+                await userManager.AddToRoleAsync(user, "Listener");
             }
-
-            using var hmac = new HMACSHA512();
-
-            user.PasswordHashed = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
-            user.PasswordSalt = hmac.Key;
-
-            context.Users.Add(user);
         }
-
-        await context.SaveChangesAsync();
     }
 
     public static async Task SeedSongs(DataContext context)

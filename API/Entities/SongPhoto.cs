@@ -10,6 +10,6 @@ public class SongPhoto
     public string? PublicId { get; set; }
 
     // Navigation properties
-    public int AppSongId { get; set; }
-    public AppSong AppSong { get; set; } = null!;
+    public int SongId { get; set; }
+    public AppSong Song { get; set; } = null!;
 }

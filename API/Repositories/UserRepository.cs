@@ -9,24 +9,12 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 {
     public void ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto)
     {
-        using var hmac = new HMACSHA512();
-
-        user.PasswordHashed = hmac.ComputeHash(
-            Encoding.UTF8.GetBytes(changePasswordDto.NewPassword)
-            );
-        user.PasswordSalt = hmac.Key;
+        
     }
 
     public async Task<AppUser> CreateUserAsync(RegisterDto registerDto)
     {
         var registerUser = mapper.Map<AppUser>(registerDto);
-
-        using var hmac = new HMACSHA512();
-
-        registerUser.PasswordHashed = hmac.ComputeHash(
-            Encoding.UTF8.GetBytes(registerDto.Password)
-            );
-        registerUser.PasswordSalt = hmac.Key;
 
         var user = await context.Users.AddAsync(registerUser);
 

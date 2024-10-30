@@ -1,4 +1,5 @@
 using API.DTOs.Users;
+using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 
@@ -8,6 +9,7 @@ public class AuthController(
     IEmailService emailService,
     ITokenService tokenService,
     IUserRepository userRepository,
+    UserManager<AppUser> userManager,
     IMapper mapper
 ) : BaseApiController
 {
@@ -20,11 +22,16 @@ public class AuthController(
             return BadRequest("Email already exists.");
         }
 
-        var user = await userRepository.CreateUserAsync(registerDto);
+        var user = mapper.Map<AppUser>(registerDto);
 
-        if (!await userRepository.SaveAllAsync())
+        var result = await userManager.CreateAsync(user, registerDto.Password);
+        if (!result.Succeeded)
         {
-            return BadRequest("Failed to create user.");
+            return BadRequest(result.Errors);
+        }
+        else
+        {
+            await userManager.AddToRoleAsync(user, registerDto.Role ?? "Listener");
         }
 
         return mapper.Map<UserDto>(user);
@@ -39,20 +46,8 @@ public class AuthController(
             return Unauthorized("User with this email does not exist.");
         }
 
-        using var hmac = new HMACSHA512(existingUser.PasswordSalt);
-
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-
-        for (int i = 0; i < computedHash.Length; i++)
-        {
-            if (computedHash[i] != existingUser.PasswordHashed[i])
-            {
-                return Unauthorized("Incorrect password.");
-            }
-        }
-
         var userDto = mapper.Map<UserDto>(existingUser);
-        userDto.Token = tokenService.CreateToken(existingUser);
+        userDto.Token = await tokenService.CreateTokenAsync(existingUser);
 
         return userDto;
     }
@@ -101,7 +96,6 @@ public class AuthController(
 
         return NoContent();
     }
-
 
     private static string HideEmail(string email)
     {
