@@ -1,6 +1,6 @@
 namespace API.Entities;
 
-public class AppAlbum
+public class Album
 {
     public int Id { get; set; }
     public required string AlbumName { get; set; }

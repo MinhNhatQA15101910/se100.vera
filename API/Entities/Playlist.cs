@@ -1,6 +1,6 @@
 namespace API.Entities;
 
-public class AppPlaylist
+public class Playlist
 {
     public int Id { get; set; }
     public required string PlaylistName { get; set; }

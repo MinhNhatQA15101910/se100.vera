@@ -1,6 +1,6 @@
 namespace API.Entities;
 
-public class AppSong
+public class Song
 {
     public int Id { get; set; }
     public required string SongName { get; set; }

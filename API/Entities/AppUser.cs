@@ -11,11 +11,11 @@ public class AppUser : IdentityUser<int>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public List<UserPhoto> Photos { get; set; } = [];
-    public List<AppSong> PublishedSongs { get; set; } = [];
+    public List<Song> PublishedSongs { get; set; } = [];
     public List<ArtistSong> Songs { get; set; } = [];
-    public List<AppAlbum> PublishedAlbums { get; set; } = [];
+    public List<Album> PublishedAlbums { get; set; } = [];
     public List<ArtistAlbum> Albums { get; set; } = [];
-    public List<AppPlaylist> PublishedPlaylists { get; set; } = [];
+    public List<Playlist> PublishedPlaylists { get; set; } = [];
     public List<ArtistGenre> Genres { get; set; } = [];
     public List<SubscriptionPlan> SubscriptionPlans { get; set; } = [];
     public List<Payment> Payments { get; set; } = [];

@@ -1,6 +1,6 @@
 namespace API.Entities;
 
-public class AppGenre
+public class Genre
 {
     public int Id { get; set; }
     public required string GenreName { get; set; }

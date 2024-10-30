@@ -13,7 +13,7 @@ public class AutoMapperProfiles : Profile
             .ForMember(
                 d => d.PhotoUrl,
                 o => o.MapFrom(
-                    s => s.Photos.FirstOrDefault(x => x.IsMain)!.Url
+                    s => s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
                 )
             );
         CreateMap<RegisterDto, AppUser>()
@@ -22,14 +22,14 @@ public class AutoMapperProfiles : Profile
                 r => r.MapFrom(x => x.FirstName.ToLower() + x.LastName.ToLower())
             );
 
-        CreateMap<AppSong, SongDto>()
+        CreateMap<Song, SongDto>()
             .ForMember(
                 d => d.SongPhotoUrl,
                 o => o.MapFrom(
-                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Url
+                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
                 )
             );
-        CreateMap<NewSongDto, AppSong>();
+        CreateMap<NewSongDto, Song>();
 
         CreateMap<SongPhoto, FileDto>();
         CreateMap<UserPhoto, FileDto>();
