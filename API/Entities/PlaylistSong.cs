@@ -1,10 +1,10 @@
 namespace API.Entities;
 
-[Table("AlbumSongs")]
-public class AlbumSong
+[Table("PlaylistSongs")]
+public class PlaylistSong
 {
-    public int AlbumId { get; set; }
-    public AppAlbum Album { get; set; } = null!;
+    public int PlaylistId { get; set; }
+    public AppPlaylist Playlist { get; set; } = null!;
     public int SongId { get; set; }
     public AppSong Song { get; set; } = null!;
     public int Order { get; set; }
