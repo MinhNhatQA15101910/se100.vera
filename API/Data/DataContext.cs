@@ -126,5 +126,35 @@ IdentityDbContext<
             .WithMany(x => x.Payments)
             .HasForeignKey(x => x.SubscriptionPlanId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AlbumGenre>()
+            .HasKey(x => new { x.AlbumId, x.GenreId });
+
+        modelBuilder.Entity<AlbumGenre>()
+            .HasOne(x => x.Album)
+            .WithMany(x => x.Genres)
+            .HasForeignKey(x => x.AlbumId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AlbumGenre>()
+            .HasOne(x => x.Genre)
+            .WithMany(x => x.Albums)
+            .HasForeignKey(x => x.GenreId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ArtistGenre>()
+            .HasKey(x => new { x.ArtistId, x.GenreId });
+
+        modelBuilder.Entity<ArtistGenre>()
+            .HasOne(x => x.Artist)
+            .WithMany(x => x.Genres)
+            .HasForeignKey(x => x.ArtistId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ArtistGenre>()
+            .HasOne(x => x.Genre)
+            .WithMany(x => x.Artists)
+            .HasForeignKey(x => x.GenreId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

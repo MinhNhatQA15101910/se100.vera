@@ -5,7 +5,7 @@ public class AppSong
     public int Id { get; set; }
     public required string SongName { get; set; }
     public required string Description { get; set; }
-    public int TotalViews { get; set; } = 0;
+    public int TotalListeningHours { get; set; } = 0;
     public DateTime UploadDate { get; set; } = DateTime.UtcNow;
     public required string MusicUrl { get; set; }
     public string? MusicPublicId { get; set; }
