@@ -6,9 +6,11 @@ public class Payment
     public int Amount { get; set; }
     public DateTime PaymentDate { get; set; }
     public required string PaymentMethod { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public List<PaymentDetail> SubscriptionPlans { get; set; } = [];
 
     // Navigation properties
-    public int UserId { get; set; }
-    public AppUser User { get; set; } = null!;
+    public int ListenerId { get; set; }
+    public AppUser Listener { get; set; } = null!;
 }
