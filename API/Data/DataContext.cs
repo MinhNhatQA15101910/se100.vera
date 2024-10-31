@@ -15,14 +15,24 @@ IdentityDbContext<
 >(options)
 {
     public DbSet<Photo> Photos { get; set; }
-    public DbSet<Song> Songs { get; set; }
-    public DbSet<Album> Albums { get; set; }
-    public DbSet<Playlist> Playlists { get; set; }
     public DbSet<Genre> Genres { get; set; }
+    public DbSet<UserPhoto> UserPhotos { get; set; }
+    public DbSet<Song> Songs { get; set; }
+    public DbSet<SongPhoto> SongPhotos { get; set; }
+    public DbSet<SongGenre> SongGenres { get; set; }
+    public DbSet<Album> Albums { get; set; }
+    public DbSet<AlbumPhoto> AlbumPhotos { get; set; }
+    public DbSet<AlbumSong> AlbumSongs { get; set; }
+    public DbSet<AlbumGenre> AlbumGenres { get; set; }
+    public DbSet<Playlist> Playlists { get; set; }
+    public DbSet<PlaylistPhoto> PlaylistPhotos { get; set; }
+    public DbSet<PlaylistSong> PlaylistSongs { get; set; }
+    public DbSet<ArtistGenre> ArtistGenres { get; set; }
+    public DbSet<ArtistSong> ArtistSongs { get; set; }
+    public DbSet<ArtistAlbum> ArtistAlbums { get; set; }
     public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
     public DbSet<Payment> Payments { get; set; }
-
-    public DbSet<UserPhoto> UserPhotos { get; set; }
+    public DbSet<PaymentDetail> PaymentDetails { get; set; }
 
     override protected void OnModelCreating(ModelBuilder modelBuilder)
     {

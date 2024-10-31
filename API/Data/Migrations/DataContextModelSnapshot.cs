@@ -356,7 +356,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
                 b.HasIndex("SubscriptionPlanId");
 
-                b.ToTable("PaymentDetail");
+                b.ToTable("PaymentDetails");
             });
 
         modelBuilder.Entity("API.Entities.Photo", b =>
