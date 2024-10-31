@@ -1,12 +1,13 @@
 namespace API.Entities;
 
-public class AppSong
+public class Song
 {
     public int Id { get; set; }
     public required string SongName { get; set; }
     public required string Description { get; set; }
-    public int TotalViews { get; set; } = 0;
-    public DateTime UploadDate { get; set; } = DateTime.UtcNow;
+    public int TotalListeningHours { get; set; } = 0;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public required string MusicUrl { get; set; }
     public string? MusicPublicId { get; set; }
     public required string LyricUrl { get; set; }

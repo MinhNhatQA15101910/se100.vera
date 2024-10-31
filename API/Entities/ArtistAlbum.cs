@@ -6,5 +6,5 @@ public class ArtistAlbum
     public int ArtistId { get; set; }
     public AppUser Artist { get; set; } = null!;
     public int AlbumId { get; set; }
-    public AppAlbum Album { get; set; } = null!;
+    public Album Album { get; set; } = null!;
 }
