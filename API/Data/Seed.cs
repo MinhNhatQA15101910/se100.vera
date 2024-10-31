@@ -4,6 +4,29 @@ namespace API.Data;
 
 public class Seed
 {
+    public static async Task SeedPhotos(DataContext context)
+    {
+        if (await context.Photos.AnyAsync()) return;
+
+        var photoData = await File.ReadAllTextAsync("Data/PhotoSeedData.json");
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var photos = JsonSerializer.Deserialize<List<Photo>>(photoData, options);
+
+        if (photos == null) return;
+
+        foreach (var photo in photos)
+        {
+            context.Photos.Add(photo);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
     public static async Task SeedUsers(
         UserManager<AppUser> userManager,
         RoleManager<AppRole> roleManager
@@ -56,6 +79,31 @@ public class Seed
         }
     }
 
+    public static async Task SeedEntityPhotos(DataContext context)
+    {
+        if (await context.Users.AnyAsync()) return;
+
+        var users = await context.Users.ToListAsync();
+        var photos = await context.Photos.ToListAsync();
+
+        int iterator, count = photos.Count;
+        for (iterator = 0; iterator < count; iterator++)
+        {
+            var user = users.ElementAt(iterator);
+            var photo = photos.ElementAt(iterator);
+            var userPhoto = new UserPhoto
+            {
+                UserId = user.Id,
+                PhotoId = photo.Id,
+                IsMain = true,
+            };
+
+            context.UserPhotos.Add(userPhoto);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
     public static async Task SeedSongs(DataContext context)
     {
         if (await context.Songs.AnyAsync()) return;
@@ -67,7 +115,7 @@ public class Seed
             PropertyNameCaseInsensitive = true
         };
 
-        var songs = JsonSerializer.Deserialize<List<AppSong>>(songData, options);
+        var songs = JsonSerializer.Deserialize<List<Song>>(songData, options);
 
         if (songs == null) return;
 
@@ -90,7 +138,7 @@ public class Seed
             PropertyNameCaseInsensitive = true
         };
 
-        var albums = JsonSerializer.Deserialize<List<AppAlbum>>(albumData, options);
+        var albums = JsonSerializer.Deserialize<List<Album>>(albumData, options);
 
         if (albums == null) return;
 
@@ -113,7 +161,7 @@ public class Seed
             PropertyNameCaseInsensitive = true
         };
 
-        var playlists = JsonSerializer.Deserialize<List<AppPlaylist>>(playlistData, options);
+        var playlists = JsonSerializer.Deserialize<List<Playlist>>(playlistData, options);
 
         if (playlists == null) return;
 
@@ -136,7 +184,7 @@ public class Seed
             PropertyNameCaseInsensitive = true
         };
 
-        var genres = JsonSerializer.Deserialize<List<AppGenre>>(genreData, options);
+        var genres = JsonSerializer.Deserialize<List<Genre>>(genreData, options);
 
         if (genres == null) return;
 

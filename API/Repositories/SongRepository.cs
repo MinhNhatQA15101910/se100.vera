@@ -14,9 +14,9 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
         return mapper.Map<SongDto>(song);
     }
 
-    public async Task<AppSong> AddSongAsync(NewSongDto newSongDto)
+    public async Task<Song> AddSongAsync(NewSongDto newSongDto)
     {
-        var song = mapper.Map<AppSong>(newSongDto);
+        var song = mapper.Map<Song>(newSongDto);
 
         var newSong = await context.Songs.AddAsync(song);
 

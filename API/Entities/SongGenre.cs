@@ -4,7 +4,7 @@ namespace API.Entities;
 public class SongGenre
 {
     public int SongId { get; set; }
-    public AppSong Song { get; set; } = null!;
+    public Song Song { get; set; } = null!;
     public int GenreId { get; set; }
-    public AppGenre Genre { get; set; } = null!;
+    public Genre Genre { get; set; } = null!;
 }

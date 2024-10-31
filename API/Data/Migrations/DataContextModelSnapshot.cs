@@ -15,7 +15,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-        modelBuilder.Entity("API.Entities.AlbumPhoto", b =>
+        modelBuilder.Entity("API.Entities.Album", b =>
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
@@ -23,22 +23,65 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
                 NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                b.Property<string>("AlbumName")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.Property<string>("Description")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<int>("PublisherId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("TotalListeningHours")
+                    .HasColumnType("integer");
+
+                b.Property<int>("TotalSongs")
+                    .HasColumnType("integer");
+
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.HasKey("Id");
+
+                b.HasIndex("PublisherId");
+
+                b.ToTable("Albums");
+            });
+
+        modelBuilder.Entity("API.Entities.AlbumGenre", b =>
+            {
                 b.Property<int>("AlbumId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("GenreId")
+                    .HasColumnType("integer");
+
+                b.HasKey("AlbumId", "GenreId");
+
+                b.HasIndex("GenreId");
+
+                b.ToTable("AlbumGenres");
+            });
+
+        modelBuilder.Entity("API.Entities.AlbumPhoto", b =>
+            {
+                b.Property<int>("AlbumId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("PhotoId")
                     .HasColumnType("integer");
 
                 b.Property<bool>("IsMain")
                     .HasColumnType("boolean");
 
-                b.Property<string>("PublicId")
-                    .HasColumnType("text");
+                b.HasKey("AlbumId", "PhotoId");
 
-                b.Property<string>("Url")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.HasKey("Id");
-
-                b.HasIndex("AlbumId");
+                b.HasIndex("PhotoId");
 
                 b.ToTable("AlbumPhotos");
             });
@@ -59,93 +102,6 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.HasIndex("SongId");
 
                 b.ToTable("AlbumSongs");
-            });
-
-        modelBuilder.Entity("API.Entities.AppAlbum", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
-
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<string>("AlbumName")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<string>("Description")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<int>("PublisherId")
-                    .HasColumnType("integer");
-
-                b.Property<int>("TotalSongs")
-                    .HasColumnType("integer");
-
-                b.Property<int>("TotalViews")
-                    .HasColumnType("integer");
-
-                b.Property<DateTime>("UploadDate")
-                    .HasColumnType("timestamp with time zone");
-
-                b.HasKey("Id");
-
-                b.HasIndex("PublisherId");
-
-                b.ToTable("Albums");
-            });
-
-        modelBuilder.Entity("API.Entities.AppGenre", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
-
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<string>("GenreName")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.HasKey("Id");
-
-                b.ToTable("Genres");
-            });
-
-        modelBuilder.Entity("API.Entities.AppPlaylist", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
-
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<string>("Description")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<string>("PlaylistName")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<int>("PublisherId")
-                    .HasColumnType("integer");
-
-                b.Property<int>("TotalSongs")
-                    .HasColumnType("integer");
-
-                b.Property<int>("TotalViews")
-                    .HasColumnType("integer");
-
-                b.Property<DateTime>("UploadDate")
-                    .HasColumnType("timestamp with time zone");
-
-                b.HasKey("Id");
-
-                b.HasIndex("PublisherId");
-
-                b.ToTable("Playlists");
             });
 
         modelBuilder.Entity("API.Entities.AppRole", b =>
@@ -177,52 +133,6 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.ToTable("AspNetRoles", (string)null);
             });
 
-        modelBuilder.Entity("API.Entities.AppSong", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
-
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<string>("Description")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<string>("LyricPublicId")
-                    .HasColumnType("text");
-
-                b.Property<string>("LyricUrl")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<string>("MusicPublicId")
-                    .HasColumnType("text");
-
-                b.Property<string>("MusicUrl")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<int>("PublisherId")
-                    .HasColumnType("integer");
-
-                b.Property<string>("SongName")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<int>("TotalViews")
-                    .HasColumnType("integer");
-
-                b.Property<DateTime>("UploadDate")
-                    .HasColumnType("timestamp with time zone");
-
-                b.HasKey("Id");
-
-                b.HasIndex("PublisherId");
-
-                b.ToTable("Songs");
-            });
-
         modelBuilder.Entity("API.Entities.AppUser", b =>
             {
                 b.Property<int>("Id")
@@ -244,7 +154,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .IsConcurrencyToken()
                     .HasColumnType("text");
 
-                b.Property<DateTime>("Created")
+                b.Property<DateTime>("CreatedAt")
                     .HasColumnType("timestamp with time zone");
 
                 b.Property<DateOnly>("DateOfBirth")
@@ -298,6 +208,9 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Property<bool>("TwoFactorEnabled")
                     .HasColumnType("boolean");
 
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone");
+
                 b.Property<string>("UserName")
                     .HasMaxLength(256)
                     .HasColumnType("character varying(256)");
@@ -344,6 +257,21 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.ToTable("ArtistAlbums");
             });
 
+        modelBuilder.Entity("API.Entities.ArtistGenre", b =>
+            {
+                b.Property<int>("ArtistId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("GenreId")
+                    .HasColumnType("integer");
+
+                b.HasKey("ArtistId", "GenreId");
+
+                b.HasIndex("GenreId");
+
+                b.ToTable("ArtistGenres");
+            });
+
         modelBuilder.Entity("API.Entities.ArtistSong", b =>
             {
                 b.Property<int>("ArtistId")
@@ -359,6 +287,29 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.ToTable("ArtistSongs");
             });
 
+        modelBuilder.Entity("API.Entities.Genre", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
+
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.Property<string>("GenreName")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.HasKey("Id");
+
+                b.ToTable("Genres");
+            });
+
         modelBuilder.Entity("API.Entities.Payment", b =>
             {
                 b.Property<int>("Id")
@@ -370,6 +321,12 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Property<int>("Amount")
                     .HasColumnType("integer");
 
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.Property<int>("ListenerId")
+                    .HasColumnType("integer");
+
                 b.Property<DateTime>("PaymentDate")
                     .HasColumnType("timestamp with time zone");
 
@@ -377,12 +334,12 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("text");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("integer");
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone");
 
                 b.HasKey("Id");
 
-                b.HasIndex("UserId");
+                b.HasIndex("ListenerId");
 
                 b.ToTable("Payments");
             });
@@ -399,22 +356,16 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
                 b.HasIndex("SubscriptionPlanId");
 
-                b.ToTable("PaymentDetail");
+                b.ToTable("PaymentDetails");
             });
 
-        modelBuilder.Entity("API.Entities.PlaylistPhoto", b =>
+        modelBuilder.Entity("API.Entities.Photo", b =>
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
                     .HasColumnType("integer");
 
                 NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<bool>("IsMain")
-                    .HasColumnType("boolean");
-
-                b.Property<int>("PlaylistId")
-                    .HasColumnType("integer");
 
                 b.Property<string>("PublicId")
                     .HasColumnType("text");
@@ -425,7 +376,64 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
                 b.HasKey("Id");
 
-                b.HasIndex("PlaylistId");
+                b.ToTable("Photos");
+            });
+
+        modelBuilder.Entity("API.Entities.Playlist", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
+
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.Property<string>("Description")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<string>("PlaylistName")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<int>("PublisherId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("TotalListeningHours")
+                    .HasColumnType("integer");
+
+                b.Property<int>("TotalSongs")
+                    .HasColumnType("integer");
+
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.Property<DateTime>("UploadDate")
+                    .HasColumnType("timestamp with time zone");
+
+                b.HasKey("Id");
+
+                b.HasIndex("PublisherId");
+
+                b.ToTable("Playlists");
+            });
+
+        modelBuilder.Entity("API.Entities.PlaylistPhoto", b =>
+            {
+                b.Property<int>("PlaylistId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("PhotoId")
+                    .HasColumnType("integer");
+
+                b.Property<bool>("IsMain")
+                    .HasColumnType("boolean");
+
+                b.HasKey("PlaylistId", "PhotoId");
+
+                b.HasIndex("PhotoId");
 
                 b.ToTable("PlaylistPhotos");
             });
@@ -448,6 +456,55 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.ToTable("PlaylistSongs");
             });
 
+        modelBuilder.Entity("API.Entities.Song", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
+
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.Property<string>("Description")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<string>("LyricPublicId")
+                    .HasColumnType("text");
+
+                b.Property<string>("LyricUrl")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<string>("MusicPublicId")
+                    .HasColumnType("text");
+
+                b.Property<string>("MusicUrl")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<int>("PublisherId")
+                    .HasColumnType("integer");
+
+                b.Property<string>("SongName")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<int>("TotalListeningHours")
+                    .HasColumnType("integer");
+
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone");
+
+                b.HasKey("Id");
+
+                b.HasIndex("PublisherId");
+
+                b.ToTable("Songs");
+            });
+
         modelBuilder.Entity("API.Entities.SongGenre", b =>
             {
                 b.Property<int>("SongId")
@@ -465,28 +522,18 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("API.Entities.SongPhoto", b =>
             {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
+                b.Property<int>("SongId")
                     .HasColumnType("integer");
 
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                b.Property<int>("PhotoId")
+                    .HasColumnType("integer");
 
                 b.Property<bool>("IsMain")
                     .HasColumnType("boolean");
 
-                b.Property<string>("PublicId")
-                    .HasColumnType("text");
+                b.HasKey("SongId", "PhotoId");
 
-                b.Property<int>("SongId")
-                    .HasColumnType("integer");
-
-                b.Property<string>("Url")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.HasKey("Id");
-
-                b.HasIndex("SongId");
+                b.HasIndex("PhotoId");
 
                 b.ToTable("SongPhotos");
             });
@@ -499,9 +546,15 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
                 NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone");
+
                 b.Property<string>("Description")
                     .IsRequired()
                     .HasColumnType("text");
+
+                b.Property<int>("ListenerId")
+                    .HasColumnType("integer");
 
                 b.Property<string>("PlanName")
                     .IsRequired()
@@ -510,40 +563,30 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Property<decimal>("Price")
                     .HasColumnType("numeric");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("integer");
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone");
 
                 b.HasKey("Id");
 
-                b.HasIndex("UserId");
+                b.HasIndex("ListenerId");
 
                 b.ToTable("SubscriptionPlans");
             });
 
         modelBuilder.Entity("API.Entities.UserPhoto", b =>
             {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
+                b.Property<int>("UserId")
                     .HasColumnType("integer");
 
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                b.Property<int>("PhotoId")
+                    .HasColumnType("integer");
 
                 b.Property<bool>("IsMain")
                     .HasColumnType("boolean");
 
-                b.Property<string>("PublicId")
-                    .HasColumnType("text");
+                b.HasKey("UserId", "PhotoId");
 
-                b.Property<string>("Url")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<int>("UserId")
-                    .HasColumnType("integer");
-
-                b.HasKey("Id");
-
-                b.HasIndex("UserId");
+                b.HasIndex("PhotoId");
 
                 b.ToTable("UserPhotos");
             });
@@ -636,37 +679,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.ToTable("AspNetUserTokens", (string)null);
             });
 
-        modelBuilder.Entity("API.Entities.AlbumPhoto", b =>
-            {
-                b.HasOne("API.Entities.AppAlbum", "Album")
-                    .WithMany("Photos")
-                    .HasForeignKey("AlbumId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Album");
-            });
-
-        modelBuilder.Entity("API.Entities.AlbumSong", b =>
-            {
-                b.HasOne("API.Entities.AppAlbum", "Album")
-                    .WithMany("Songs")
-                    .HasForeignKey("AlbumId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.HasOne("API.Entities.AppSong", "Song")
-                    .WithMany("Albums")
-                    .HasForeignKey("SongId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Album");
-
-                b.Navigation("Song");
-            });
-
-        modelBuilder.Entity("API.Entities.AppAlbum", b =>
+        modelBuilder.Entity("API.Entities.Album", b =>
             {
                 b.HasOne("API.Entities.AppUser", "Publisher")
                     .WithMany("PublishedAlbums")
@@ -677,26 +690,61 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Navigation("Publisher");
             });
 
-        modelBuilder.Entity("API.Entities.AppPlaylist", b =>
+        modelBuilder.Entity("API.Entities.AlbumGenre", b =>
             {
-                b.HasOne("API.Entities.AppUser", "Publisher")
-                    .WithMany("PublishedPlaylists")
-                    .HasForeignKey("PublisherId")
+                b.HasOne("API.Entities.Album", "Album")
+                    .WithMany("Genres")
+                    .HasForeignKey("AlbumId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.Navigation("Publisher");
+                b.HasOne("API.Entities.Genre", "Genre")
+                    .WithMany("Albums")
+                    .HasForeignKey("GenreId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Album");
+
+                b.Navigation("Genre");
             });
 
-        modelBuilder.Entity("API.Entities.AppSong", b =>
+        modelBuilder.Entity("API.Entities.AlbumPhoto", b =>
             {
-                b.HasOne("API.Entities.AppUser", "Publisher")
-                    .WithMany("PublishedSongs")
-                    .HasForeignKey("PublisherId")
+                b.HasOne("API.Entities.Album", "Album")
+                    .WithMany("Photos")
+                    .HasForeignKey("AlbumId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.Navigation("Publisher");
+                b.HasOne("API.Entities.Photo", "Photo")
+                    .WithMany("Albums")
+                    .HasForeignKey("PhotoId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Album");
+
+                b.Navigation("Photo");
+            });
+
+        modelBuilder.Entity("API.Entities.AlbumSong", b =>
+            {
+                b.HasOne("API.Entities.Album", "Album")
+                    .WithMany("Songs")
+                    .HasForeignKey("AlbumId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.Song", "Song")
+                    .WithMany("Albums")
+                    .HasForeignKey("SongId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Album");
+
+                b.Navigation("Song");
             });
 
         modelBuilder.Entity("API.Entities.AppUserRole", b =>
@@ -720,7 +768,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("API.Entities.ArtistAlbum", b =>
             {
-                b.HasOne("API.Entities.AppAlbum", "Album")
+                b.HasOne("API.Entities.Album", "Album")
                     .WithMany("Artists")
                     .HasForeignKey("AlbumId")
                     .OnDelete(DeleteBehavior.Cascade)
@@ -737,6 +785,25 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Navigation("Artist");
             });
 
+        modelBuilder.Entity("API.Entities.ArtistGenre", b =>
+            {
+                b.HasOne("API.Entities.AppUser", "Artist")
+                    .WithMany("Genres")
+                    .HasForeignKey("ArtistId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.Genre", "Genre")
+                    .WithMany("Artists")
+                    .HasForeignKey("GenreId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Artist");
+
+                b.Navigation("Genre");
+            });
+
         modelBuilder.Entity("API.Entities.ArtistSong", b =>
             {
                 b.HasOne("API.Entities.AppUser", "Artist")
@@ -745,7 +812,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.HasOne("API.Entities.AppSong", "Song")
+                b.HasOne("API.Entities.Song", "Song")
                     .WithMany("Artists")
                     .HasForeignKey("SongId")
                     .OnDelete(DeleteBehavior.Cascade)
@@ -758,13 +825,13 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("API.Entities.Payment", b =>
             {
-                b.HasOne("API.Entities.AppUser", "User")
+                b.HasOne("API.Entities.AppUser", "Listener")
                     .WithMany("Payments")
-                    .HasForeignKey("UserId")
+                    .HasForeignKey("ListenerId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.Navigation("User");
+                b.Navigation("Listener");
             });
 
         modelBuilder.Entity("API.Entities.PaymentDetail", b =>
@@ -786,26 +853,45 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Navigation("SubscriptionPlan");
             });
 
+        modelBuilder.Entity("API.Entities.Playlist", b =>
+            {
+                b.HasOne("API.Entities.AppUser", "Publisher")
+                    .WithMany("PublishedPlaylists")
+                    .HasForeignKey("PublisherId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Publisher");
+            });
+
         modelBuilder.Entity("API.Entities.PlaylistPhoto", b =>
             {
-                b.HasOne("API.Entities.AppPlaylist", "Playlist")
+                b.HasOne("API.Entities.Photo", "Photo")
+                    .WithMany("Playlists")
+                    .HasForeignKey("PhotoId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.Playlist", "Playlist")
                     .WithMany("Photos")
                     .HasForeignKey("PlaylistId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
+
+                b.Navigation("Photo");
 
                 b.Navigation("Playlist");
             });
 
         modelBuilder.Entity("API.Entities.PlaylistSong", b =>
             {
-                b.HasOne("API.Entities.AppPlaylist", "Playlist")
+                b.HasOne("API.Entities.Playlist", "Playlist")
                     .WithMany("Songs")
                     .HasForeignKey("PlaylistId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.HasOne("API.Entities.AppSong", "Song")
+                b.HasOne("API.Entities.Song", "Song")
                     .WithMany("Playlists")
                     .HasForeignKey("SongId")
                     .OnDelete(DeleteBehavior.Cascade)
@@ -816,15 +902,26 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Navigation("Song");
             });
 
+        modelBuilder.Entity("API.Entities.Song", b =>
+            {
+                b.HasOne("API.Entities.AppUser", "Publisher")
+                    .WithMany("PublishedSongs")
+                    .HasForeignKey("PublisherId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Publisher");
+            });
+
         modelBuilder.Entity("API.Entities.SongGenre", b =>
             {
-                b.HasOne("API.Entities.AppGenre", "Genre")
+                b.HasOne("API.Entities.Genre", "Genre")
                     .WithMany("Songs")
                     .HasForeignKey("GenreId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.HasOne("API.Entities.AppSong", "Song")
+                b.HasOne("API.Entities.Song", "Song")
                     .WithMany("Genres")
                     .HasForeignKey("SongId")
                     .OnDelete(DeleteBehavior.Cascade)
@@ -837,33 +934,49 @@ partial class DataContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("API.Entities.SongPhoto", b =>
             {
-                b.HasOne("API.Entities.AppSong", "Song")
+                b.HasOne("API.Entities.Photo", "Photo")
+                    .WithMany("Songs")
+                    .HasForeignKey("PhotoId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.Song", "Song")
                     .WithMany("Photos")
                     .HasForeignKey("SongId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
+
+                b.Navigation("Photo");
 
                 b.Navigation("Song");
             });
 
         modelBuilder.Entity("API.Entities.SubscriptionPlan", b =>
             {
-                b.HasOne("API.Entities.AppUser", "User")
+                b.HasOne("API.Entities.AppUser", "Listener")
                     .WithMany("SubscriptionPlans")
-                    .HasForeignKey("UserId")
+                    .HasForeignKey("ListenerId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.Navigation("User");
+                b.Navigation("Listener");
             });
 
         modelBuilder.Entity("API.Entities.UserPhoto", b =>
             {
+                b.HasOne("API.Entities.Photo", "Photo")
+                    .WithMany("Users")
+                    .HasForeignKey("PhotoId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
                 b.HasOne("API.Entities.AppUser", "User")
                     .WithMany("Photos")
                     .HasForeignKey("UserId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
+
+                b.Navigation("Photo");
 
                 b.Navigation("User");
             });
@@ -904,22 +1017,12 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .IsRequired();
             });
 
-        modelBuilder.Entity("API.Entities.AppAlbum", b =>
+        modelBuilder.Entity("API.Entities.Album", b =>
             {
                 b.Navigation("Artists");
 
-                b.Navigation("Photos");
+                b.Navigation("Genres");
 
-                b.Navigation("Songs");
-            });
-
-        modelBuilder.Entity("API.Entities.AppGenre", b =>
-            {
-                b.Navigation("Songs");
-            });
-
-        modelBuilder.Entity("API.Entities.AppPlaylist", b =>
-            {
                 b.Navigation("Photos");
 
                 b.Navigation("Songs");
@@ -930,22 +1033,11 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Navigation("UserRoles");
             });
 
-        modelBuilder.Entity("API.Entities.AppSong", b =>
-            {
-                b.Navigation("Albums");
-
-                b.Navigation("Artists");
-
-                b.Navigation("Genres");
-
-                b.Navigation("Photos");
-
-                b.Navigation("Playlists");
-            });
-
         modelBuilder.Entity("API.Entities.AppUser", b =>
             {
                 b.Navigation("Albums");
+
+                b.Navigation("Genres");
 
                 b.Navigation("Payments");
 
@@ -964,9 +1056,49 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Navigation("UserRoles");
             });
 
+        modelBuilder.Entity("API.Entities.Genre", b =>
+            {
+                b.Navigation("Albums");
+
+                b.Navigation("Artists");
+
+                b.Navigation("Songs");
+            });
+
         modelBuilder.Entity("API.Entities.Payment", b =>
             {
                 b.Navigation("SubscriptionPlans");
+            });
+
+        modelBuilder.Entity("API.Entities.Photo", b =>
+            {
+                b.Navigation("Albums");
+
+                b.Navigation("Playlists");
+
+                b.Navigation("Songs");
+
+                b.Navigation("Users");
+            });
+
+        modelBuilder.Entity("API.Entities.Playlist", b =>
+            {
+                b.Navigation("Photos");
+
+                b.Navigation("Songs");
+            });
+
+        modelBuilder.Entity("API.Entities.Song", b =>
+            {
+                b.Navigation("Albums");
+
+                b.Navigation("Artists");
+
+                b.Navigation("Genres");
+
+                b.Navigation("Photos");
+
+                b.Navigation("Playlists");
             });
 
         modelBuilder.Entity("API.Entities.SubscriptionPlan", b =>
