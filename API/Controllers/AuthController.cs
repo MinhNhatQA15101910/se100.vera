@@ -8,7 +8,6 @@ namespace API.Controllers;
 public class AuthController(
     IEmailService emailService,
     ITokenService tokenService,
-    IUserRepository userRepository,
     UserManager<AppUser> userManager,
     IMapper mapper
 ) : BaseApiController
@@ -16,8 +15,7 @@ public class AuthController(
     [HttpPost("signup")]
     public async Task<ActionResult<UserDto>> Signup(RegisterDto registerDto)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(registerDto.Email);
-        if (existingUser != null)
+        if (await UserExists(registerDto.Email))
         {
             return BadRequest("Email already exists.");
         }
@@ -40,7 +38,9 @@ public class AuthController(
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(loginDto.Email);
+        var existingUser = await userManager.Users
+            .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .SingleOrDefaultAsync(x => x.NormalizedEmail == loginDto.Email.ToUpper());
         if (existingUser == null)
         {
             return Unauthorized("User with this email does not exist.");
@@ -67,8 +67,7 @@ public class AuthController(
     [HttpPost("email-exists")]
     public async Task<ActionResult<bool>> EmailExists(ValidateEmailDto validateEmailDto)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(validateEmailDto.Email);
-        return existingUser != null;
+        return await UserExists(validateEmailDto.Email);
     }
 
     [HttpPost("send-email")]
@@ -108,6 +107,11 @@ public class AuthController(
 
     //     return NoContent();
     // }
+
+    private async Task<bool> UserExists(string email)
+    {
+        return await userManager.Users.AnyAsync(x => x.NormalizedEmail == email.ToUpper());
+    }
 
     private static string HideEmail(string email)
     {
