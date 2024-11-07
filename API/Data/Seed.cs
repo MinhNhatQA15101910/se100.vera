@@ -63,7 +63,7 @@ public class Seed
 
         foreach (var user in users)
         {
-            await userManager.CreateAsync(user);
+            await userManager.CreateAsync(user, "Pa$$w0rd");
 
             if (user.FirstName == "Admin")
             {

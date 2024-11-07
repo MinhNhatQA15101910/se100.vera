@@ -30,8 +30,15 @@ public class AutoMapperProfiles : Profile
                 )
             );
         CreateMap<NewSongDto, Song>();
-
-        CreateMap<SongPhoto, FileDto>();
+        CreateMap<SongPhoto, FileDto>()
+            .ForMember(
+                f => f.Id,
+                photos => photos.MapFrom(p => p.Photo.Id)
+            )
+            .ForMember(
+                f => f.Url,
+                photos => photos.MapFrom(p => p.Photo.Url)
+            );
         CreateMap<UserPhoto, FileDto>();
         CreateMap<AlbumPhoto, FileDto>();
     }

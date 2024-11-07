@@ -47,6 +47,18 @@ public class AuthController(
         }
 
         var userDto = mapper.Map<UserDto>(existingUser);
+        userDto.Photos = [];
+        foreach (var photo in existingUser.Photos)
+        {
+            userDto.Photos.Add(
+                new DTOs.Files.FileDto
+                {
+                    Id = photo.PhotoId,
+                    Url = photo.Photo.Url,
+                    IsMain = photo.IsMain
+                }
+            );
+        }
         userDto.Token = await tokenService.CreateTokenAsync(existingUser);
 
         return userDto;
@@ -78,24 +90,24 @@ public class AuthController(
         return Ok();
     }
 
-    [HttpPatch("change-password/{email:regex(^\\S+@\\S+\\.\\S+$)}")]
-    public async Task<ActionResult> ChangePassword(string email, ChangePasswordDto changePasswordDto)
-    {
-        var existingUser = await userRepository.GetUserByEmailAsync(email);
-        if (existingUser == null)
-        {
-            return Unauthorized("User with this email does not exist.");
-        }
+    // [HttpPatch("change-password/{email:regex(^\\S+@\\S+\\.\\S+$)}")]
+    // public async Task<ActionResult> ChangePassword(string email, ChangePasswordDto changePasswordDto)
+    // {
+    //     var existingUser = await userRepository.GetUserByEmailAsync(email);
+    //     if (existingUser == null)
+    //     {
+    //         return Unauthorized("User with this email does not exist.");
+    //     }
 
-        userRepository.ChangePasswordAsync(existingUser, changePasswordDto);
+    //     userRepository.ChangePasswordAsync(existingUser, changePasswordDto);
 
-        if (!await userRepository.SaveAllAsync())
-        {
-            return BadRequest("Failed to change password.");
-        }
+    //     if (!await userRepository.SaveAllAsync())
+    //     {
+    //         return BadRequest("Failed to change password.");
+    //     }
 
-        return NoContent();
-    }
+    //     return NoContent();
+    // }
 
     private static string HideEmail(string email)
     {
