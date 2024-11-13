@@ -46,6 +46,9 @@ public class AuthController(
             return Unauthorized("User with this email does not exist.");
         }
 
+        var result = await userManager.CheckPasswordAsync(existingUser, loginDto.Password);
+        if (!result) return Unauthorized("Invalid password");
+
         var userDto = mapper.Map<UserDto>(existingUser);
         userDto.Photos = [];
         foreach (var photo in existingUser.Photos)
