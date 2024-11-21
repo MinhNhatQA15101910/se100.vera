@@ -1,6 +1,7 @@
 using API.Data;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,7 @@ try
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+
     await context.Database.MigrateAsync();
     await Seed.SeedPhotos(context);
     await Seed.SeedUsers(userManager, roleManager);

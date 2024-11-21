@@ -2,10 +2,11 @@ using API.Data;
 using API.DTOs.Songs;
 using API.Entities;
 using API.Interfaces;
+using API.Services;
 
 namespace API.Repositories;
 
-public class SongRepository(DataContext context, IMapper mapper) : ISongRepository
+public class SongRepository(DataContext context, IMapper mapper, IFileService _fileService) : ISongRepository
 {
     public async Task<SongDto?> GetSongByIdAsync(int id)
     {
@@ -18,8 +19,28 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     {
         var song = mapper.Map<Song>(newSongDto);
 
-        var newSong = await context.Songs.AddAsync(song);
+        if (newSongDto.MusicFile != null)
+        {
+            var uploadResult = await _fileService.UploadAudioResult(song.SongName, newSongDto.MusicFile);
+            song.MusicUrl = uploadResult.Url.ToString();
 
+        }
+
+        if (newSongDto.PhotoFiles != null)
+        {
+            foreach (var photo in newSongDto.PhotoFiles)
+            {
+                var uploadResult = await _fileService.UploadImageAsync(song.SongName, photo);
+            }
+        }
+
+        if (newSongDto.LyricFile != null)
+        {
+            var uploadResult = await _fileService.UploadImageAsync(song.SongName, newSongDto.LyricFile);
+            song.LyricUrl = uploadResult.Url.ToString();
+        }
+
+        var newSong = await context.Songs.AddAsync(song);
         return newSong.Entity;
     }
 

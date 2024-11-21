@@ -3,7 +3,7 @@ using API.Interfaces;
 
 namespace API.Controllers;
 
-public class SongsController(ISongRepository songRepository, IMapper mapper): BaseApiController
+public class SongsController(ISongRepository songRepository, IMapper mapper) : BaseApiController
 {
     [HttpGet("{id:int}")]
     public async Task<ActionResult<SongDto>> GetSongById(int id)
@@ -18,7 +18,8 @@ public class SongsController(ISongRepository songRepository, IMapper mapper): Ba
     }
 
     [HttpPost]
-    public async Task<ActionResult<SongDto>> AddSong(NewSongDto newSongDto)
+    [Authorize]
+    public async Task<ActionResult<SongDto>> AddSong([FromForm] NewSongDto newSongDto)
     {
         var song = await songRepository.AddSongAsync(newSongDto);
 
@@ -28,8 +29,8 @@ public class SongsController(ISongRepository songRepository, IMapper mapper): Ba
         }
 
         return CreatedAtAction(
-            nameof(GetSongById), 
-            new { id = song.Id }, 
+            nameof(GetSongById),
+            new { id = song.Id },
             mapper.Map<SongDto>(song)
         );
     }
