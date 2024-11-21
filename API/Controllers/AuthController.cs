@@ -8,7 +8,6 @@ namespace API.Controllers;
 public class AuthController(
     IEmailService emailService,
     ITokenService tokenService,
-    IUserRepository userRepository,
     UserManager<AppUser> userManager,
     IMapper mapper
 ) : BaseApiController
@@ -16,8 +15,7 @@ public class AuthController(
     [HttpPost("signup")]
     public async Task<ActionResult<UserDto>> Signup(RegisterDto registerDto)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(registerDto.Email);
-        if (existingUser != null)
+        if (await UserExists(registerDto.Email))
         {
             return BadRequest("Email already exists.");
         }
@@ -40,13 +38,30 @@ public class AuthController(
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(loginDto.Email);
+        var existingUser = await userManager.Users
+            .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .SingleOrDefaultAsync(x => x.NormalizedEmail == loginDto.Email.ToUpper());
         if (existingUser == null)
         {
             return Unauthorized("User with this email does not exist.");
         }
 
+        var result = await userManager.CheckPasswordAsync(existingUser, loginDto.Password);
+        if (!result) return Unauthorized("Invalid password");
+
         var userDto = mapper.Map<UserDto>(existingUser);
+        userDto.Photos = [];
+        foreach (var photo in existingUser.Photos)
+        {
+            userDto.Photos.Add(
+                new DTOs.Files.FileDto
+                {
+                    Id = photo.PhotoId,
+                    Url = photo.Photo.Url,
+                    IsMain = photo.IsMain
+                }
+            );
+        }
         userDto.Token = await tokenService.CreateTokenAsync(existingUser);
 
         return userDto;
@@ -55,8 +70,7 @@ public class AuthController(
     [HttpPost("email-exists")]
     public async Task<ActionResult<bool>> EmailExists(ValidateEmailDto validateEmailDto)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(validateEmailDto.Email);
-        return existingUser != null;
+        return await UserExists(validateEmailDto.Email);
     }
 
     [HttpPost("send-email")]
@@ -78,23 +92,28 @@ public class AuthController(
         return Ok();
     }
 
-    [HttpPatch("change-password/{email:regex(^\\S+@\\S+\\.\\S+$)}")]
-    public async Task<ActionResult> ChangePassword(string email, ChangePasswordDto changePasswordDto)
+    // [HttpPatch("change-password/{email:regex(^\\S+@\\S+\\.\\S+$)}")]
+    // public async Task<ActionResult> ChangePassword(string email, ChangePasswordDto changePasswordDto)
+    // {
+    //     var existingUser = await userRepository.GetUserByEmailAsync(email);
+    //     if (existingUser == null)
+    //     {
+    //         return Unauthorized("User with this email does not exist.");
+    //     }
+
+    //     userRepository.ChangePasswordAsync(existingUser, changePasswordDto);
+
+    //     if (!await userRepository.SaveAllAsync())
+    //     {
+    //         return BadRequest("Failed to change password.");
+    //     }
+
+    //     return NoContent();
+    // }
+
+    private async Task<bool> UserExists(string email)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(email);
-        if (existingUser == null)
-        {
-            return Unauthorized("User with this email does not exist.");
-        }
-
-        userRepository.ChangePasswordAsync(existingUser, changePasswordDto);
-
-        if (!await userRepository.SaveAllAsync())
-        {
-            return BadRequest("Failed to change password.");
-        }
-
-        return NoContent();
+        return await userManager.Users.AnyAsync(x => x.NormalizedEmail == email.ToUpper());
     }
 
     private static string HideEmail(string email)

@@ -5,34 +5,30 @@ using API.Interfaces;
 
 namespace API.Repositories;
 
-public class UserRepository(DataContext context, IMapper mapper) : IUserRepository
+public class UserRepository(
+    UserManager<AppUser> userManager,
+    IMapper mapper
+) : IUserRepository
 {
     public void ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto)
     {
-        
+
     }
 
-    public async Task<AppUser> CreateUserAsync(RegisterDto registerDto)
+    public async Task<IdentityResult> CreateUserAsync(RegisterDto registerDto)
     {
+        var password = registerDto.Password;
         var registerUser = mapper.Map<AppUser>(registerDto);
 
-        var user = await context.Users.AddAsync(registerUser);
+        var result = await userManager.CreateAsync(registerUser, password);
 
-        return user.Entity;
+        return result;
     }
 
     public async Task<AppUser?> GetUserByEmailAsync(string email)
     {
-        return await context.Users.SingleOrDefaultAsync(x => x.Email == email);
-    }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
-
-    public void Update(AppUser user)
-    {
-        context.Entry(user).State = EntityState.Modified;
+        return await userManager.Users
+            .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .SingleOrDefaultAsync(x => x.NormalizedEmail == email.ToUpper());
     }
 }
