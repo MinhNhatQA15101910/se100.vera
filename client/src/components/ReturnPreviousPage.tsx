@@ -1,9 +1,23 @@
-import React from 'react'
+"use client";
+
+import React from "react";
+import { useRouter } from "next/navigation";
 
 const ReturnPreviousPage = () => {
-  return (
-    <div>ReturnPreviousPage</div>
-  )
-}
+  const router = useRouter();
 
-export default ReturnPreviousPage
+  const handleReturn = () => {
+    router.back();
+  };
+
+  return (
+    <button
+      onClick={handleReturn}
+      className="mt-4 text-blue-600 hover:text-blue-800 underline cursor-pointer"
+    >
+      Return to Previous Page
+    </button>
+  );
+};
+
+export default ReturnPreviousPage;

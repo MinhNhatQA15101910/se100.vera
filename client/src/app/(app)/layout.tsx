@@ -1,15 +1,16 @@
-import Sidebar from "@/components/Sidebar";
-import React from "react";
+import Sidebar from '@/components/Sidebar';
+import React from 'react';
+import ProtectedLayout from './ProtectedLayout';
 
 interface ILayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const layout: React.FC<ILayoutProps> = ({ children }) => {
   return (
-    <div className="flex flex-row  h-screen app-background">
+    <div className="flex flex-row h-screen w-full app-background">
       <Sidebar />
-      {children}
+      <ProtectedLayout>{children}</ProtectedLayout>
     </div>
   );
 };

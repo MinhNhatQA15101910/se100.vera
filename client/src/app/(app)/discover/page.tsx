@@ -2,8 +2,8 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="flex flex-col bg-red-400 h-screen w-full">
-      <h1>Discover</h1>
+    <div className="flex flex-col h-screen w-full">
+      
     </div>
   );
 };

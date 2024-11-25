@@ -1,16 +1,16 @@
-"use client";
-
-import React from "react";
-
-import { useUser } from "@/contexts/UserContext";
+import React from 'react';
+import MusicLanding from './_components/MusicLanding';
+import MusicCards from './_components/MusicCards';
+import TrendingSongs from './_components/TrendingSongs';
+import MetaData from './_components/MetaData';
 
 const page = () => {
-  const { logout } = useUser();
   return (
-    <div className="flex flex-col items-center justify-center h-full min-h-screen app-background">
-      <button className="bg-red-400" onClick={logout}>
-        logout
-      </button>
+    <div className="flex flex-col items-center justify-center h-full w-full min-h-screen space-y-4">
+      <MusicLanding />
+      <MusicCards />
+      <TrendingSongs />
+      <MetaData />
     </div>
   );
 };

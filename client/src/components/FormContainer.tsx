@@ -14,12 +14,10 @@ const FormContainer: React.FC<IFormContainerProps> = ({
   className,
 }) => {
   return (
-    <div className={cn(`flex flex-col items-center justify-center`,className)}>
+    <div className={cn(`flex flex-col items-center justify-center`, className)}>
       <form onSubmit={onSubmit}>{children}</form>
     </div>
   );
 };
-
-
 
 export default FormContainer;

@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React from "react";
-import { IconClipboard } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface IAppButtonProps {
   children: React.ReactNode;
   className?: string;
-  onClick?: () => void;
-  type: "submit" | "reset" | "button" | undefined;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: 'submit' | 'reset' | 'button' | undefined;
+  disabled?: boolean;
 }
 
 export const AppButton: React.FC<IAppButtonProps> = ({
@@ -16,9 +16,15 @@ export const AppButton: React.FC<IAppButtonProps> = ({
   className,
   onClick,
   type,
+  disabled,
 }) => {
   return (
-    <button type={type} className={cn("", className)} onClick={onClick}>
+    <button
+      type={type}
+      className={cn('', className)}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {children}
     </button>
   );
