@@ -2,7 +2,6 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 import Providers from "./providers";
-
 export const metadata: Metadata = {
   title: "Vera Music ♫",
   description: "We are the next generation of music",

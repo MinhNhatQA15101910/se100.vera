@@ -11,14 +11,14 @@
  * @returns An object containing the scaled width and height.
  */
 
-const screenWidth = window.innerWidth
-const screenHeight = window.innerHeight
+const screenWidth = window.innerWidth;
+const screenHeight = window.innerHeight;
 
 export function getScaledSize(
   designWidth: number,
   designHeight: number,
   objectWidth: number,
-  objectHeight: number
+  objectHeight: number,
 ): { width: number; height: number } {
   const widthScale = screenWidth / designWidth;
   const heightScale = screenHeight / designHeight;
