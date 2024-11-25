@@ -28,6 +28,7 @@ public class Seed
     }
 
     public static async Task SeedUsers(
+        DataContext context,
         UserManager<AppUser> userManager,
         RoleManager<AppRole> roleManager
     )
@@ -62,7 +63,7 @@ public class Seed
 
         foreach (var user in users)
         {
-            await userManager.CreateAsync(user);
+            await userManager.CreateAsync(user, "Pa$$w0rd");
 
             if (user.FirstName == "Admin")
             {
@@ -77,25 +78,22 @@ public class Seed
                 await userManager.AddToRoleAsync(user, "Listener");
             }
         }
+
+        await SeedUserPhotos(context);
     }
 
-    public static async Task SeedEntityPhotos(DataContext context)
+    public static async Task SeedUserPhotos(DataContext context)
     {
-        if (await context.Users.AnyAsync()) return;
-
         var users = await context.Users.ToListAsync();
-        var photos = await context.Photos.ToListAsync();
+        var photoId = 1;
 
-        int iterator, count = photos.Count;
-        for (iterator = 0; iterator < count; iterator++)
+        foreach (var user in users)
         {
-            var user = users.ElementAt(iterator);
-            var photo = photos.ElementAt(iterator);
             var userPhoto = new UserPhoto
             {
                 UserId = user.Id,
-                PhotoId = photo.Id,
-                IsMain = true,
+                PhotoId = photoId++,
+                IsMain = true
             };
 
             context.UserPhotos.Add(userPhoto);
