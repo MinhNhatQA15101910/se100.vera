@@ -28,4 +28,32 @@ public class UsersController(IUserRepository userRepository, IMapper mapper) : B
 
         return mapper.Map<UserDto>(user);
     }
+
+    [HttpPatch("change-password")]
+    public async Task<ActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+    {
+        var existingUser = await userRepository.GetUserByEmailAsync(User.GetEmail());
+        if (existingUser == null)
+        {
+            return Unauthorized("User with this email does not exist.");
+        }
+
+        var checkPasswordResult = await userRepository.CheckPasswordAsync(
+            existingUser, 
+            changePasswordDto.CurrentPassword
+        );
+        if (!checkPasswordResult) return Unauthorized("Invalid current password");
+
+        var changePasswordResult = userRepository.ChangePasswordAsync(
+            existingUser, 
+            changePasswordDto
+        );
+
+        if (changePasswordResult.Result.Errors.Any())
+        {
+            return BadRequest("Failed to change password.");
+        }
+
+        return NoContent();
+    }
 }

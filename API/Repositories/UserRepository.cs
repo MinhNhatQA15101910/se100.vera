@@ -1,4 +1,3 @@
-using API.Data;
 using API.DTOs.Users;
 using API.Entities;
 using API.Interfaces;
@@ -10,9 +9,20 @@ public class UserRepository(
     IMapper mapper
 ) : IUserRepository
 {
-    public void ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto)
+    public async Task<IdentityResult> ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto)
     {
+        var result = await userManager.ChangePasswordAsync(
+            user,
+            changePasswordDto.CurrentPassword,
+            changePasswordDto.NewPassword
+        );
 
+        return result;
+    }
+
+    public Task<bool> CheckPasswordAsync(AppUser user, string password)
+    {
+        return userManager.CheckPasswordAsync(user, password);
     }
 
     public async Task<IdentityResult> CreateUserAsync(RegisterDto registerDto)

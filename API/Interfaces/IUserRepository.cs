@@ -5,7 +5,8 @@ namespace API.Interfaces;
 
 public interface IUserRepository
 {
-    void ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto);
+    Task<IdentityResult> ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto);
+    Task<bool> CheckPasswordAsync(AppUser user, string password);
     Task<IdentityResult> CreateUserAsync(RegisterDto registerDto);
     Task<AppUser?> GetUserByEmailAsync(string email);
 }

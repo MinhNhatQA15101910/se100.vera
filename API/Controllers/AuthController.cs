@@ -68,9 +68,23 @@ public class AuthController(
     }
 
     [HttpPost("email-exists")]
-    public async Task<ActionResult<bool>> EmailExists(ValidateEmailDto validateEmailDto)
+    public async Task<ActionResult<object>> EmailExists(ValidateEmailDto validateEmailDto)
     {
-        return await UserExists(validateEmailDto.Email);
+        if (!await UserExists(validateEmailDto.Email))
+        {
+            return false;
+        }
+
+        return new
+        {
+            Token = await tokenService.CreateTokenAsync(new AppUser
+            {
+                Email = validateEmailDto.Email,
+                FirstName = "",
+                LastName = "",
+                Gender = ""
+            })
+        };
     }
 
     [HttpPost("send-email")]
@@ -91,25 +105,6 @@ public class AuthController(
 
         return Ok();
     }
-
-    // [HttpPatch("change-password/{email:regex(^\\S+@\\S+\\.\\S+$)}")]
-    // public async Task<ActionResult> ChangePassword(string email, ChangePasswordDto changePasswordDto)
-    // {
-    //     var existingUser = await userRepository.GetUserByEmailAsync(email);
-    //     if (existingUser == null)
-    //     {
-    //         return Unauthorized("User with this email does not exist.");
-    //     }
-
-    //     userRepository.ChangePasswordAsync(existingUser, changePasswordDto);
-
-    //     if (!await userRepository.SaveAllAsync())
-    //     {
-    //         return BadRequest("Failed to change password.");
-    //     }
-
-    //     return NoContent();
-    // }
 
     private async Task<bool> UserExists(string email)
     {
