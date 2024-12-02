@@ -39,9 +39,15 @@ module.exports = {
           },
         },
       },
+      backgroundImage: {
+        'blue-gradient': 'linear-gradient(90deg, #1171E2, rgba(83, 174, 214, 0.1) 98%)',
+      },
     },
   },
-  plugins: [addVariablesForColors],
+  plugins: [
+    addVariablesForColors,     
+    require('tailwind-scrollbar'),
+  ], 
 };
 
 function addVariablesForColors({ addBase, theme }: any) {
@@ -54,3 +60,5 @@ function addVariablesForColors({ addBase, theme }: any) {
     ":root": newVars,
   });
 }
+
+

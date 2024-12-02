@@ -17,7 +17,7 @@ const Sidebar = () => {
   return (
     <div className="text-white h-screen w-64 p-6">
       {/* Logo */}
-      <h1 className="text-3xl font-bold text-pink-500 mb-8">Melodies</h1>
+      <h1 className="text-3xl font-bold text-pink-500 mb-8">Vera</h1>
 
       {/* Menu Section */}
       <div className="mb-6">
