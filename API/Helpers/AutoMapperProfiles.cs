@@ -39,7 +39,15 @@ public class AutoMapperProfiles : Profile
                 f => f.Url,
                 photos => photos.MapFrom(p => p.Photo.Url)
             );
-        CreateMap<UserPhoto, FileDto>();
+        CreateMap<UserPhoto, FileDto>()
+            .ForMember(
+                f => f.Id,
+                photos => photos.MapFrom(p => p.Photo.Id)
+            )
+            .ForMember(
+                f => f.Url,
+                photos => photos.MapFrom(p => p.Photo.Url)
+            );
         CreateMap<AlbumPhoto, FileDto>();
     }
 }

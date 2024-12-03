@@ -26,7 +26,7 @@ public class FileService : IFileService
         return deletionResult;
     }
 
-    public async Task<UploadResult> UploadAudioResult(string folderPath, IFormFile file)
+    public async Task<UploadResult> UploadAudioAsync(string folderPath, IFormFile file)
     {
         var uploadResult = new VideoUploadResult();
 

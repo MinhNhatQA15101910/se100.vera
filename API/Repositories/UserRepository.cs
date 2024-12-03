@@ -1,3 +1,4 @@
+using API.Data;
 using API.DTOs.Users;
 using API.Entities;
 using API.Interfaces;
@@ -6,9 +7,15 @@ namespace API.Repositories;
 
 public class UserRepository(
     UserManager<AppUser> userManager,
-    IMapper mapper
+    IMapper mapper,
+    DataContext context
 ) : IUserRepository
 {
+    public void AddUserPhoto(UserPhoto userPhoto)
+    {
+        context.UserPhotos.Add(userPhoto);
+    }
+
     public async Task<IdentityResult> ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto)
     {
         var result = await userManager.ChangePasswordAsync(
@@ -40,5 +47,17 @@ public class UserRepository(
         return await userManager.Users
             .Include(u => u.Photos).ThenInclude(p => p.Photo)
             .SingleOrDefaultAsync(x => x.NormalizedEmail == email.ToUpper());
+    }
+
+    public async Task<AppUser?> GetUserByIdAsync(int id)
+    {
+        return await userManager.Users
+            .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .SingleOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<bool> SaveChangesAsync()
+    {
+        return await context.SaveChangesAsync() > 0;
     }
 }
