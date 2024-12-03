@@ -9,6 +9,7 @@ namespace API.Controllers;
 [Authorize]
 public class UsersController(
     IPhotoRepository photoRepository,
+    IUserPhotoRepository userPhotoRepository,
     IUserRepository userRepository,
     IMapper mapper,
     IFileService fileService
@@ -90,9 +91,9 @@ public class UsersController(
         {
             userPhoto.IsMain = true;
         }
-        userRepository.AddUserPhoto(userPhoto);
+        userPhotoRepository.AddUserPhoto(userPhoto);
 
-        if (!await userRepository.SaveChangesAsync()) return BadRequest("Problem adding photo");
+        if (!await userPhotoRepository.SaveChangesAsync()) return BadRequest("Problem adding photo");
 
         return CreatedAtAction(
             nameof(GetCurrentUser),
@@ -122,27 +123,31 @@ public class UsersController(
     //     return BadRequest("Problem setting main photo");
     // }
 
-    // [HttpDelete("delete-photo/{photoId:int}")]
-    // public async Task<ActionResult> DeletePhoto(int photoId)
-    // {
-    //     var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+    [HttpDelete("delete-photo/{photoId:int}")]
+    public async Task<ActionResult> DeletePhoto(int photoId)
+    {
+        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        if (user == null) return BadRequest("User not found");
 
-    //     if (user == null) return BadRequest("User not found");
+        var photo = await photoRepository.GetPhotoByIdAsync(photoId);
+        if (photo == null) return BadRequest("This photo cannot be deleted");
 
-    //     var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+        var userPhoto = await userPhotoRepository.GetUserPhotoAsync(user.Id, photoId);
+        if (userPhoto == null) return BadRequest("This photo does not belong to the user");
 
-    //     if (photo == null || photo.IsMain) return BadRequest("This photo cannot be deleted");
+        if (userPhoto.IsMain) return BadRequest("This photo cannot be deleted");
 
-    //     if (photo.PublicId != null)
-    //     {
-    //         var result = await photoService.DeletePhotoAsync(photo.PublicId);
-    //         if (result.Error != null) return BadRequest(result.Error.Message);
-    //     }
+        if (photo.PublicId != null)
+        {
+            var result = await fileService.DeleteFileAsync(photo.PublicId);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+        }
 
-    //     user.Photos.Remove(photo);
+        photoRepository.RemovePhoto(photo);
+        userPhotoRepository.RemoveUserPhoto(userPhoto);
 
-    //     if (await userRepository.SaveAllAsync()) return Ok();
+        if (!await photoRepository.SaveChangesAsync()) return BadRequest("Problem deleting photo");
 
-    //     return BadRequest("Problem deleting photo");
-    // }
+        return Ok();
+    }
 }

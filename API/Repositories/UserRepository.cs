@@ -7,15 +7,9 @@ namespace API.Repositories;
 
 public class UserRepository(
     UserManager<AppUser> userManager,
-    IMapper mapper,
-    DataContext context
+    IMapper mapper
 ) : IUserRepository
 {
-    public void AddUserPhoto(UserPhoto userPhoto)
-    {
-        context.UserPhotos.Add(userPhoto);
-    }
-
     public async Task<IdentityResult> ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto)
     {
         var result = await userManager.ChangePasswordAsync(
@@ -54,10 +48,5 @@ public class UserRepository(
         return await userManager.Users
             .Include(u => u.Photos).ThenInclude(p => p.Photo)
             .SingleOrDefaultAsync(u => u.Id == id);
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 }
