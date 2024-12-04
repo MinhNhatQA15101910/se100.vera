@@ -103,26 +103,28 @@ public class UsersController(
         );
     }
 
-    // [HttpPut("set-main-photo/{photoId:int}")]
-    // public async Task<ActionResult> SetMainPhoto(int photoId)
-    // {
-    //     var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+    [HttpPut("set-main-photo/{photoId:int}")]
+    public async Task<ActionResult> SetMainPhoto(int photoId)
+    {
+        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        if (user == null) return BadRequest("Could not find user");
 
-    //     if (user == null) return BadRequest("Could not find user");
+        var photo = await photoRepository.GetPhotoByIdAsync(photoId);
+        if (photo == null) return BadRequest("Could not find photo");
 
-    //     var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+        var userPhoto = await userPhotoRepository.GetUserPhotoAsync(user.Id, photoId);
+        if (userPhoto == null) return BadRequest("This photo does not belong to the user");
+        if (userPhoto.IsMain) return BadRequest("This is already the main photo");
 
-    //     if (photo == null || photo.IsMain) return BadRequest("Cannot use this as main photo");
+        var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
+        if (currentMain != null) currentMain.IsMain = false;
 
-    //     var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
-    //     if (currentMain != null) currentMain.IsMain = false;
+        userPhoto.IsMain = true;
 
-    //     photo.IsMain = true;
+        if (await userPhotoRepository.SaveChangesAsync()) return NoContent();
 
-    //     if (await userRepository.SaveAllAsync()) return NoContent();
-
-    //     return BadRequest("Problem setting main photo");
-    // }
+        return BadRequest("Problem setting main photo");
+    }
 
     [HttpDelete("delete-photo/{photoId:int}")]
     public async Task<ActionResult> DeletePhoto(int photoId)
