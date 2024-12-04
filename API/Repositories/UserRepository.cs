@@ -1,4 +1,3 @@
-using API.Data;
 using API.DTOs.Users;
 using API.Entities;
 using API.Interfaces;
@@ -10,7 +9,10 @@ public class UserRepository(
     IMapper mapper
 ) : IUserRepository
 {
-    public async Task<IdentityResult> ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto)
+    public async Task<IdentityResult> ChangePasswordAsync(
+        AppUser user,
+        ChangePasswordDto changePasswordDto
+    )
     {
         var result = await userManager.ChangePasswordAsync(
             user,
@@ -40,6 +42,7 @@ public class UserRepository(
     {
         return await userManager.Users
             .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
             .SingleOrDefaultAsync(x => x.NormalizedEmail == email.ToUpper());
     }
 
@@ -47,6 +50,7 @@ public class UserRepository(
     {
         return await userManager.Users
             .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
             .SingleOrDefaultAsync(u => u.Id == id);
     }
 }

@@ -40,6 +40,7 @@ public class AuthController(
     {
         var existingUser = await userManager.Users
             .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
             .SingleOrDefaultAsync(x => x.NormalizedEmail == loginDto.Email.ToUpper());
         if (existingUser == null)
         {
@@ -50,18 +51,6 @@ public class AuthController(
         if (!result) return Unauthorized("Invalid password");
 
         var userDto = mapper.Map<UserDto>(existingUser);
-        userDto.Photos = [];
-        foreach (var photo in existingUser.Photos)
-        {
-            userDto.Photos.Add(
-                new DTOs.Files.FileDto
-                {
-                    Id = photo.PhotoId,
-                    Url = photo.Photo.Url,
-                    IsMain = photo.IsMain
-                }
-            );
-        }
         userDto.Token = await tokenService.CreateTokenAsync(existingUser);
 
         return userDto;
