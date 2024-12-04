@@ -1,5 +1,6 @@
 using API.DTOs.Users;
 using API.Entities;
+using API.Helpers;
 
 namespace API.Interfaces;
 
@@ -10,4 +11,5 @@ public interface IUserRepository
     Task<IdentityResult> CreateUserAsync(RegisterDto registerDto);
     Task<AppUser?> GetUserByEmailAsync(string email);
     Task<AppUser?> GetUserByIdAsync(int id);
+    Task<PagedList<UserDto>> GetUsersAsync(UserParams userParams);
 }

@@ -2,6 +2,7 @@ using API.DTOs.Files;
 using API.DTOs.Users;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 
 namespace API.Controllers;
@@ -149,5 +150,17 @@ public class UsersController(
         if (!await photoRepository.SaveChangesAsync()) return BadRequest("Problem deleting photo");
 
         return Ok();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers([FromQuery] UserParams userParams)
+    {
+        userParams.CurrentEmail = User.GetEmail();
+        var users = await userRepository.GetUsersAsync(userParams);
+
+        Response.AddPaginationHeader(users);
+
+        return Ok(users);
     }
 }
