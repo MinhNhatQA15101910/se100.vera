@@ -12,6 +12,24 @@ public class AuthController(
     IMapper mapper
 ) : BaseApiController
 {
+    [HttpPost("validate-signup")]
+    public async Task<ActionResult<UserDto>> ValidateSignup(RegisterDto registerDto)
+    {
+        if (await UserExists(registerDto.Email))
+        {
+            return BadRequest("Email already exists.");
+        }
+
+        var result = await userManager.PasswordValidators.First().ValidateAsync(userManager, null!, registerDto.Password);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return Ok(true);
+    }
+
     [HttpPost("signup")]
     public async Task<ActionResult<UserDto>> Signup(RegisterDto registerDto)
     {
