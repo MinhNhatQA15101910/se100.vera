@@ -15,6 +15,23 @@ public class AutoMapperProfiles : Profile
                 o => o.MapFrom(
                     s => s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
                 )
+            )
+            .ForMember(
+                d => d.Photos,
+                o => o.MapFrom(
+                    s => s.Photos.Select(x => new FileDto
+                    {
+                        Id = x.Photo.Id,
+                        Url = x.Photo.Url,
+                        IsMain = x.IsMain
+                    })
+                )
+            )
+            .ForMember(
+                d => d.Roles,
+                o => o.MapFrom(
+                    s => s.UserRoles.Select(x => x.Role.Name)
+                )
             );
         CreateMap<RegisterDto, AppUser>()
             .ForMember(
@@ -30,9 +47,24 @@ public class AutoMapperProfiles : Profile
                 )
             );
         CreateMap<NewSongDto, Song>();
-
-        CreateMap<SongPhoto, FileDto>();
-        CreateMap<UserPhoto, FileDto>();
+        CreateMap<SongPhoto, FileDto>()
+            .ForMember(
+                f => f.Id,
+                photos => photos.MapFrom(p => p.Photo.Id)
+            )
+            .ForMember(
+                f => f.Url,
+                photos => photos.MapFrom(p => p.Photo.Url)
+            );
+        CreateMap<UserPhoto, FileDto>()
+            .ForMember(
+                f => f.Id,
+                photos => photos.MapFrom(p => p.Photo.Id)
+            )
+            .ForMember(
+                f => f.Url,
+                photos => photos.MapFrom(p => p.Photo.Url)
+            );
         CreateMap<AlbumPhoto, FileDto>();
     }
 }

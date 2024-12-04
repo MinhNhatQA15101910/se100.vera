@@ -1,6 +1,5 @@
 namespace API.Entities;
 
-
 [Table("UserPhotos")]
 public class UserPhoto
 {

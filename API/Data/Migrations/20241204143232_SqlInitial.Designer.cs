@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20241031020720_SqlInitial")]
+[Migration("20241204143232_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -575,6 +575,21 @@ partial class SqlInitial
                 b.ToTable("SubscriptionPlans");
             });
 
+        modelBuilder.Entity("API.Entities.UserFollow", b =>
+            {
+                b.Property<int>("SourceUserId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("TargetUserId")
+                    .HasColumnType("integer");
+
+                b.HasKey("SourceUserId", "TargetUserId");
+
+                b.HasIndex("TargetUserId");
+
+                b.ToTable("Follows");
+            });
+
         modelBuilder.Entity("API.Entities.UserPhoto", b =>
             {
                 b.Property<int>("UserId")
@@ -964,6 +979,25 @@ partial class SqlInitial
                 b.Navigation("Listener");
             });
 
+        modelBuilder.Entity("API.Entities.UserFollow", b =>
+            {
+                b.HasOne("API.Entities.AppUser", "SourceUser")
+                    .WithMany("Followings")
+                    .HasForeignKey("SourceUserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.AppUser", "TargetUser")
+                    .WithMany("Followers")
+                    .HasForeignKey("TargetUserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("SourceUser");
+
+                b.Navigation("TargetUser");
+            });
+
         modelBuilder.Entity("API.Entities.UserPhoto", b =>
             {
                 b.HasOne("API.Entities.Photo", "Photo")
@@ -1038,6 +1072,10 @@ partial class SqlInitial
         modelBuilder.Entity("API.Entities.AppUser", b =>
             {
                 b.Navigation("Albums");
+
+                b.Navigation("Followers");
+
+                b.Navigation("Followings");
 
                 b.Navigation("Genres");
 
