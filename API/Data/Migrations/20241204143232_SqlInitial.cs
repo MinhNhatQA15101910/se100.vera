@@ -218,6 +218,30 @@ public partial class SqlInitial : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "Follows",
+            columns: table => new
+            {
+                SourceUserId = table.Column<int>(type: "integer", nullable: false),
+                TargetUserId = table.Column<int>(type: "integer", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_Follows", x => new { x.SourceUserId, x.TargetUserId });
+                table.ForeignKey(
+                    name: "FK_Follows_AspNetUsers_SourceUserId",
+                    column: x => x.SourceUserId,
+                    principalTable: "AspNetUsers",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "FK_Follows_AspNetUsers_TargetUserId",
+                    column: x => x.TargetUserId,
+                    principalTable: "AspNetUsers",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
             name: "Payments",
             columns: table => new
             {
@@ -686,6 +710,11 @@ public partial class SqlInitial : Migration
             unique: true);
 
         migrationBuilder.CreateIndex(
+            name: "IX_Follows_TargetUserId",
+            table: "Follows",
+            column: "TargetUserId");
+
+        migrationBuilder.CreateIndex(
             name: "IX_PaymentDetails_SubscriptionPlanId",
             table: "PaymentDetails",
             column: "SubscriptionPlanId");
@@ -771,6 +800,9 @@ public partial class SqlInitial : Migration
 
         migrationBuilder.DropTable(
             name: "AspNetUserTokens");
+
+        migrationBuilder.DropTable(
+            name: "Follows");
 
         migrationBuilder.DropTable(
             name: "PaymentDetails");
