@@ -48,6 +48,9 @@ module.exports = {
     addVariablesForColors,     
     require('tailwind-scrollbar'),
   ], 
+  variants: {
+    scrollbar: ['rounded'], // Tùy chọn cho phép bo tròn thanh cuộn
+  },
 };
 
 function addVariablesForColors({ addBase, theme }: any) {
