@@ -15,6 +15,7 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
 
         var claims = new List<Claim>
         {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Email, user.Email),
         };
 

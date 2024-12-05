@@ -4,6 +4,10 @@ namespace API.Interfaces;
 
 public interface IPhotoRepository
 {
-    Task<Photo> AddPhotoAsync(Photo photo);
+    void AddPhoto(Photo photo);
+    Task<Photo?> GetPhotoByIdAsync(int photoId);
+    void RemovePhoto(Photo photo);
     Task<bool> SaveChangesAsync();
+
+    Task<Photo> AddPhotoAsync(Photo photo);
 }
