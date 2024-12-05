@@ -1,5 +1,3 @@
-using API.Entities;
-
 namespace API.DTOs.Songs;
 
 public class NewSongDto
@@ -13,8 +11,7 @@ public class NewSongDto
     [Required]
     public required IFormFile MusicFile { get; set; }
 
-    [Required]
-    public required int PublisherId { get; set; }
+    public int PublisherId { get; set; }
 
     public List<IFormFile>? PhotoFiles { get; set; }
 
