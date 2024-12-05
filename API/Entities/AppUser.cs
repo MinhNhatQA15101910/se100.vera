@@ -10,6 +10,8 @@ public class AppUser : IdentityUser<int>
     public string? About { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public List<UserFollow> Followers { get; set; } = [];
+    public List<UserFollow> Followings { get; set; } = [];
     public List<UserPhoto> Photos { get; set; } = [];
     public List<Song> PublishedSongs { get; set; } = [];
     public List<ArtistSong> Songs { get; set; } = [];
