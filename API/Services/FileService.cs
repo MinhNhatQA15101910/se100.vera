@@ -10,8 +10,8 @@ public class FileService : IFileService
     public FileService(IOptions<CloudinarySettings> config)
     {
         var acc = new Account(
-            config.Value.CloudName, 
-            config.Value.ApiKey, 
+            config.Value.CloudName,
+            config.Value.ApiKey,
             config.Value.ApiSecret
         );
 
@@ -30,12 +30,31 @@ public class FileService : IFileService
     {
         var uploadResult = new VideoUploadResult();
 
-        if (file.Length > 0) 
+        if (file.Length > 0)
         {
             using var stream = file.OpenReadStream();
-            var uploadParams = new VideoUploadParams{
+            var uploadParams = new VideoUploadParams
+            {
                 File = new FileDescription(file.FileName, stream),
                 Folder = "Vera - Music listening app/audio/" + folderPath
+            };
+
+            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        }
+
+        return uploadResult;
+    }
+
+    public async Task<UploadResult> UploadLyricAsync(string folderPath, IFormFile file)
+    {
+        var uploadResult = new RawUploadResult();
+        if (file.Length > 0)
+        {
+            using var stream = file.OpenReadStream();
+            var uploadParams = new RawUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                Folder = "Vera - Music listening app/lyrics" + folderPath
             };
 
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -48,7 +67,7 @@ public class FileService : IFileService
     {
         var uploadResult = new ImageUploadResult();
 
-        if (file.Length > 0) 
+        if (file.Length > 0)
         {
             using var stream = file.OpenReadStream();
             var uploadParams = new ImageUploadParams

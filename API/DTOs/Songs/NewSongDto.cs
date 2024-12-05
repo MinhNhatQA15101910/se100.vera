@@ -11,11 +11,14 @@ public class NewSongDto
     public required string Description { get; set; }
 
     [Required]
-    public required IFormFile MusicFile  { get; set; }
+    public required IFormFile MusicFile { get; set; }
+
+    [Required]
+    public required int PublisherId { get; set; }
 
     public List<IFormFile>? PhotoFiles { get; set; }
 
     public IFormFile? LyricFile { get; set; }
 
-    
+
 }
