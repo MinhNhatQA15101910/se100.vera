@@ -19,8 +19,10 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     {
         var song = mapper.Map<Song>(newSongDto);
 
-        var newSong = await context.Songs.AddAsync(song);
-        return newSong.Entity;
+        await context.Songs.AddAsync(song);
+        await context.SaveChangesAsync();
+
+        return song;
     }
 
     public async Task<bool> AddPhotoAsync(Song song, Photo photo, bool isMain)

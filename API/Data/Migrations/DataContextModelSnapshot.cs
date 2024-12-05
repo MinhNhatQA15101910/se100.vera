@@ -475,7 +475,6 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .HasColumnType("text");
 
                 b.Property<string>("LyricUrl")
-                    .IsRequired()
                     .HasColumnType("text");
 
                 b.Property<string>("MusicPublicId")
