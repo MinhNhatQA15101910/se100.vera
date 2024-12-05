@@ -32,7 +32,7 @@ public class SongsController(ISongRepository songRepository, IMapper mapper, IFi
 
         if (newSongDto.MusicFile != null)
         {
-            var uploadResult = await fileService.UploadAudioResult("/songs/" + song.Id, newSongDto.MusicFile);
+            var uploadResult = await fileService.UploadAudioAsync("/songs/" + song.Id, newSongDto.MusicFile);
             song.MusicUrl = uploadResult.Url.ToString();
             song.MusicPublicId = uploadResult.PublicId;
 
@@ -81,7 +81,5 @@ public class SongsController(ISongRepository songRepository, IMapper mapper, IFi
 
     }
 
-    [HttpPut("{id:int}")]
-    [Authorize]
-    public async Task<ActionResult<SongDto>> 
+
 }
