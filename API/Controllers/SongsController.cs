@@ -1,10 +1,17 @@
 using API.DTOs.Songs;
 using API.Interfaces;
 using API.Entities;
+using API.Extensions;
 
 namespace API.Controllers;
 
-public class SongsController(ISongRepository songRepository, IMapper mapper, IFileService fileService, IPhotoRepository photoRepository) : BaseApiController
+[Authorize]
+public class SongsController(
+    ISongRepository songRepository,
+    IMapper mapper,
+    IFileService fileService,
+    IPhotoRepository photoRepository
+) : BaseApiController
 {
     [HttpGet("{id:int}")]
     public async Task<ActionResult<SongDto>> GetSongById(int id)
@@ -19,7 +26,6 @@ public class SongsController(ISongRepository songRepository, IMapper mapper, IFi
     }
 
     [HttpPost]
-    [Authorize]
     public async Task<ActionResult<SongDto>> AddSong([FromForm] NewSongDto newSongDto)
     {
         if (newSongDto == null)
@@ -27,6 +33,8 @@ public class SongsController(ISongRepository songRepository, IMapper mapper, IFi
             return BadRequest("Invalid song data.");
         }
 
+        var userId = User.GetUserId();
+        newSongDto.PublisherId = userId;
 
         var song = await songRepository.AddSongAsync(newSongDto);
 
@@ -35,7 +43,6 @@ public class SongsController(ISongRepository songRepository, IMapper mapper, IFi
             var uploadResult = await fileService.UploadAudioAsync("/songs/" + song.Id, newSongDto.MusicFile);
             song.MusicUrl = uploadResult.Url.ToString();
             song.MusicPublicId = uploadResult.PublicId;
-
         }
 
         if (newSongDto.LyricFile != null)
@@ -56,7 +63,6 @@ public class SongsController(ISongRepository songRepository, IMapper mapper, IFi
                 {
                     Url = uploadResult.Url.ToString(),
                     PublicId = uploadResult.PublicId,
-
                 });
 
                 await songRepository.AddPhotoAsync(song, newPhoto, !isMainSet);
@@ -69,9 +75,6 @@ public class SongsController(ISongRepository songRepository, IMapper mapper, IFi
         {
             return BadRequest("Failed to add song.");
         }
-
-        SongDto songDto = mapper.Map<SongDto>(song);
-
 
         return CreatedAtAction(
             nameof(GetSongById),

@@ -304,7 +304,7 @@ public partial class SqlInitial : Migration
                 UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 MusicUrl = table.Column<string>(type: "text", nullable: false),
                 MusicPublicId = table.Column<string>(type: "text", nullable: true),
-                LyricUrl = table.Column<string>(type: "text", nullable: false),
+                LyricUrl = table.Column<string>(type: "text", nullable: true),
                 LyricPublicId = table.Column<string>(type: "text", nullable: true),
                 PublisherId = table.Column<int>(type: "integer", nullable: false)
             },
