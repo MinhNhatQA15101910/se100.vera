@@ -63,7 +63,6 @@ public class SongsController(
                 {
                     Url = uploadResult.Url.ToString(),
                     PublicId = uploadResult.PublicId,
-
                 });
 
                 await songRepository.AddPhotoAsync(song, newPhoto, !isMainSet);
