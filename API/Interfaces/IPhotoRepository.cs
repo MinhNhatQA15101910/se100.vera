@@ -8,4 +8,6 @@ public interface IPhotoRepository
     Task<Photo?> GetPhotoByIdAsync(int photoId);
     void RemovePhoto(Photo photo);
     Task<bool> SaveChangesAsync();
+
+    Task<Photo> AddPhotoAsync(Photo photo);
 }

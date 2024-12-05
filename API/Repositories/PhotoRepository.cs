@@ -21,6 +21,12 @@ public class PhotoRepository(DataContext context) : IPhotoRepository
         context.Photos.Remove(photo);
     }
 
+    public async Task<Photo> AddPhotoAsync(Photo photo)
+    {
+        var newPhoto = await context.Photos.AddAsync(photo);
+        return newPhoto.Entity;
+    }
+
     public async Task<bool> SaveChangesAsync()
     {
         return await context.SaveChangesAsync() > 0;
