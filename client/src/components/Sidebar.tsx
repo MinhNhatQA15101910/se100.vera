@@ -65,7 +65,7 @@ const Sidebar = () => {
       className={`sticky top-0 animated-border h-full z-2 hidden md:flex flex-col min-h-screen text-white max-w-fit p-6 border-r border-r-general-pink shadow-[8px_0px_24.2px_0px_rgba(238,16,176,0.15)] animate-[border-pulse_2s_ease-in-out_infinite] ${!isAuthenticated && 'hidden'}`}
     >
       {/* Logo */}
-      <h1 className="title-text-gradient mb-8">Melodies</h1>
+      <h1 className="title-text-gradient mb-8">VERA</h1>
       {sidebarSections.map((section, index) => (
         <div
           key={section.title}
