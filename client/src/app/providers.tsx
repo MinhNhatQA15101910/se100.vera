@@ -1,22 +1,23 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { Noto_Serif_JP } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { UserProvider } from '@/contexts/UserContext';
 import { LoadingProvider } from '@/contexts/LoadingContext';
-import { ToastContainer } from 'react-toastify'; 
+import { ToastContainer } from 'react-toastify';
 import ProtectedRoute from './ProtectedRoute';
 import 'react-toastify/dist/ReactToastify.css';
 
-const notoSerifJP = Noto_Serif_JP({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-noto-serif-jp',
+const inter = Inter({
+  subsets: ['vietnamese'],
+  weight: ['400', '700'], // Specify the weights you need
+  variable: '--font-inter', // Define a CSS variable for the font
 });
+
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <div className={`${notoSerifJP.variable} font-serif`}>
+    <div className={`${inter.variable} font-sans`}>
       <LoadingProvider>
         <UserProvider>
           <ProtectedRoute>
