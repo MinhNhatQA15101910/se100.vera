@@ -1,3 +1,4 @@
+import LikeButton from '@/components/music/LikeButton';
 import { AppButton } from '@/components/ui/AppButton';
 import {
   Table,
@@ -7,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Heart, Plus } from 'lucide-react';
+import {  Plus } from 'lucide-react';
 import Image from 'next/image';
 
 export default function TrendingSongs() {
@@ -126,10 +127,7 @@ export default function TrendingSongs() {
               </TableCell>
               <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                 <div className="flex items-center justify-end space-x-4">
-                  <AppButton className="text-gray-400 hover:text-pink-500">
-                    <Heart className="h-5 w-5" />
-                    <span className="sr-only">Like</span>
-                  </AppButton>
+                  <LikeButton songId={"KEKEKEEKE"}/>
                   <span className="text-gray-400 mx-auto">{song.duration}</span>
                 </div>
               </TableCell>

@@ -1,7 +1,7 @@
 'use client';
 
 import { UserType } from '@/types/declaration';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/ui/label';
 
 type SegmentedControlProps = {
   isRole: UserType;

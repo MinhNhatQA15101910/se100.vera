@@ -1,6 +1,5 @@
 'use client';
 
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AppButton } from '@/components/ui/AppButton';
 import Image from 'next/image';
 import { Plus } from 'lucide-react';
@@ -12,6 +11,9 @@ const artists = [
   { name: 'Lana Del Ray', image: 'https://picsum.photos/400/400?random=4' },
   { name: 'Harry Styles', image: 'https://picsum.photos/400/400?random=5' },
   { name: 'Billie Eilish', image: 'https://picsum.photos/400/400?random=6' },
+  { name: 'Billie Baby', image: 'https://picsum.photos/400/400?random=7' },
+  { name: 'Dog Eilish', image: 'https://picsum.photos/400/400?random=8' },
+  { name: 'King Gay', image: 'https://picsum.photos/400/400?random=9' },
 ];
 
 const albums = [
@@ -40,6 +42,31 @@ const albums = [
     artist: 'The Weekend',
     image: 'https://picsum.photos/400/400?random=11',
   },
+  {
+    title: 'Beauty Behind the...',
+    artist: 'The Weekend',
+    image: 'https://picsum.photos/400/400?random=11',
+  },
+  {
+    title: 'Beauty Behind the...',
+    artist: 'The Weekend',
+    image: 'https://picsum.photos/400/400?random=11',
+  },
+  {
+    title: 'Beauty Behind the...',
+    artist: 'The Weekend',
+    image: 'https://picsum.photos/400/400?random=11',
+  },
+  {
+    title: 'Beauty Behind the...',
+    artist: 'The Weekend',
+    image: 'https://picsum.photos/400/400?random=11',
+  },
+  {
+    title: 'Beauty Behind the...',
+    artist: 'The Weekend',
+    image: 'https://picsum.photos/400/400?random=11',
+  },
 ];
 
 const playlist = [
@@ -51,100 +78,145 @@ const playlist = [
     title: 'Workout Mix',
     image: 'https://picsum.photos/400/400?random=13',
   },
-  {
-    title: 'Chill Vibes',
-    image: 'https://picsum.photos/400/400?random=14',
-  },
-  {
-    title: 'Party Time',
-    image: 'https://picsum.photos/400/400?random=15',
-  },
-  {
-    title: 'Study Focus',
-    image: 'https://picsum.photos/400/400?random=16',
-  },
+  // {
+  //   title: 'Chill Vibes',
+  //   image: 'https://picsum.photos/400/400?random=14',
+  // },
+  // {
+  //   title: 'Party Time',
+  //   image: 'https://picsum.photos/400/400?random=15',
+  // },
+  // {
+  //   title: 'Study Focus',
+  //   image: 'https://picsum.photos/400/400?random=16',
+  // },
 ];
+
+const ViewAllFeature = () => {
+  return (
+    <AppButton
+      className={`flex flex-col items-center justify-center space-y-2 group w-[10%] `}
+    >
+      <div className="p-2 rounded-full bg-[#1E1E1E] group-hover:bg-[#434343] transition-colors duration-200 mt-6">
+        <Plus className="text-general-white group-hover:text-general-pink-hover transition-colors duration-200" />
+      </div>
+      <p className="font-[16px] text-general-white group-hover:text-general-pink-hover transition-colors duration-200">
+        View All
+      </p>
+    </AppButton>
+  );
+};
+
+const ArtistCard = ({ name, image }: { name: string; image: string }) => {
+  return (
+    <div key={name} className="flex flex-col items-center">
+      <div className="relative w-full aspect-square">
+        <Image
+          src={image}
+          alt={name}
+          fill
+          className="object-cover rounded-full"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
+      <span className="mt-2 text-sm text-gray-200">{name}</span>
+    </div>
+  );
+};
+
+const AlbumCard = ({
+  title,
+  image,
+  artist,
+}: {
+  title: string;
+  image: string;
+  artist: string;
+}) => {
+  return (
+    <div className="flex flex-col bg-[#1F1F1F] p-2 pb-4 rounded-lg">
+      <div className="relative w-full aspect-square">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover rounded-md"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
+      <span className="mt-2">{title}</span>
+      <span className="text-sm text-gray-400">{artist}</span>
+    </div>
+  );
+};
+
+const PlaylistCard = ({ title, image }: { title: string; image: string }) => {
+  return (
+    <div className="flex flex-col bg-[#1F1F1F] p-2">
+      <div className="relative w-full aspect-square">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
+      <span className="mt-2">{title}</span>
+    </div>
+  );
+};
 
 export default function MetaData() {
   return (
-    <div className="text-white p-6 space-y-8 w-[90%] flex flex-col ">
-      <section>
-        <CardHeader>
-          <CardTitle className="text-2xl">
-            Popular <span className="text-pink-500">Artists</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center space-x-4 overflow-x-auto">
-          {artists.map((artist) => (
-            <div key={artist.name} className="flex flex-col items-center">
-              <Image
-                src={artist.image}
-                alt={artist.name}
-                width={77}
-                height={77}
-                className="object-cover rounded-full"
-              />
-              <span className="mt-2">{artist.name}</span>
-            </div>
-          ))}
-          <AppButton className="flex-shrink-0">
-            <Plus />
-            View All
-          </AppButton>
-        </CardContent>
+    <div className="text-white space-y-8 w-[90%] flex flex-col">
+      <section className="flex flex-col w-full">
+        <h2 className="text-2xl font-bold mb-4">
+          Popular <span className="text-pink-500">Artists</span>
+        </h2>
+        <div className="flex flex-row items-center">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 w-full">
+            {artists.slice(0, 6).map((artist, idx) => (
+              <ArtistCard key={idx} name={artist.name} image={artist.image} />
+            ))}
+          </div>
+          {artists.length >= 6 ? <ViewAllFeature /> : <div className='flex w-[10%]'/>}
+        </div>
       </section>
-
-      <section>
-        <CardHeader>
-          <CardTitle className="text-2xl">
-            Top <span className="text-pink-500">Albums</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center space-x-4 overflow-x-auto">
-          {albums.map((album) => (
-            <div key={album.title} className="flex flex-col items-center">
-              <Image
-                src={album.image}
-                alt={album.title}
-                width={0}
-                height={0}
-                className="w-32 h-32 rounded-lg"
+      <section className="flex flex-col w-full">
+        <h2 className="text-2xl font-bold mb-4">
+          Top <span className="text-pink-500">Albums</span>
+        </h2>
+        <div className="flex flex-row items-center">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
+            {albums.slice(0, 5).map((album, idx) => (
+              <AlbumCard
+                key={idx}
+                title={album.title}
+                image={album.image}
+                artist={album.artist}
               />
-              <span className="mt-2">{album.title}</span>
-              <span className="text-sm text-gray-400">{album.artist}</span>
-            </div>
-          ))}
-          <AppButton className="flex-shrink-0">
-            <Plus />
-            View All
-          </AppButton>
-        </CardContent>
+            ))}
+          </div>
+          {albums.length >= 5 ? <ViewAllFeature /> : <div className='flex w-[10%]'/>}
+        </div>
       </section>
-
-      <section>
-        <CardHeader>
-          <CardTitle className="text-2xl">
-            Mood <span className="text-pink-500">Playlists</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center space-x-4 overflow-x-auto">
-          {playlist.map((album) => (
-            <div key={album.title} className="flex flex-col items-center">
-              <Image
-                src={album.image}
-                alt={album.title}
-                width={0}
-                height={0}
-                className="w-32 h-32 rounded-lg"
+      <section className="flex flex-col w-full">
+        <h2 className="text-2xl font-bold mb-4">
+          Mood <span className="text-pink-500">Playlists</span>
+        </h2>
+        <div className="flex flex-row items-center">
+          <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full`}>
+            {playlist.slice(0, 5).map((playlist, idx) => (
+              <PlaylistCard
+                key={idx}
+                title={playlist.title}
+                image={playlist.image}
               />
-              <span className="mt-2">{album.title}</span>
-            </div>
-          ))}
-          <AppButton className="flex-shrink-0">
-            <Plus />
-            View All
-          </AppButton>
-        </CardContent>
+            ))}
+          </div>
+          {playlist.length >= 5 ? <ViewAllFeature /> : <div className='flex w-[10%]'/>}
+        </div>
       </section>
     </div>
   );

@@ -7,10 +7,10 @@ import { useLoading } from '@/contexts/LoadingContext';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/Label';
+import { Label, LabelInputContainer } from '@/components/ui/label';
 import { Input } from '@/components/ui/Input';
 import Separator from '@/components/Separator';
-import { Checkbox } from '@/components/ui/CheckBox';
+import { Checkbox } from '@/components/ui/check-box';
 import { AppButton } from '@/components/ui/AppButton';
 import LoginFeatures from './LoginFeatures';
 import ToSignup from './ToSignup';
@@ -22,7 +22,7 @@ const loginSchema = z.object({
 
 const LoginForm = () => {
   const { login } = useUser();
-  const { isLoading, setIsLoading } = useLoading();
+  const { isLoading, setLoadingState } = useLoading();
   const [isRememberMe, setIsRememberMe] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -60,16 +60,14 @@ const LoginForm = () => {
 
     try {
       const validatedData = loginSchema.parse(formData);
-      setIsLoading(true);
+      setLoadingState(true);
 
       await login({
         email: validatedData.email,
         password: validatedData.password,
+        rememberMe: isRememberMe,
       });
 
-      if (isRememberMe) {
-        localStorage.setItem('rememberedEmail', validatedData.email);
-      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors: { [key: string]: string } = {};
@@ -81,7 +79,7 @@ const LoginForm = () => {
         setErrors(formattedErrors);
       }
     } finally {
-      setIsLoading(false);
+      setLoadingState(false);
     }
   };
 

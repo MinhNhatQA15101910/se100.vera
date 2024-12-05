@@ -1,72 +1,30 @@
 'use client';
 
-import React, { ReactNode, useEffect } from 'react';
-import { Inter } from 'next/font/google';
-import { useRouter, usePathname } from 'next/navigation';
-import { useUser, UserProvider } from '@/contexts/UserContext';
-import { LoadingProvider, useLoading } from '@/contexts/LoadingContext';
-import { ToastContainer } from 'react-toastify';
+import React, { ReactNode } from 'react';
+import { Noto_Serif_JP } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { UserProvider } from '@/contexts/UserContext';
+import { LoadingProvider } from '@/contexts/LoadingContext';
+import { ToastContainer } from 'react-toastify'; 
+import ProtectedRoute from './ProtectedRoute';
 import 'react-toastify/dist/ReactToastify.css';
 
-interface IProtectedRoute {
-  children: ReactNode;
-}
-
-const inter = Inter({
+const notoSerifJP = Noto_Serif_JP({
   subsets: ['latin'],
-  variable: '--font-inter',
+  weight: ['400', '700'],
+  variable: '--font-noto-serif-jp',
 });
-
-const ProtectedRoute: React.FC<IProtectedRoute> = ({ children }) => {
-  const { isAuthenticated } = useUser();
-  const router = useRouter();
-  const pathname = usePathname();
-  const { setIsLoading } = useLoading();
-
-  const publicRoutes = ['/login', '/signup', '/verify-code', '/reset-password'];
-  const appRoutes = ['/home', '/discover'];
-
-  useEffect(() => {
-    setIsLoading(false);
-
-    if (pathname === '/') {
-      if (!isAuthenticated) {
-        router.push('/login');
-      } else {
-        router.push('/home');
-      }
-      return;
-    }
-
-    if (!isAuthenticated && !publicRoutes.includes(pathname)) {
-      router.push('/login');
-      return;
-    }
-
-    if (isAuthenticated && publicRoutes.includes(pathname)) {
-      router.push('/home');
-      return;
-    }
-
-    // Redirect to home if not on valid app route while authenticated
-    if (isAuthenticated && !appRoutes.includes(pathname) && !pathname.startsWith('/')) {
-      router.push('/home');
-    }
-
-  }, [isAuthenticated, pathname, router, setIsLoading]);
-
-  return <>{children}</>;
-};
-
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <div className={`${inter.variable} font-sans`}>
+    <div className={`${notoSerifJP.variable} font-serif`}>
       <LoadingProvider>
         <UserProvider>
-          <ProtectedRoute>{children}</ProtectedRoute>
+          <ProtectedRoute>
+            <NuqsAdapter>{children}</NuqsAdapter>
+          </ProtectedRoute>
           <ToastContainer
             position="top-right"
-            autoClose={5000}
+            autoClose={2699}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick

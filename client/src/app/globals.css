@@ -155,4 +155,16 @@ table {
   body {
     @apply bg-background text-foreground;
   }
+
+  h2 {
+    @apply text-general-white
+  }
+
+  textarea {
+    @apply text-general-pink
+  }
+
+  label {
+    @apply text-general-white
+  }
 }

@@ -12,9 +12,11 @@ import {
   FaHeart,
   FaPlus,
   FaCog,
+  FaMask,
   FaSignOutAlt,
 } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
+import { useLoading } from '@/contexts/LoadingContext';
 
 const sidebarSections = [
   {
@@ -44,6 +46,7 @@ const sidebarSections = [
   {
     title: 'General',
     items: [
+      { name: 'Profile', icon: FaMask, href: '/profile' },
       { name: 'Settings', icon: FaCog, href: '/settings' },
       { name: 'Logout', icon: FaSignOutAlt, href: '#' },
     ],
@@ -52,17 +55,20 @@ const sidebarSections = [
 
 const Sidebar = () => {
   const { logout, isAuthenticated } = useUser();
+  const {setLoadingState} = useLoading();
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = () => {
+    setLoadingState(true);
     logout();
     router.push('/login');
+    setLoadingState(false);
   };
 
   return (
     <div
-      className={`sticky top-0 animated-border h-full z-2 hidden md:flex flex-col min-h-screen text-white max-w-fit p-6 border-r border-r-general-pink shadow-[8px_0px_24.2px_0px_rgba(238,16,176,0.15)] animate-[border-pulse_2s_ease-in-out_infinite] ${!isAuthenticated && 'hidden'}`}
+      className={`hidden sticky top-0 animated-border h-full z-2 md:flex flex-col min-h-screen text-white max-w-fit p-6 border-r border-r-general-pink shadow-[8px_0px_24.2px_0px_rgba(238,16,176,0.15)] animate-[border-pulse_2s_ease-in-out_infinite] ${!isAuthenticated && 'hidden'}`}
     >
       {/* Logo */}
       <h1 className="title-text-gradient mb-8">Melodies</h1>
