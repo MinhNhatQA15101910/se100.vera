@@ -1,6 +1,3 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
-
-const colors = require('tailwindcss/colors');
 const {
   default: flattenColorPalette,
 } = require('tailwindcss/lib/util/flattenColorPalette');
@@ -19,6 +16,7 @@ module.exports = {
         'general-pink': '#EE10B0',
         'general-pink-hover': '#F342C4',
         'general-white': '#FFFFFF',
+        'general-theme': '#181818',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -92,16 +90,12 @@ module.exports = {
     addVariablesForColors,
     require('tailwindcss-animate'),
     addVariablesForColors,
-    require('tailwind-scrollbar'),
   ],
-  variants: {
-    scrollbar: ['rounded'],
-  },
 };
 
 function addVariablesForColors({ addBase, theme }: any) {
-  let allColors = flattenColorPalette(theme('colors'));
-  let newVars = Object.fromEntries(
+  const allColors = flattenColorPalette(theme('colors'));
+  const newVars = Object.fromEntries(
     Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
   );
 

@@ -2,16 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: #181818;
+}
+
 :root {
+  --theme-color: #181818;
   --main-text-color: #ffffff --separator-color: #d9dadc;
   --general-pink: #ee10b0;
+  --general-pink-hover: #f342c4;
   --general-blue: rgba(14, 158, 239, 0.92) 127.01%;
-  --kadfjkasfksajkl: #ffdd23
 }
 
 .app-background {
   background-color: #181818;
-  display: flex;
   height: 100%;
 }
 
@@ -49,7 +53,7 @@
 }
 
 .general-grayscale-hover {
-  background-color: #2E2E2E;
+  background-color: #2e2e2e;
   transition: background-color 200ms;
 }
 
@@ -158,14 +162,45 @@ table {
   }
 
   h2 {
-    @apply text-general-white
+    @apply text-general-white;
   }
 
   textarea {
-    @apply text-general-pink
+    @apply text-general-pink;
   }
 
   label {
-    @apply text-general-white
+    @apply text-general-white;
   }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollable {
+  overflow-y: auto;
+}
+
+.scrollable::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: var(--general-pink);
+  border-radius: 4px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background-color: var(--theme-color);
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover {
+  background-color: var(--general-pink-hover);
 }
