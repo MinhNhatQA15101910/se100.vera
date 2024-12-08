@@ -1,12 +1,6 @@
 import { create } from 'zustand';
 
-interface Song {
-  id: string;
-  title: string;
-  artist: string;
-  url: string;
-  cover?: string;
-}
+import { Song } from '@/types/global';
 
 interface PlayerState {
   playlist: Song[];
@@ -14,12 +8,12 @@ interface PlayerState {
   isVisible: boolean;
   isPlaying: boolean;
   volume: number;
-  setPlaylist: (tracks: Song[]) => void;
-  setActiveTrack: (trackId: string) => void;
-  play: () => void;
-  pause: () => void;
-  next: () => void;
-  previous: () => void;
+  setPlaylist: (songs: Song[]) => void;
+  setActiveTrack: (song: Song) => void;
+  onPlay: () => void;
+  onPause: () => void;
+  onNext: () => void;
+  onPrevious: () => void;
   setVolume: (volume: number) => void;
   toggleVisibility: () => void;
   reset: () => void;
@@ -31,27 +25,28 @@ const usePlayerStore = create<PlayerState>((set, get) => ({
   isVisible: false,
   isPlaying: false,
   volume: 0.8,
-  setPlaylist: (tracks) => set({ playlist: tracks }),
-  setActiveTrack: (trackId) => {
-    const track = get().playlist.find((t) => t.id === trackId);
-    if (track) set({ activeSong: track });
+  setPlaylist: (songs) => set({ playlist: songs }),
+  setActiveTrack: (song) => {
+    if (song) {
+      set({ activeSong: song });
+    }
   },
-  play: () => set({ isPlaying: true }),
-  pause: () => set({ isPlaying: false }),
-  next: () => {
+  onPlay: () => set({ isPlaying: true }),
+  onPause: () => set({ isPlaying: false }),
+  onNext: () => {
     const { playlist, activeSong } = get();
-    if (!activeSong) return;
-    const currentIndex = playlist.findIndex((t) => t.id === activeSong.id);
-    const nextTrack = playlist[(currentIndex + 1) % playlist.length];
-    set({ activeSong: nextTrack });
+    if (!activeSong || playlist.length === 0) return;
+    const currentIndex = playlist.findIndex((s) => s.id === activeSong.id);
+    const nextSong = playlist[(currentIndex + 1) % playlist.length];
+    set({ activeSong: nextSong });
   },
-  previous: () => {
+  onPrevious: () => {
     const { playlist, activeSong } = get();
-    if (!activeSong) return;
-    const currentIndex = playlist.findIndex((t) => t.id === activeSong.id);
-    const prevTrack =
+    if (!activeSong || playlist.length === 0) return;
+    const currentIndex = playlist.findIndex((s) => s.id === activeSong.id);
+    const prevSong =
       playlist[(currentIndex - 1 + playlist.length) % playlist.length];
-    set({ activeSong: prevTrack });
+    set({ activeSong: prevSong });
   },
   setVolume: (volume) => set({ volume }),
   toggleVisibility: () => set((state) => ({ isVisible: !state.isVisible })),

@@ -15,42 +15,49 @@ const ProtectedRoute: React.FC<IProtectedRoute> = ({ children }) => {
   const pathname = usePathname();
   const { setLoadingState } = useLoading();
 
+  // Define route categories
   const publicRoutes = ['/login', '/signup', '/verify-code', '/reset-password'];
-  const appRoutes = ['/home', '/discover'];
+  const appRoutes = [
+    '/home',
+    '/discover',
+    '/artists',
+    '/albums',
+    '/artist-detail',
+    'recently-added',
+  ];
 
   useEffect(() => {
-    setLoadingState(false);
+    setLoadingState(false); // Stop loading indicator
 
+    // Handle root route `/`
     if (pathname === '/') {
-      if (!isAuthenticated) {
-        router.push('/login');
+      if (isAuthenticated) {
+        router.push('/home'); // Redirect authenticated user to home
       } else {
-        router.push('/home');
+        router.push('/login'); // Redirect unauthenticated user to login
       }
       return;
     }
 
+    // Handle unauthenticated user trying to access protected routes
     if (!isAuthenticated && !publicRoutes.includes(pathname)) {
       router.push('/login');
       return;
     }
 
+    // Handle authenticated user trying to access public routes
     if (isAuthenticated && publicRoutes.includes(pathname)) {
       router.push('/home');
       return;
     }
 
-    // Redirect to home if not on valid app route while authenticated
-    if (
-      isAuthenticated &&
-      !appRoutes.includes(pathname) &&
-      !pathname.startsWith('/')
-    ) {
-      router.push('/home');
+    // Handle authenticated user accessing invalid routes
+    if (isAuthenticated && !appRoutes.includes(pathname)) {
+      router.push('/home'); 
     }
   }, [isAuthenticated, pathname, router, setLoadingState]);
 
   return <>{children}</>;
 };
 
-export default ProtectedRoute
+export default ProtectedRoute;

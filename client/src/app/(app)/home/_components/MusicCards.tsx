@@ -2,68 +2,9 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronRight } from 'lucide-react';
-import MusicCard from '@/components/music/MusicCard';
+import SongCard from '@/components/music/SongCard';
 
-const weeklyTopSongs = [
-  {
-    title: 'Whatever It Takes',
-    artist: 'Imagine Dragons',
-    image: 'https://picsum.photos/400/400?random=1',
-  },
-  {
-    title: 'Skyfall',
-    artist: 'Adele',
-    image: 'https://picsum.photos/400/400?random=2',
-  },
-  {
-    title: 'Superman',
-    artist: 'Eminem',
-    image: 'https://picsum.photos/400/400?random=13',
-  },
-  {
-    title: 'Softcore',
-    artist: 'The Neighborhood',
-    image: 'https://picsum.photos/400/400?random=34',
-  },
-  {
-    title: 'Softcore',
-    artist: 'The Neighborhood',
-    image: 'https://picsum.photos/400/400?random=45',
-  },
-  {
-    title: 'Softcore',
-    artist: 'The Neighborhood',
-    image: 'https://picsum.photos/400/400?random=6',
-  },
-  {
-    title: 'Softcore',
-    artist: 'The Neighborhood',
-    image: 'https://picsum.photos/400/400?random=8',
-  },
-  {
-    title: 'Softcore',
-    artist: 'The Neighborhood',
-    image: 'https://picsum.photos/400/400?random=9',
-  },
-  {
-    title: 'Softcore',
-    artist: 'The Neighborhood',
-    image: 'https://picsum.photos/400/400?random=42',
-  },
-];
-
-const newReleaseSongs = [
-  {
-    title: 'Time',
-    artist: 'Luciano',
-    image: 'https://picsum.photos/400/400?random=5',
-  },
-  {
-    title: '112',
-    artist: 'jazzek',
-    image: 'https://picsum.photos/400/400?random=6',
-  },
-];
+import { weeklyTopSongs, newReleaseSongs } from '@/actions/song-actions';
 
 const ViewAllCard = () => {
   return (
@@ -87,12 +28,7 @@ const MusicCards = () => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {weeklyTopSongs.slice(0, 5).map((song, index) => (
-              <MusicCard
-                key={index}
-                title={song.title}
-                artist={song.artist}
-                image={song.image}
-              />
+              <SongCard key={index} song={song} />
             ))}
             <ViewAllCard />
           </div>
@@ -105,12 +41,7 @@ const MusicCards = () => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {newReleaseSongs.slice(0, 5).map((song, index) => (
-              <MusicCard
-                key={index}
-                title={song.title}
-                artist={song.artist}
-                image={song.image}
-              />
+              <SongCard key={index} song={song} />
             ))}
             <ViewAllCard />
           </div>

@@ -5,7 +5,12 @@ import { useUser } from '@/contexts/UserContext';
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useUser();
-  return <>{isAuthenticated && children}</>;
+
+  if (!isAuthenticated) {
+    return;
+  }
+
+  return <>{children}</>;
 };
 
 export default ProtectedLayout;

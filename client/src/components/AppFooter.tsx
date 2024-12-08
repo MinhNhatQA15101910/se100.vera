@@ -12,9 +12,7 @@ export default function Footer() {
       className={`relative text-white p-8 ${!isAuthenticated && 'hidden'}`}
     >
       {/* Curved top edge */}
-      <div className='mt-8'>
-
-      </div>
+      <div className="mt-8"></div>
       {/* */}
 
       <div className="container mx-auto px-4">

@@ -3,6 +3,7 @@
 import { AppButton } from '@/components/ui/AppButton';
 import Image from 'next/image';
 import { Plus } from 'lucide-react';
+import AlbumCard from '@/components/ui/AlbumCard';
 
 const artists = [
   { name: 'Eminem', image: 'https://picsum.photos/400/400?random=1' },
@@ -124,31 +125,31 @@ const ArtistCard = ({ name, image }: { name: string; image: string }) => {
   );
 };
 
-const AlbumCard = ({
-  title,
-  image,
-  artist,
-}: {
-  title: string;
-  image: string;
-  artist: string;
-}) => {
-  return (
-    <div className="flex flex-col bg-[#1F1F1F] p-2 pb-4 rounded-lg">
-      <div className="relative w-full aspect-square">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className="object-cover rounded-md"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-      </div>
-      <span className="mt-2">{title}</span>
-      <span className="text-sm text-gray-400">{artist}</span>
-    </div>
-  );
-};
+// const AlbumCard = ({
+//   title,
+//   image,
+//   artist,
+// }: {
+//   title: string;
+//   image: string;
+//   artist: string;
+// }) => {
+//   return (
+//     <div className="flex flex-col bg-[#1F1F1F] p-2 pb-4 rounded-lg">
+//       <div className="relative w-full aspect-square">
+//         <Image
+//           src={image}
+//           alt={title}
+//           fill
+//           className="object-cover rounded-md"
+//           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+//         />
+//       </div>
+//       <span className="mt-2">{title}</span>
+//       <span className="text-sm text-gray-400">{artist}</span>
+//     </div>
+//   );
+// };
 
 const PlaylistCard = ({ title, image }: { title: string; image: string }) => {
   return (

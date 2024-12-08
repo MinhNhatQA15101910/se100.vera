@@ -1,27 +1,23 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { Inter } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { UserProvider } from '@/contexts/UserContext';
 import { LoadingProvider } from '@/contexts/LoadingContext';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { ToastContainer } from 'react-toastify';
 import ProtectedRoute from './ProtectedRoute';
 import 'react-toastify/dist/ReactToastify.css';
 
-const inter = Inter({
-  subsets: ['vietnamese'],
-  weight: ['400', '700'], // Specify the weights you need
-  variable: '--font-inter', // Define a CSS variable for the font
-});
-
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <div className={`${inter.variable} font-sans`}>
+    <>
       <LoadingProvider>
         <UserProvider>
           <ProtectedRoute>
-            <NuqsAdapter>{children}</NuqsAdapter>
+            <NuqsAdapter>
+              <TooltipProvider>{children}</TooltipProvider>
+            </NuqsAdapter>
           </ProtectedRoute>
           <ToastContainer
             position="top-right"
@@ -37,6 +33,6 @@ export default function Providers({ children }: { children: ReactNode }) {
           />
         </UserProvider>
       </LoadingProvider>
-    </div>
+    </>
   );
 }

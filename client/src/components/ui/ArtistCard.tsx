@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface ArtistCardProps {
   imageUrl: string;
@@ -12,7 +13,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ imageUrl, name }) => {
       <div className="artist-card flex flex-col items-center text-center">
         {/* Artist Image */}
         <div className="rounded-full overflow-hidden w-36 h-36 mb-4 shadow-lg">
-          <img
+          <Image
             src={imageUrl}
             alt={name}
             className="w-full h-full object-cover"

@@ -44,7 +44,7 @@ export default function ChoosePlaylistCard() {
         <IoClose className="text-3xl mr-2 cursor-pointer" />
       </div>
 
-      <div className="p-6 h-96 overflow-y-auto scrollbar scrollbar-thumb-[#EE10B0] scrollbar-track-[#1F1F1F]">
+      <div className="p-6 h-96 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Special "Create a Playlist" card */}
           <div className="p-4 bg-[#1F1F1F] rounded-lg cursor-pointer hover:bg-gray-700 transition flex flex-col justify-center items-center">

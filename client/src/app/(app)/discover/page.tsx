@@ -6,7 +6,7 @@ import TrendingSongs from "./_components/TrendingSongs";
 
 const MainContent = () => {
   return (
-    <div className="bg-[#141414] flex-1 p-10 text-white">
+    <div className="bg-[#141414] flex w-full p-10 text-white">
       <Tabs defaultValue="trending" className="w-full">
         <TabsList className="flex space-x-8 text-gray-400 border-b border-gray-700 pb-2 mb-5 bg-transparent">
           <TabsTrigger 
@@ -55,21 +55,12 @@ const MainContent = () => {
   );
 };
 
-// Footer component
-const Footer = () => (
-  <div className="bg-[#1e1e1e] text-white p-5 flex justify-between">
-    <p>About</p>
-    <p>Vera © 2024</p>
-  </div>
-);
-
 // Main Page component
 const Page = () => (
-  <div className="flex h-screen w-screen overflow-hidden">
+  <div className="flex h-screen w-full overflow-hidden">
     <div className="flex flex-col w-full overflow-hidden">
       <div className="flex-1 overflow-y-auto">
         <MainContent />
-        <Footer />
         <ChoosePlaylistCard />
       </div>
     </div>
