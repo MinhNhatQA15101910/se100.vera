@@ -135,6 +135,9 @@ public class SongsController(
     public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams userParams)
     {
         var songs = await songRepository.GetSongsAsync(userParams);
+
+        Response.AddPaginationHeader(songs);
+
         return Ok(songs);
     }
 
