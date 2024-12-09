@@ -2,6 +2,7 @@ using API.DTOs.Songs;
 using API.Interfaces;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 
 namespace API.Controllers;
 
@@ -82,7 +83,6 @@ public class SongsController(
                     IsMain = isMain
                 };
                 songPhotoRepository.AddSongPhoto(songPhoto);
-                if (!await songPhotoRepository.SaveChangesAsync()) return BadRequest("Failed to add photo.");
                 isMain = false;
             }
         }
@@ -129,4 +129,13 @@ public class SongsController(
     //     );
 
     // }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams userParams)
+    {
+        var songs = await songRepository.GetSongsAsync(userParams);
+        return Ok(songs);
+    }
+
 }
