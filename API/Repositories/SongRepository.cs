@@ -25,25 +25,6 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
         return song;
     }
 
-    public async Task<bool> AddPhotoAsync(Song song, Photo photo, bool isMain)
-    {
-        // Add photo to SongPhoto
-
-        var songPhoto = new SongPhoto
-        {
-            SongId = song.Id,
-            Song = song,
-            PhotoId = photo.Id,
-            Photo = photo,
-            IsMain = isMain
-        };
-
-        await context.SongPhotos.AddAsync(songPhoto);
-
-        return true;
-
-    }
-
     public async Task<bool> SaveChangesAsync()
     {
         return await context.SaveChangesAsync() > 0;
