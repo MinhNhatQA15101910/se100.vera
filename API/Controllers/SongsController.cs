@@ -130,7 +130,6 @@ public class SongsController(
 
     // }
 
-    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams songParams)
     {
