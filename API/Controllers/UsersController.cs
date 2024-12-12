@@ -79,9 +79,7 @@ public class UsersController(
             Url = result.SecureUrl.AbsoluteUri,
             PublicId = result.PublicId
         };
-        photoRepository.AddPhoto(photo);
-
-        if (!await photoRepository.SaveChangesAsync()) return BadRequest("Problem adding photo");
+        await photoRepository.AddPhotoAsync(photo);
 
         var userPhoto = new UserPhoto
         {

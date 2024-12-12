@@ -8,9 +8,9 @@ public class Song
     public int TotalListeningHours { get; set; } = 0;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public required string MusicUrl { get; set; }
+    public required string MusicUrl { get; set; } = "";
     public string? MusicPublicId { get; set; }
-    public required string LyricUrl { get; set; }
+    public string? LyricUrl { get; set; }
     public string? LyricPublicId { get; set; }
     public List<SongPhoto> Photos { get; set; } = [];
     public List<ArtistSong> Artists { get; set; } = [];

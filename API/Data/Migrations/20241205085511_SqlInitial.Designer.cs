@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20241204143232_SqlInitial")]
+[Migration("20241205085511_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -477,7 +477,6 @@ partial class SqlInitial
                     .HasColumnType("text");
 
                 b.Property<string>("LyricUrl")
-                    .IsRequired()
                     .HasColumnType("text");
 
                 b.Property<string>("MusicPublicId")
