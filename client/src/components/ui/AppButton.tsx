@@ -23,7 +23,6 @@ export const AppButton: React.FC<IAppButtonProps> = ({
 }) => {
   return (
     <Button
-      variant={'default' || variant}
       type={type}
       className={cn('', className)}
       onClick={onClick}

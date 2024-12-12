@@ -1,132 +1,132 @@
-"use client";
-import AlbumCard from "@/components/ui/AlbumCard";
+'use client';
+import AlbumCard from '@/components/ui/AlbumCard';
 
 const topAlbums = [
   {
     id: 1,
-    image: "https://via.placeholder.com/200",
-    title: "Adele 21",
-    artist: "Adele",
+    image: 'https://via.placeholder.com/200',
+    title: 'Adele 21',
+    artist: 'Adele',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
   {
     id: 1,
-    image: "https://via.placeholder.com/200",
-    title: "Adele 21",
-    artist: "Adele",
+    image: 'https://via.placeholder.com/200',
+    title: 'Adele 21',
+    artist: 'Adele',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
 ];
 
 const newReleaseAlbums = [
   {
     id: 3,
-    image: "https://via.placeholder.com/200",
+    image: 'https://via.placeholder.com/200',
     title: "Harry's House",
-    artist: "Harry Styles",
+    artist: 'Harry Styles',
   },
   {
     id: 4,
-    image: "https://via.placeholder.com/200",
-    title: "Born to Die",
-    artist: "Lana Del Rey",
+    image: 'https://via.placeholder.com/200',
+    title: 'Born to Die',
+    artist: 'Lana Del Rey',
   },
   {
     id: 1,
-    image: "https://via.placeholder.com/200",
-    title: "Adele 21",
-    artist: "Adele",
+    image: 'https://via.placeholder.com/200',
+    title: 'Adele 21',
+    artist: 'Adele',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
 ];
 
 const allAlbums = [
   {
     id: 5,
-    image: "https://via.placeholder.com/200",
-    title: "Beauty Behind",
-    artist: "The Weeknd",
+    image: 'https://via.placeholder.com/200',
+    title: 'Beauty Behind',
+    artist: 'The Weeknd',
   },
   {
     id: 6,
-    image: "https://via.placeholder.com/200",
-    title: "Thriller",
-    artist: "Michael Jackson",
+    image: 'https://via.placeholder.com/200',
+    title: 'Thriller',
+    artist: 'Michael Jackson',
   },
   {
     id: 1,
-    image: "https://via.placeholder.com/200",
-    title: "Adele 21",
-    artist: "Adele",
+    image: 'https://via.placeholder.com/200',
+    title: 'Adele 21',
+    artist: 'Adele',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
   {
     id: 1,
-    image: "https://via.placeholder.com/200",
-    title: "Adele 21",
-    artist: "Adele",
+    image: 'https://via.placeholder.com/200',
+    title: 'Adele 21',
+    artist: 'Adele',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
   {
     id: 1,
-    image: "https://via.placeholder.com/200",
-    title: "Adele 21",
-    artist: "Adele",
+    image: 'https://via.placeholder.com/200',
+    title: 'Adele 21',
+    artist: 'Adele',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
   {
     id: 1,
-    image: "https://via.placeholder.com/200",
-    title: "Adele 21",
-    artist: "Adele",
+    image: 'https://via.placeholder.com/200',
+    title: 'Adele 21',
+    artist: 'Adele',
   },
   {
     id: 2,
-    image: "https://via.placeholder.com/200",
-    title: "Scorpion",
-    artist: "Drake",
+    image: 'https://via.placeholder.com/200',
+    title: 'Scorpion',
+    artist: 'Drake',
   },
 ];
 
@@ -139,7 +139,7 @@ export default function AlbumsPage() {
             <div className="mb-24">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">
-                  <span className="text-white">Top</span>{" "}
+                  <span className="text-white">Top</span>{' '}
                   <span className="text-[#EE10B0]">Albums</span>
                 </h2>
                 <button className="text-[#EE10B0] hover:underline">
@@ -162,7 +162,7 @@ export default function AlbumsPage() {
             <div className="mb-24">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">
-                  <span className="text-white">New Release</span>{" "}
+                  <span className="text-white">New Release</span>{' '}
                   <span className="text-[#EE10B0]">Albums</span>
                 </h2>
                 <button className="text-[#EE10B0] hover:underline">
@@ -184,7 +184,7 @@ export default function AlbumsPage() {
             {/* All Albums Section */}
             <div>
               <h2 className="text-2xl font-bold mb-6">
-                <span className="text-white">All</span>{" "}
+                <span className="text-white">All</span>{' '}
                 <span className="text-[#EE10B0]">Albums</span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">

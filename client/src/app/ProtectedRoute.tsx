@@ -23,7 +23,8 @@ const ProtectedRoute: React.FC<IProtectedRoute> = ({ children }) => {
     '/artists',
     '/albums',
     '/artist-detail',
-    'recently-added',
+    '/album-detail',
+    '/recently-added',
   ];
 
   useEffect(() => {
@@ -53,7 +54,7 @@ const ProtectedRoute: React.FC<IProtectedRoute> = ({ children }) => {
 
     // Handle authenticated user accessing invalid routes
     if (isAuthenticated && !appRoutes.includes(pathname)) {
-      router.push('/home'); 
+      router.push('/home');
     }
   }, [isAuthenticated, pathname, router, setLoadingState]);
 

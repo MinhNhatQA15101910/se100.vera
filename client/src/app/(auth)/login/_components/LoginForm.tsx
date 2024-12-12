@@ -7,7 +7,7 @@ import { useLoading } from '@/contexts/LoadingContext';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/label';
+import { Label, LabelInputContainer } from '@/components/ui/Label';
 import { Input } from '@/components/ui/Input';
 import Separator from '@/components/Separator';
 import { Checkbox } from '@/components/ui/check-box';
@@ -67,7 +67,6 @@ const LoginForm = () => {
         password: validatedData.password,
         rememberMe: isRememberMe,
       });
-
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors: { [key: string]: string } = {};

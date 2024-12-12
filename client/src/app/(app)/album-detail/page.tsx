@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { GoPlay } from "react-icons/go";
-import { MdOutlineFavoriteBorder, MdOutlineFavorite } from "react-icons/md";
-import { FaSortAmountDown, FaSortAmountUpAlt } from "react-icons/fa";
-import { IoArrowBack } from "react-icons/io5";
-import { FiMoreHorizontal } from "react-icons/fi";
-import Image from "next/image";
+import { useState } from 'react';
+import { GoPlay } from 'react-icons/go';
+import { MdOutlineFavoriteBorder, MdOutlineFavorite } from 'react-icons/md';
+import { FaSortAmountDown, FaSortAmountUpAlt } from 'react-icons/fa';
+import { IoArrowBack } from 'react-icons/io5';
+import { FiMoreHorizontal } from 'react-icons/fi';
+import Image from 'next/image';
 import {
   Table,
   TableBody,
@@ -14,24 +14,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import Link from "next/link";
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import Link from 'next/link';
 
 const AlbumDetailDemo: React.FC = () => {
-  const albumImage = "https://via.placeholder.com/268";
-  const albumTitle = "Album 1";
+  const albumImage = 'https://via.placeholder.com/268';
+  const albumTitle = 'Album 1';
   const albumDescription =
-    "tate mcree, nightmares, the neighberhood, doja cat and tate mcree, nightmares, the neighberhood, doja cat and tate mcree, nightmares, the neighberhood, doja cat and ";
+    'tate mcree, nightmares, the neighberhood, doja cat and tate mcree, nightmares, the neighberhood, doja cat and tate mcree, nightmares, the neighberhood, doja cat and ';
   const initialSongs = [
     {
       id: 1,
-      title: "Sorforc",
-      releaseDate: "Nov 4, 2023",
-      genre: "Pop",
-      views: "1.2M",
-      duration: "2:36",
+      title: 'Sorforc',
+      releaseDate: 'Nov 4, 2023',
+      genre: 'Pop',
+      views: '1.2M',
+      duration: '2:36',
     },
     // ... rest of the songs array
   ];
@@ -46,7 +46,7 @@ const AlbumDetailDemo: React.FC = () => {
   const getSortIcon = (column: string) => {
     if (!sortConfig || sortConfig.key !== column) return null;
 
-    return sortConfig.direction === "ascending" ? (
+    return sortConfig.direction === 'ascending' ? (
       <FaSortAmountUpAlt className="text-primary" />
     ) : (
       <FaSortAmountDown className="text-primary" />
@@ -54,23 +54,23 @@ const AlbumDetailDemo: React.FC = () => {
   };
 
   const sortSongs = (key: keyof (typeof initialSongs)[0]) => {
-    let direction = "ascending";
+    let direction = 'ascending';
     if (
       sortConfig &&
       sortConfig.key === key &&
-      sortConfig.direction === "ascending"
+      sortConfig.direction === 'ascending'
     ) {
-      direction = "descending";
+      direction = 'descending';
     }
 
     const sortedSongs = [...songs].sort((a, b) => {
       const valueA =
-        key === "views" ? parseFloat(a[key].replace("M", "")) : a[key];
+        key === 'views' ? parseFloat(a[key].replace('M', '')) : a[key];
       const valueB =
-        key === "views" ? parseFloat(b[key].replace("M", "")) : b[key];
+        key === 'views' ? parseFloat(b[key].replace('M', '')) : b[key];
 
-      if (valueA < valueB) return direction === "ascending" ? -1 : 1;
-      if (valueA > valueB) return direction === "ascending" ? 1 : -1;
+      if (valueA < valueB) return direction === 'ascending' ? -1 : 1;
+      if (valueA > valueB) return direction === 'ascending' ? 1 : -1;
       return 0;
     });
 
@@ -85,20 +85,16 @@ const AlbumDetailDemo: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden">
+    <div className="flex w-full h-screen overflow-hidden">
       <div className="flex flex-col w-full overflow-hidden">
         <div className="flex-1 overflow-y-auto p-6">
           <Card className="w-full bg-blue-gradient">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <Link href="/albums">
-                  <Button variant="ghost" size="icon">
-                    <IoArrowBack className="text-4xl" />
-                  </Button>
+                  <IoArrowBack className="text-4xl text-white" />
                 </Link>
-                <Button variant="ghost" size="icon">
-                  <FiMoreHorizontal className="text-4xl" />
-                </Button>
+                <FiMoreHorizontal className="text-4xl text-white" />
               </div>
             </CardHeader>
 
@@ -109,26 +105,26 @@ const AlbumDetailDemo: React.FC = () => {
                   alt={albumTitle}
                   width={268}
                   height={268}
-                  className="col-span-3 rounded-md object-cover shadow-2xl"
+                  className="col-span-3 rounded-md object-cover shadow-2xl "
                 />
-                <div className="flex flex-col col-span-6 h-56">
+                <div className="flex flex-col col-span-6 h-56 text-white">
                   <h1 className="text-3xl font-bold mb-8">{albumTitle}</h1>
-                  <p className="text-muted-foreground mt-2 line-clamp-3">
+                  <p className="text-muted-foreground mt-2 line-clamp-3 text-white">
                     {albumDescription}
                   </p>
                   <div className="flex items-center space-x-2 mt-auto">
                     <p className="text-lg font-bold">20 songs</p>
-                    <span className="text-primary leading-none">●</span>
+                    <span className="leading-none text-[#EE10B0]">●</span>
                     <p className="text-lg font-bold">1h 36m</p>
                   </div>
                 </div>
                 <div className="flex h-60 col-span-3 justify-end items-end">
-                  <Button variant="ghost" className="space-x-2">
-                    <span className="text-lg text-primary font-medium">
+                  <button className="flex justify-center items-center space-x-2 focus:outline-none">
+                    <span className="text-lg font-medium text-[#EE10B0]">
                       Play all
                     </span>
-                    <GoPlay className="text-primary text-6xl" />
-                  </Button>
+                    <GoPlay className="text-6xl text-[#EE10B0]" />
+                  </button>
                 </div>
               </div>
 
@@ -140,51 +136,51 @@ const AlbumDetailDemo: React.FC = () => {
                       <TableHead>
                         <Button
                           variant="ghost"
-                          onClick={() => sortSongs("title")}
+                          onClick={() => sortSongs('title')}
                           className="flex items-center space-x-1"
                         >
                           <span>Title</span>
-                          {getSortIcon("title")}
+                          {getSortIcon('title')}
                         </Button>
                       </TableHead>
                       <TableHead>
                         <Button
                           variant="ghost"
-                          onClick={() => sortSongs("releaseDate")}
+                          onClick={() => sortSongs('releaseDate')}
                           className="flex items-center space-x-1"
                         >
                           <span>Release Date</span>
-                          {getSortIcon("releaseDate")}
+                          {getSortIcon('releaseDate')}
                         </Button>
                       </TableHead>
                       <TableHead>
                         <Button
                           variant="ghost"
-                          onClick={() => sortSongs("genre")}
+                          onClick={() => sortSongs('genre')}
                           className="flex items-center space-x-1"
                         >
                           <span>Genre</span>
-                          {getSortIcon("genre")}
+                          {getSortIcon('genre')}
                         </Button>
                       </TableHead>
                       <TableHead>
                         <Button
                           variant="ghost"
-                          onClick={() => sortSongs("views")}
+                          onClick={() => sortSongs('views')}
                           className="flex items-center space-x-1"
                         >
                           <span>Views</span>
-                          {getSortIcon("views")}
+                          {getSortIcon('views')}
                         </Button>
                       </TableHead>
                       <TableHead>
                         <Button
                           variant="ghost"
-                          onClick={() => sortSongs("duration")}
+                          onClick={() => sortSongs('duration')}
                           className="flex items-center space-x-1"
                         >
                           <span>Time</span>
-                          {getSortIcon("duration")}
+                          {getSortIcon('duration')}
                         </Button>
                       </TableHead>
                     </TableRow>
