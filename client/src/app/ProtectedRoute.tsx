@@ -23,7 +23,8 @@ const ProtectedRoute: React.FC<IProtectedRoute> = ({ children }) => {
     '/artists',
     '/albums',
     '/artist-detail',
-    'recently-added',
+    '/recently-added',
+
   ];
 
   useEffect(() => {
