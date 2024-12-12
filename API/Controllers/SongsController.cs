@@ -132,9 +132,9 @@ public class SongsController(
 
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams userParams)
+    public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams songParams)
     {
-        var songs = await songRepository.GetSongsAsync(userParams);
+        var songs = await songRepository.GetSongsAsync(songParams);
 
         Response.AddPaginationHeader(songs);
 
