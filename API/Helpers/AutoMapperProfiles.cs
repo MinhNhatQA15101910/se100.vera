@@ -45,7 +45,27 @@ public class AutoMapperProfiles : Profile
                 o => o.MapFrom(
                     s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
                 )
+            )
+            .ForMember(
+                d => d.Genres,
+                o => o.MapFrom(
+                    s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
+                )
             );
+        // .ForMember(
+        //     d => d.Artists,
+        //     o => o.MapFrom(
+        //         s => s.Artists.Select(x => new UserDto
+        //         {
+        //             Id = x.Artist.Id,
+        //             FirstName = x.Artist.FirstName,
+        //             LastName = x.Artist.LastName,
+        //             Email = x.Artist.Email,
+        //             Gender = x.Artist.Gender,
+        //             PhotoUrl = x.Artist.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
+        //         })
+        //     )
+        // );
         CreateMap<NewSongDto, Song>();
         CreateMap<SongPhoto, FileDto>()
             .ForMember(
@@ -66,5 +86,10 @@ public class AutoMapperProfiles : Profile
                 photos => photos.MapFrom(p => p.Photo.Url)
             );
         CreateMap<AlbumPhoto, FileDto>();
+        CreateMap<SongGenre, Genre>()
+            .ForMember(
+                g => g.GenreName,
+                s => s.MapFrom(x => x.Genre.GenreName)
+            );
     }
 }
