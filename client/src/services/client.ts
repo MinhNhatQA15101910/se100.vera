@@ -25,14 +25,13 @@ async function client<T>(
 
     if (!response.ok) {
       const errorMessage = await response.text();
+      const defaultError = response.status >= 500 
+        ? 'Internal server error.'
+        : 'An error occurred.';
 
-      if (response.status >= 400 && response.status < 500) {
-        toast.error(errorMessage || 'An error occurred.');
-      } else if (response.status >= 500) {
-        toast.error(errorMessage || 'Internal server error.');
-      }
-      
-      throw new Error(errorMessage || 'An error occurred');
+      // Only show toast error once with appropriate message
+      toast.error(errorMessage || defaultError);
+      throw new Error(errorMessage || defaultError);
     }
 
     // Special case for /api/auth/send-email which doesn't return a response
@@ -43,12 +42,11 @@ async function client<T>(
     const data = await response.json();
     return data as T;
   } catch (error) {
-    if (error instanceof Error) {
-      toast.error(error.message);
-      throw error;
+    // Only show toast error if it wasn't already shown from response error
+    if (!(error instanceof Error && error.message.includes('error'))) {
+      toast.error('An unexpected error occurred');
     }
-    toast.error('An unexpected error occurred');
-    throw new Error('An unexpected error occurred');
+    throw error;
   }
 }
 

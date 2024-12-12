@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { Label, LabelInputContainer } from '@/components/ui/Label';
+import { Input } from '@/components/ui/Input';
 import { AppButton } from '@/components/ui/AppButton';
 import Separator from '@/components/Separator';
 import SegmentedControl from '@/app/(auth)/signup/_components/SegmentedControl';

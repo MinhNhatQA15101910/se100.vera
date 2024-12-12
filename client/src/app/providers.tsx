@@ -6,8 +6,8 @@ import { UserProvider } from '@/contexts/UserContext';
 import { LoadingProvider } from '@/contexts/LoadingContext';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ToastContainer } from 'react-toastify';
-import ProtectedRoute from './ProtectedRoute';
 import 'react-toastify/dist/ReactToastify.css';
+import ProtectedRoute from './ProtectedRoute';
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
