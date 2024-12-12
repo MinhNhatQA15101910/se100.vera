@@ -1,71 +1,142 @@
 [
   {
-    "SongName": "Richmond Finland Genmy",
-    "Description": "",
-    "MusicUrl": "https://drive.google.com/file/d/1HQ6By_5JkNZ_WZPhrazH61URsV9VDzyK/view?usp=drive_link",
-    "LyricUrl": "https://drive.google.com/file/d/1mDXf-yuJv7cHLk5mjeBwYK52WNU9Xl7i/view?usp=drive_link",
-    "SongPhotos": [
-      {
-        "Url": "https://drive.google.com/file/d/1JbLdZLUAouMa9evQq7GRBZ59stq5a5uA/view?usp=drive_link",
-        "IsMain": true
-      }
-    ],
-    "UploadDate": "2016-03-03T08:29:22Z"
+    "SongName": "Shape of You",
+    "Description": "A catchy pop song by Ed Sheeran about love and attraction.",
+    "PublisherId": 3,
+    "MusicUrl": "https://example.com/music/shape-of-you.mp3",
+    "LyricUrl": "https://example.com/lyrics/shape-of-you.txt"
   },
   {
-    "SongName": "Brianna Cameroon Vicon",
-    "ArtistName": "in sunt laboris",
-    "SongPhotos": [
-      {
-        "Url": "https://drive.google.com/file/d/1JbLdZLUAouMa9evQq7GRBZ59stq5a5uA/view?usp=drive_link",
-        "IsMain": true
-      }
-    ],
-    "MusicUrl": "https://drive.google.com/file/d/1HQ6By_5JkNZ_WZPhrazH61URsV9VDzyK/view?usp=drive_link",
-    "LyricUrl": "https://drive.google.com/file/d/1mDXf-yuJv7cHLk5mjeBwYK52WNU9Xl7i/view?usp=drive_link",
-    "TotalView": 0,
-    "UploadDate": "2017-02-10T02:25:51Z"
+    "SongName": "Bohemian Rhapsody",
+    "Description": "A rock classic by Queen featuring unique structure and vocals.",
+    "PublisherId": 4,
+    "MusicUrl": "https://example.com/music/bohemian-rhapsody.mp3",
+    "LyricUrl": "https://example.com/lyrics/bohemian-rhapsody.txt"
   },
   {
-    "SongName": "Crane Central African Republic Tersanki",
-    "ArtistName": "labore labore mollit",
-    "SongPhotos": [
-      {
-        "Url": "https://drive.google.com/file/d/1JbLdZLUAouMa9evQq7GRBZ59stq5a5uA/view?usp=drive_link",
-        "IsMain": true
-      }
-    ],
-    "MusicUrl": "https://drive.google.com/file/d/1HQ6By_5JkNZ_WZPhrazH61URsV9VDzyK/view?usp=drive_link",
-    "LyricUrl": "https://drive.google.com/file/d/1mDXf-yuJv7cHLk5mjeBwYK52WNU9Xl7i/view?usp=drive_link",
-    "TotalView": 0,
-    "UploadDate": "2022-05-22T04:44:15Z"
+    "SongName": "Blinding Lights",
+    "Description": "A synthwave-inspired hit by The Weeknd.",
+    "PublisherId": 5,
+    "MusicUrl": "https://example.com/music/blinding-lights.mp3",
+    "LyricUrl": "https://example.com/lyrics/blinding-lights.txt"
   },
   {
-    "SongName": "Long Switzerland Solgan",
-    "ArtistName": "amet consequat reprehenderit",
-    "SongPhotos": [
-      {
-        "Url": "https://drive.google.com/file/d/1JbLdZLUAouMa9evQq7GRBZ59stq5a5uA/view?usp=drive_link",
-        "IsMain": true
-      }
-    ],
-    "MusicUrl": "https://drive.google.com/file/d/1HQ6By_5JkNZ_WZPhrazH61URsV9VDzyK/view?usp=drive_link",
-    "LyricUrl": "https://drive.google.com/file/d/1mDXf-yuJv7cHLk5mjeBwYK52WNU9Xl7i/view?usp=drive_link",
-    "TotalView": 0,
-    "UploadDate": "2021-09-30T12:33:28Z"
+    "SongName": "Imagine",
+    "Description": "A timeless anthem for peace by John Lennon.",
+    "PublisherId": 6,
+    "MusicUrl": "https://example.com/music/imagine.mp3",
+    "LyricUrl": "https://example.com/lyrics/imagine.txt"
   },
   {
-    "SongName": "Eve Somalia Anarco",
-    "ArtistName": "quis in labore",
-    "SongPhotos": [
-      {
-        "Url": "https://drive.google.com/file/d/1JbLdZLUAouMa9evQq7GRBZ59stq5a5uA/view?usp=drive_link",
-        "IsMain": true
-      }
-    ],
-    "MusicUrl": "https://drive.google.com/file/d/1HQ6By_5JkNZ_WZPhrazH61URsV9VDzyK/view?usp=drive_link",
-    "LyricUrl": "https://drive.google.com/file/d/1mDXf-yuJv7cHLk5mjeBwYK52WNU9Xl7i/view?usp=drive_link",
-    "TotalView": 0,
-    "UploadDate": "2020-06-10T09:39:24Z"
+    "SongName": "Hotel California",
+    "Description": "A classic rock masterpiece by Eagles.",
+    "PublisherId": 7,
+    "MusicUrl": "https://example.com/music/hotel-california.mp3",
+    "LyricUrl": "https://example.com/lyrics/hotel-california.txt"
+  },
+  {
+    "SongName": "Rolling in the Deep",
+    "Description": "A powerful soul-pop anthem by Adele.",
+    "PublisherId": 8,
+    "MusicUrl": "https://example.com/music/rolling-in-the-deep.mp3",
+    "LyricUrl": "https://example.com/lyrics/rolling-in-the-deep.txt"
+  },
+  {
+    "SongName": "Let It Be",
+    "Description": "An iconic song by The Beatles with a message of hope.",
+    "PublisherId": 3,
+    "MusicUrl": "https://example.com/music/let-it-be.mp3",
+    "LyricUrl": "https://example.com/lyrics/let-it-be.txt"
+  },
+  {
+    "SongName": "Stairway to Heaven",
+    "Description": "A rock epic by Led Zeppelin.",
+    "PublisherId": 4,
+    "MusicUrl": "https://example.com/music/stairway-to-heaven.mp3",
+    "LyricUrl": "https://example.com/lyrics/stairway-to-heaven.txt"
+  },
+  {
+    "SongName": "Sweet Child O' Mine",
+    "Description": "A hard rock hit by Guns N' Roses.",
+    "PublisherId": 5,
+    "MusicUrl": "https://example.com/music/sweet-child-o-mine.mp3",
+    "LyricUrl": "https://example.com/lyrics/sweet-child-o-mine.txt"
+  },
+  {
+    "SongName": "Billie Jean",
+    "Description": "A pop sensation by Michael Jackson with a captivating bassline.",
+    "PublisherId": 6,
+    "MusicUrl": "https://example.com/music/billie-jean.mp3",
+    "LyricUrl": "https://example.com/lyrics/billie-jean.txt"
+  },
+  {
+    "SongName": "Smells Like Teen Spirit",
+    "Description": "A grunge anthem by Nirvana.",
+    "PublisherId": 7,
+    "MusicUrl": "https://example.com/music/smells-like-teen-spirit.mp3",
+    "LyricUrl": "https://example.com/lyrics/smells-like-teen-spirit.txt"
+  },
+  {
+    "SongName": "Hey Jude",
+    "Description": "An emotional and uplifting song by The Beatles.",
+    "PublisherId": 8,
+    "MusicUrl": "https://example.com/music/hey-jude.mp3",
+    "LyricUrl": "https://example.com/lyrics/hey-jude.txt"
+  },
+  {
+    "SongName": "Purple Rain",
+    "Description": "A soulful rock ballad by Prince.",
+    "PublisherId": 3,
+    "MusicUrl": "https://example.com/music/purple-rain.mp3",
+    "LyricUrl": "https://example.com/lyrics/purple-rain.txt"
+  },
+  {
+    "SongName": "Thriller",
+    "Description": "A groundbreaking pop hit by Michael Jackson.",
+    "PublisherId": 4,
+    "MusicUrl": "https://example.com/music/thriller.mp3",
+    "LyricUrl": "https://example.com/lyrics/thriller.txt"
+  },
+  {
+    "SongName": "Wonderwall",
+    "Description": "A Britpop classic by Oasis.",
+    "PublisherId": 5,
+    "MusicUrl": "https://example.com/music/wonderwall.mp3",
+    "LyricUrl": "https://example.com/lyrics/wonderwall.txt"
+  },
+  {
+    "SongName": "I Will Always Love You",
+    "Description": "A heartfelt ballad by Whitney Houston.",
+    "PublisherId": 6,
+    "MusicUrl": "https://example.com/music/i-will-always-love-you.mp3",
+    "LyricUrl": "https://example.com/lyrics/i-will-always-love-you.txt"
+  },
+  {
+    "SongName": "Lose Yourself",
+    "Description": "A motivational rap hit by Eminem.",
+    "PublisherId": 7,
+    "MusicUrl": "https://example.com/music/lose-yourself.mp3",
+    "LyricUrl": "https://example.com/lyrics/lose-yourself.txt"
+  },
+  {
+    "SongName": "Someone Like You",
+    "Description": "A moving ballad by Adele.",
+    "PublisherId": 8,
+    "MusicUrl": "https://example.com/music/someone-like-you.mp3",
+    "LyricUrl": "https://example.com/lyrics/someone-like-you.txt"
+  },
+  {
+    "SongName": "Creep",
+    "Description": "An alternative rock anthem by Radiohead.",
+    "PublisherId": 3,
+    "MusicUrl": "https://example.com/music/creep.mp3",
+    "LyricUrl": "https://example.com/lyrics/creep.txt"
+  },
+  {
+    "SongName": "Halo",
+    "Description": "A powerful ballad by Beyoncé.",
+    "PublisherId": 4,
+    "MusicUrl": "https://example.com/music/halo.mp3",
+    "LyricUrl": "https://example.com/lyrics/halo.txt"
   }
 ]

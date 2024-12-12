@@ -123,6 +123,43 @@ public class Seed
         }
 
         await context.SaveChangesAsync();
+
+        await SeedSongGenres(context);
+        //await SeedSongArtist(context);
+    }
+
+    public static async Task SeedSongGenres(DataContext context)
+    {
+        var songs = await context.Songs.ToListAsync();
+
+        foreach (var song in songs)
+        {
+            var songGenre = new SongGenre
+            {
+                SongId = song.Id,
+                GenreId = Random.Shared.Next(1, 15)
+            };
+
+            context.SongGenres.Add(songGenre);
+        }
+        await context.SaveChangesAsync();
+    }
+
+    public static async Task SeedSongArtist(DataContext context)
+    {
+        var songs = await context.Songs.ToListAsync();
+
+        foreach (var song in songs)
+        {
+            var songArtist = new ArtistSong
+            {
+                SongId = song.Id,
+                ArtistId = Random.Shared.Next(1, 15)
+            };
+
+            context.ArtistSongs.Add(songArtist);
+        }
+        await context.SaveChangesAsync();
     }
 
     public static async Task SeedAlbums(DataContext context)

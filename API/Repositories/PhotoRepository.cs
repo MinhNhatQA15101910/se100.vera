@@ -6,9 +6,12 @@ namespace API.Repositories;
 
 public class PhotoRepository(DataContext context) : IPhotoRepository
 {
-    public void AddPhoto(Photo photo)
+    public async Task<Photo> AddPhotoAsync(Photo photo)
     {
-        context.Photos.Add(photo);
+        await context.Photos.AddAsync(photo);
+        await context.SaveChangesAsync();
+
+        return photo;
     }
 
     public async Task<Photo?> GetPhotoByIdAsync(int photoId)
