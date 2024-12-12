@@ -1,4 +1,5 @@
 using API.DTOs.Files;
+using API.Entities;
 
 namespace API.DTOs.Songs;
 
@@ -6,7 +7,10 @@ public class SongDto
 {
     public int Id { get; set; }
     public required string SongName { get; set; }
-    public required string ArtistName { get; set; }
+    public required string PublisherName { get; set; }
+    public string? PublisherImageUrl { get; set; }
+    public required List<ArtistSong> Artists { get; set; }
+    public required List<Genre> Genres { get; set; }
     public int TotalView { get; set; }
     public required string MusicUrl { get; set; }
     public string? LyricUrl { get; set; }
