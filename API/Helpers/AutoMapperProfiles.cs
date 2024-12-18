@@ -47,6 +47,12 @@ public class AutoMapperProfiles : Profile
                 )
             )
             .ForMember(
+                d => d.SongPhotoPublicId,
+                o => o.MapFrom(
+                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.PublicId
+                )
+            )
+            .ForMember(
                 d => d.Genres,
                 o => o.MapFrom(
                     s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()

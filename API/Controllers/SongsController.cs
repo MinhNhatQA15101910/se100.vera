@@ -12,7 +12,9 @@ public class SongsController(
     IMapper mapper,
     IFileService fileService,
     IPhotoRepository photoRepository,
-    ISongPhotoRepository songPhotoRepository
+    ISongPhotoRepository songPhotoRepository,
+    ISongGenreRepository songGenreRepository
+
 ) : BaseApiController
 {
     [HttpGet("{id:int}")]
@@ -48,6 +50,10 @@ public class SongsController(
 
             song.MusicUrl = uploadResult.Url.ToString();
             song.MusicPublicId = uploadResult.PublicId;
+        }
+        else
+        {
+            return BadRequest("Song file is required.");
         }
 
         if (newSongDto.LyricFile != null)
@@ -87,6 +93,19 @@ public class SongsController(
             }
         }
 
+        if (newSongDto.GenresId != null)
+        {
+            foreach (var genreId in newSongDto.GenresId)
+            {
+                var songGenre = new SongGenre
+                {
+                    SongId = song.Id,
+                    GenreId = int.Parse(genreId)
+                };
+                songGenreRepository.AddSongGenre(songGenre);
+            }
+        }
+
         if (!await songRepository.SaveChangesAsync())
         {
             return BadRequest("Failed to add song.");
@@ -100,35 +119,29 @@ public class SongsController(
 
     }
 
-    // [HttpPut("{id:int}")]
-    // public async Task<ActionResult<SongDto>> UpdateSong([FromForm] NewSongDto newSongDto, int id)
-    // {
-    //     var song = await songRepository.GetSongByIdAsync(id);
-    //     if (song == null)
-    //     {
-    //         return NotFound();
-    //     }
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<SongDto>> UpdateSong([FromForm] NewSongDto newSongDto, int id)
+    {
+        var song = await songRepository.GetSongByIdAsync(id);
 
-    //     if (newSongDto == null)
-    //     {
-    //         return BadRequest("Invalid song data.");
-    //     }
-
-    //     mapper.Map(newSongDto, song);
+        if (song == null)
+        {
+            return NotFound();
+        }
 
 
-    //     if (!await songRepository.SaveChangesAsync())
-    //     {
-    //         return BadRequest("Failed to update song.");
-    //     }
+        if (!await songRepository.SaveChangesAsync())
+        {
+            return BadRequest("Failed to update song.");
+        }
 
-    //     return CreatedAtAction(
-    //         nameof(GetSongById),
-    //         new { id = song.Id },
-    //         mapper.Map<SongDto>(song)
-    //     );
+        return CreatedAtAction(
+            nameof(GetSongById),
+            new { id = song.Id },
+            mapper.Map<SongDto>(song)
+        );
 
-    // }
+    }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams songParams)

@@ -6,7 +6,7 @@ namespace API.Interfaces;
 public interface ISongPhotoRepository
 {
    void AddSongPhoto(SongPhoto songPhoto);
-   Task<SongPhoto?> GetSongPhotoAsync(int songId, int photoId);
+   Task<List<SongPhoto>?> GetSongPhotoAsync(int songId);
    void RemoveSongPhoto(SongPhoto songPhoto);
    Task<bool> SaveChangesAsync();
 

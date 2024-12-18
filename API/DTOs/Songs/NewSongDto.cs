@@ -17,5 +17,5 @@ public class NewSongDto
 
     public IFormFile? LyricFile { get; set; }
 
-
+    public List<string>? GenresId { get; set; }
 }

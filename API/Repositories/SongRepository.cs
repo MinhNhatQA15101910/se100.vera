@@ -3,7 +3,6 @@ using API.DTOs.Songs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
-using API.Services;
 
 namespace API.Repositories;
 
@@ -12,7 +11,6 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     public async Task<SongDto?> GetSongByIdAsync(int id)
     {
         var song = await context.Songs.FindAsync(id);
-
         return mapper.Map<SongDto>(song);
     }
 
