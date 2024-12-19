@@ -1,3 +1,5 @@
+using API.DTOs.Songs;
+
 namespace API.DTOs.Albums;
 
 public class AlbumDto
@@ -10,4 +12,5 @@ public class AlbumDto
     public int TotalSongs { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<string>? Photos { get; set; }
+    public List<SongDto>? Songs { get; set; }
 }
