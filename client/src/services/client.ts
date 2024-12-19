@@ -2,17 +2,28 @@ import { toast } from 'react-toastify';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
+interface IErrorResponse {
+  code: string;
+  description: string
+}
+
+interface ApiResponse {
+  data: IErrorResponse;
+  status: number;
+  ok: boolean;
+}
+
 async function client<T>(
   endpoint: string,
   config: RequestInit = {}
 ): Promise<T> {
-  // Check if baseURL is defined
   if (!baseURL) {
     throw new Error('API URL is not configured');
   }
 
-  // Check if endpoint starts with '/'
-  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const normalizedEndpoint = endpoint.startsWith('/')
+    ? endpoint
+    : `/${endpoint}`;
 
   try {
     const response = await fetch(`${baseURL}${normalizedEndpoint}`, {
@@ -24,27 +35,41 @@ async function client<T>(
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text();
-      const defaultError = response.status >= 500 
-        ? 'Internal server error.'
-        : 'An error occurred.';
+      const errorData = await response.json() as IErrorResponse;
+      const apiResponse: ApiResponse = {
+        data: errorData,
+        status: response.status,
+        ok: false
+      };
 
-      // Only show toast error once with appropriate message
-      toast.error(errorMessage || defaultError);
-      throw new Error(errorMessage || defaultError);
+      toast.error(errorData.description || 'An error occurred');
+      throw apiResponse;
     }
 
-    // Special case for /api/auth/send-email which doesn't return a response
-    if (endpoint === '/api/auth/send-email') {
-      return {} as T;
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      const apiResponse: ApiResponse = {
+        data: data,
+        status: response.status,
+        ok: true
+      };
+      return apiResponse.data as T;
     }
 
-    const data = await response.json();
-    return data as T;
+    return null as T;
   } catch (error) {
-    // Only show toast error if it wasn't already shown from response error
-    if (!(error instanceof Error && error.message.includes('error'))) {
-      toast.error('An unexpected error occurred');
+    if (error instanceof Error) {
+      const apiResponse: ApiResponse = {
+        data: {
+          code: 'UNEXPECTED_ERROR',
+          description: error.message || 'An unexpected error occurred'
+        },
+        status: 500,
+        ok: false
+      };
+      toast.error(apiResponse.data.description);
+      throw apiResponse;
     }
     throw error;
   }

@@ -14,16 +14,14 @@ import {
   UserDto,
   SendEmailDto,
 } from '@/types/auth';
-import { generatePincode } from '@/lib/utils';
 
 interface IUserContext {
   token: string | null;
   setToken: (token: string | null) => void;
   isAuthenticated: boolean;
-  pincode: string;
   userDetails: UserDto | null;
   login: (loginCreds: LoginCredentials | null) => Promise<void>;
-  signup: (pincode: string) => Promise<void>;
+  signup: () => Promise<void>;
   verifyEmailSignup: (signupCreds: SignupCredentials) => Promise<void>;
   resetPassword: (
     resetPasswordCreds: ResetPasswordCredentials
@@ -38,14 +36,13 @@ const UserContext = createContext<IUserContext | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [pincode, setPincode] = useState<string>('');
   const [tempSignupCreds, setTempSignupCreds] = useState<SignupCredentials>({
     email: '',
     password: '',
     firstName: '',
     lastName: '',
     gender: 'male',
-    role: 'Listener'
+    role: 'Listener',
   });
   const [userDetails, setUserDetails] = useState<UserDto | null>(null);
   const { setLoadingState } = useLoading();
@@ -60,16 +57,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: "no-store",
+        cache: 'no-store',
         body: JSON.stringify(sendEmailDto),
       });
     } catch (error) {
       console.error('Send email error:', error);
-      if (error instanceof SyntaxError) {
-        toast.error('Invalid response from server. Please try again.');
-      } else {
-        toast.error('Failed to send verification email. Please try again.');
-      }
     } finally {
       setLoadingState(false);
     }
@@ -99,32 +91,29 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     signupCreds: SignupCredentials
   ): Promise<void> => {
     if (await checkEmailExists(signupCreds.email)) {
-      throw new Error("Email already exists!")
+      throw new Error('Email already exists!');
     }
 
     setLoadingState(true);
-    const generatedPincode = generatePincode();
     try {
-      setPincode(generatedPincode);
+      await client('/api/auth/validate-signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(signupCreds),
+      });
       setTempSignupCreds(signupCreds);
-
-      await sendEmail({ email: signupCreds.email, pincode: generatedPincode });
-      router.push('/verify-code');
     } catch (error) {
       console.error('Verify email failed:', error);
-      toast.error('Failed to send verification email');
     } finally {
       setLoadingState(false);
     }
   };
 
-  const signup = async (pincode: string): Promise<void> => {
+  const signup = async (): Promise<void> => {
     if (!tempSignupCreds) {
       throw new Error('Signup credentials are required');
-    }
-
-    if (pincode !== pincode) {
-      throw new Error('Invalid verification code');
     }
 
     setLoadingState(true);
@@ -134,7 +123,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: "no-store",
+        cache: 'no-store',
         body: JSON.stringify(tempSignupCreds),
       });
 
@@ -174,7 +163,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (loginCreds.rememberMe) {
         localStorage.setItem('userDetails', JSON.stringify(response));
-        localStorage.setItem('rememberedEmail', loginCreds.email);
+        document.cookie = `auth_token=${response.token}; path=/; max-age=604800; SameSite=Strict; Secure`;
+      } else {
+        // sessionStorage.setItem('userDetails', JSON.stringify(response));
+        // sessionStorage.setItem('rememberedEmail', loginCreds.email);
+        document.cookie = `auth_token=${response.token}; path=/; SameSite=Strict; Secure`;
       }
 
       setToken(response.token);
@@ -207,23 +200,22 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       );
     } catch (error) {
       console.error('Password reset failed:', error);
-      toast.error('Failed to reset password. Please try again.');
       throw error;
     }
   };
-
   const logout = (): void => {
     setLoadingState(true);
     try {
       localStorage.removeItem('userDetails');
       localStorage.removeItem('rememberedEmail');
+      document.cookie =
+        'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
       setToken(null);
       setIsAuthenticated(false);
       setUserDetails(null);
       router.push('/login');
     } catch (error) {
       console.error('Logout failed:', error);
-      toast.error('Failed to logout. Please try again.');
     } finally {
       setLoadingState(false);
     }
@@ -266,7 +258,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     signup,
     logout,
     token,
-    pincode,
     setToken,
     resetPassword,
     isAuthenticated,
