@@ -6,7 +6,6 @@ using API.Helpers;
 
 namespace API.Controllers;
 
-[Authorize]
 public class SongsController(
     ISongRepository songRepository,
     IMapper mapper,
@@ -24,10 +23,11 @@ public class SongsController(
             return NotFound();
         }
 
-        return song;
+        return mapper.Map<SongDto>(song);
     }
 
     [HttpPost]
+    [Authorize(Roles = "Artist")]
     public async Task<ActionResult<SongDto>> AddSong([FromForm] NewSongDto newSongDto)
     {
         if (newSongDto == null)

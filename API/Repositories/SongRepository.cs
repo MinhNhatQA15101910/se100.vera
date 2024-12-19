@@ -9,11 +9,11 @@ namespace API.Repositories;
 
 public class SongRepository(DataContext context, IMapper mapper) : ISongRepository
 {
-    public async Task<SongDto?> GetSongByIdAsync(int id)
+    public async Task<Song?> GetSongByIdAsync(int id)
     {
-        var song = await context.Songs.FindAsync(id);
-
-        return mapper.Map<SongDto>(song);
+        return await context.Songs
+            .Include(s => s.Genres).ThenInclude(s => s.Genre)
+            .SingleOrDefaultAsync(s => s.Id == id);
     }
 
     public async Task<Song> AddSongAsync(NewSongDto newSongDto)

@@ -6,5 +6,6 @@ namespace API.Interfaces;
 public interface IAlbumRepository
 {
     Task<Album> CreateAlbumAsync(NewAlbumDto newAlbumDto);
+    Task<Album?> GetAlbumByIdAsync(int id);
     Task<bool> SaveChangesAsync();
 }

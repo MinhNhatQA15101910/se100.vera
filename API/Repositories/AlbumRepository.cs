@@ -17,6 +17,13 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
         return album;
     }
 
+    public async Task<Album?> GetAlbumByIdAsync(int id)
+    {
+        return await context.Albums
+            .Include(a => a.Photos).ThenInclude(ap => ap.Photo)
+            .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
     public async Task<bool> SaveChangesAsync()
     {
         return await context.SaveChangesAsync() > 0;

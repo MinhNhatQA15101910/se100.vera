@@ -8,11 +8,25 @@ namespace API.Controllers;
 public class AlbumsController(
     IAlbumRepository albumRepository,
     IAlbumPhotoRepository albumPhotoRepository,
+    IAlbumSongRepository albumSongRepository,
+    ISongRepository songRepository,
     IPhotoRepository photoRepository,
     IFileService fileService,
     IMapper mapper
 ) : BaseApiController
 {
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<AlbumDto>> GetAlbumById(int id)
+    {
+        var album = await albumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound();
+        }
+
+        return mapper.Map<AlbumDto>(album);
+    }
+
     [HttpPost]
     [Authorize(Roles = "Artist")]
     public async Task<ActionResult<AlbumDto>> CreateAlbum([FromForm] NewAlbumDto newAlbumDto)
@@ -62,13 +76,53 @@ public class AlbumsController(
             return BadRequest("Failed to create album.");
         }
 
-        return Ok(mapper.Map<AlbumDto>(album));
+        return CreatedAtAction(
+            nameof(GetAlbumById),
+            new { id = album.Id },
+            mapper.Map<AlbumDto>(album)
+        );
+    }
 
-        // return CreatedAtAction(
-        //     nameof(GetAlbumById),
-        //     new { id = album.Id },
-        //     mapper.Map<AlbumDto>(album)
-        // );
+    [HttpPut("add-song/{id:int}")]
+    [Authorize(Roles = "Artist")]
+    public async Task<ActionResult> AddSongToAlbum(int id, AddSongDto addSongDto)
+    {
+        var album = await albumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
 
+        // Validate if the album belongs to the artist
+        var userId = User.GetUserId();
+        if (album.PublisherId != userId)
+        {
+            return Unauthorized("The album does not belong to you.");
+        }
+
+        var song = await songRepository.GetSongByIdAsync(addSongDto.SongId);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        // Validate if the song belongs to the artist
+        if (song.PublisherId != userId)
+        {
+            return Unauthorized("The song does not belong to you.");
+        }
+
+        albumSongRepository.AddAlbumSong(new AlbumSong
+        {
+            AlbumId = album.Id,
+            SongId = song.Id
+        });
+
+        if (!await albumRepository.SaveChangesAsync())
+        {
+            return BadRequest("Failed to add song to album.");
+        }
+
+        return NoContent();
     }
 }
