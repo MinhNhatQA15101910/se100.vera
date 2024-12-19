@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
-import { CheckedState } from '@radix-ui/react-checkbox';
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
 import { Label, LabelInputContainer } from '@/components/ui/Label';
@@ -33,13 +32,6 @@ const LoginForm = () => {
     password?: string;
   }>({});
 
-  const handleRememberMe = (checked: CheckedState) => {
-    setIsRememberMe(checked === true);
-    if (checked === false) {
-      localStorage.removeItem('rememberedEmail');
-    }
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
@@ -67,7 +59,6 @@ const LoginForm = () => {
         password: validatedData.password,
         rememberMe: isRememberMe,
       });
-
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors: { [key: string]: string } = {};
@@ -146,7 +137,7 @@ const LoginForm = () => {
           <div className="flex items-center space-x-2 group">
             <Checkbox
               checked={isRememberMe}
-              onCheckedChange={handleRememberMe}
+              onCheckedChange={() => setIsRememberMe((prevState) => !prevState)}
               id="rememberMe"
               className={`w-6 h-6 rounded-md ${
                 isRememberMe ? 'bg-general-pink' : 'bg-transparent'
