@@ -26,7 +26,7 @@ const signupSchema = z
       .min(8, 'Password must be at least 8 characters')
       .max(50, 'Password must be shorter than 50 characters'),
     gender: z.enum(['male', 'female'], {
-      errorMap: () => ({ message: 'Gender must be either male or female' })
+      errorMap: () => ({ message: 'Gender must be either male or female' }),
     }),
     confirmPassword: z.string(),
   })
@@ -48,7 +48,9 @@ const SignupForm = () => {
   });
   const [isRole, setIsRole] = useState<UserType>('Listener');
   const [isGender, setIsGender] = useState<GenderType>('male');
-  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
+    {}
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -67,7 +69,7 @@ const SignupForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({});
-    
+
     try {
       setLoadingState(true);
       const validatedData = signupSchema.parse({
@@ -92,10 +94,7 @@ const SignupForm = () => {
           }
         });
         setErrors(formattedErrors);
-      } else {
-        toast.error('Signup failed. Please try again.');
-        console.error(error);
-      }
+      } 
     } finally {
       setLoadingState(false);
     }
