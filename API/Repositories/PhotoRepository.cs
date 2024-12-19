@@ -9,6 +9,7 @@ public class PhotoRepository(DataContext context) : IPhotoRepository
     public async Task<Photo> AddPhotoAsync(Photo photo)
     {
         await context.Photos.AddAsync(photo);
+
         await context.SaveChangesAsync();
 
         return photo;

@@ -8,13 +8,12 @@ namespace API.Repositories;
 
 public class SongRepository(DataContext context, IMapper mapper) : ISongRepository
 {
-    public async Task<SongDto?> GetSongByIdAsync(int id)
+    public async Task<Song?> GetSongByIdAsync(int id)
     {
-        var song = await context.Songs
+        return await context.Songs
         .Include(s => s.Genres)
         .ThenInclude(g => g.Genre)
         .SingleOrDefaultAsync(s => s.Id == id);
-        return mapper.Map<SongDto>(song);
     }
 
     public async Task<Song> AddSongAsync(NewSongDto newSongDto)
@@ -26,7 +25,6 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
 
         return song;
     }
-
 
     public Task<bool> DeleteSongAsync(int id)
     {

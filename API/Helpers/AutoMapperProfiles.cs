@@ -73,6 +73,7 @@ public class AutoMapperProfiles : Profile
         //     )
         // );
         CreateMap<NewSongDto, Song>();
+        CreateMap<UpdateSongDto, Song>();
         CreateMap<SongPhoto, FileDto>()
             .ForMember(
                 f => f.Id,
