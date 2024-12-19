@@ -103,13 +103,11 @@ export default function ListenerProfile() {
           Activate Artist Account
         </AppButton>
         <AppButton
-          variant="secondary"
           className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl"
         >
           Change Profile
         </AppButton>
         <AppButton
-          variant="secondary"
           className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl"
         >
           Change Password

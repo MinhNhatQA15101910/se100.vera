@@ -36,7 +36,6 @@ const MainContent = () => {
         </TabsList>
 
         <TabsContent value="trending">
-          <TrendingSongs />
         </TabsContent>
 
         <TabsContent value="albums">
