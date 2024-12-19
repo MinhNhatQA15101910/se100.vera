@@ -1,7 +1,7 @@
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import DynamicImage from '../custom/DynamicImage';
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import DynamicImage from "../custom/DynamicImage";
 
 interface ArtistCardProps {
   imageUrl: string;
@@ -11,9 +11,14 @@ interface ArtistCardProps {
 const ArtistCard: React.FC<ArtistCardProps> = ({ imageUrl, name }) => {
   return (
     <Link href="/artist-detail">
-      <div className="artist-card flex flex-col items-center text-center ">
-        <div className="relative rounded-full overflow-hidden shadow-lg mb-4">
-          <DynamicImage src="https://via.placeholder.com/200" alt={name} />
+      <div className="artist-card flex flex-col items-center text-center">
+        {/* Artist Image */}
+        <div className="rounded-full overflow-hidden w-36 h-36 mb-4 shadow-lg">
+          <DynamicImage
+            src={imageUrl}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
         </div>
         <span className="text-white text-md font-medium">{name}</span>
       </div>

@@ -2,13 +2,11 @@
 
 import React from 'react';
 import { Button } from './button';
-import { cn } from '@/lib/utils';
 
 interface IAppButtonProps {
   children: React.ReactNode;
   className?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  variant?: string;
   type?: 'submit' | 'reset' | 'button' | undefined;
   disabled?: boolean;
 }
@@ -18,13 +16,13 @@ export const AppButton: React.FC<IAppButtonProps> = ({
   className,
   onClick,
   type,
-  variant,
   disabled,
 }) => {
   return (
     <Button
+      variant={'default'}
       type={type}
-      className={cn('', className)}
+      className={className}
       onClick={onClick}
       disabled={disabled}
     >

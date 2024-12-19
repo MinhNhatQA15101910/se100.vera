@@ -5,11 +5,19 @@ import { useUser } from '@/contexts/UserContext';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppButton } from '@/components/ui/AppButton';
-import Modal from '@/components/Modal'; // Import your Modal component
+import Modal from '@/components/Modal';
+import FormContainer from '@/components/FormContainer';
+import { Label } from '@/components/ui/Label';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function ListenerProfile() {
   const { userDetails } = useUser();
-  const [isDialogOpen, setDialogOpen] = useState(false); // State to control dialog visibility
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    artistName: '',
+    description: '',
+  });
 
   const userDisplayDetails = [
     {
@@ -18,15 +26,15 @@ export default function ListenerProfile() {
     },
     {
       title: 'Email',
-      detail: `${userDetails?.email || 'dummy@gmail.com'}`,
+      detail: userDetails?.email || 'dummy@gmail.com',
     },
     {
       title: 'Gender',
-      detail: `${userDetails?.gender || 'N/A'}`,
+      detail: userDetails?.gender || 'N/A',
     },
     {
       title: 'Date of birth',
-      detail: `${userDetails?.dateOfBirth?.replace(/-/g, '/') || 'N/A'}`,
+      detail: userDetails?.dateOfBirth?.replace(/-/g, '/') || 'N/A',
     },
   ];
 
@@ -36,6 +44,14 @@ export default function ListenerProfile() {
 
   const closeDialog = () => {
     setDialogOpen(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
   };
 
   return (
@@ -55,7 +71,7 @@ export default function ListenerProfile() {
               <div className="text-white font-Inter text-2xl font-bold">
                 Profile
               </div>
-              <h1 className="text-4xl text-white text-[100px] font-Inter font-extrabold leading-tight">
+              <h1 className="text-4xl text-white font-Inter font-extrabold leading-tight">
                 {userDetails?.lastName || 'N/A'}
               </h1>
             </div>
@@ -87,13 +103,11 @@ export default function ListenerProfile() {
           Activate Artist Account
         </AppButton>
         <AppButton
-          variant="secondary"
           className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl"
         >
           Change Profile
         </AppButton>
         <AppButton
-          variant="secondary"
           className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl"
         >
           Change Password
@@ -104,17 +118,27 @@ export default function ListenerProfile() {
       <Modal
         isOpen={isDialogOpen}
         onChange={closeDialog}
-        title="Account Activated"
-        description="Congratulations! Your account has been successfully upgraded to an artist account."
+        title="ACTIVATE ARTIST ACCOUNT"
       >
-        <div className="text-center mt-4">
+        <FormContainer className="flex mt-4 flex-col w-full">
+          <Label htmlFor="artistName">Artist name</Label>
+          <Input
+            id="artistName"
+            placeholder="Artist name like Hanzo the Dev"
+            type="text"
+            value={formData.artistName}
+            onChange={handleInputChange}
+          />
+          <Label htmlFor="description">Description</Label>
+          <Textarea id='description' placeholder="Type your message here." />
           <AppButton
             onClick={closeDialog}
+            type="submit"
             className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-10 rounded-xl"
           >
-            Close
+            ACTIVATE
           </AppButton>
-        </div>
+        </FormContainer>
       </Modal>
     </div>
   );

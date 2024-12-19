@@ -12,7 +12,7 @@ export interface SignupCredentials {
   email: string;
   password: string;
   gender: string;
-  role?: 'Listener' | 'Artist';
+  role?: 'Listener' | 'Artist'; 
 }
 
 export interface ResetPasswordCredentials {
@@ -24,14 +24,14 @@ export interface UserDto {
   firstName: string;
   lastName: string;
   email: string;
-  role: Role;
+  roles: Role[];  
   artistName: string | null;
   photoUrl: string | null;
   gender: string;
   dateOfBirth: string;
   about: string | null;
   created: string;
-  photos: Array<{ id: number; url: string; isMain: boolean }>;
+  photos: string[];
   token: string;
 }
 

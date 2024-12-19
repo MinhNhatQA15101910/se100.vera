@@ -6,7 +6,6 @@ import { UserProvider } from '@/contexts/UserContext';
 import { LoadingProvider } from '@/contexts/LoadingContext';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ToastContainer } from 'react-toastify';
-import ProtectedRoute from './ProtectedRoute';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Providers({ children }: { children: ReactNode }) {
@@ -14,11 +13,9 @@ export default function Providers({ children }: { children: ReactNode }) {
     <>
       <LoadingProvider>
         <UserProvider>
-          <ProtectedRoute>
             <NuqsAdapter>
               <TooltipProvider>{children}</TooltipProvider>
             </NuqsAdapter>
-          </ProtectedRoute>
           <ToastContainer
             position="top-right"
             autoClose={2699}

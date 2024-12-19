@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Heart, Plus } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import Image from 'next/image';
 
 export default function TrendingSongs() {
@@ -137,12 +137,6 @@ export default function TrendingSongs() {
           ))}
         </TableBody>
       </Table>
-      <AppButton
-        className={`flex flex-row w-fit space-x-1 items-center general-grayscale-hover py-1 px-3 rounded-sm`}
-      >
-        <Plus className="text-general-white h-5 w-5" />
-        <span>View</span>
-      </AppButton>
     </div>
   );
 }

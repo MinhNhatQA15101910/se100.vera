@@ -1,12 +1,14 @@
 'use client';
 
 import { useUser } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppButton } from '@/components/ui/AppButton';
 
 export default function ArtistProfile() {
   const { userDetails } = useUser();
+  const router = useRouter();
 
   const userDisplayDetails = [
     {
@@ -16,7 +18,7 @@ export default function ArtistProfile() {
     {
       title: 'Email',
       // detail: `${userDetails?.}`
-      detail: `dummi@gmail.com`,
+      detail: `${userDetails?.email}`,
     },
     {
       title: 'Gender',
@@ -61,6 +63,18 @@ export default function ArtistProfile() {
         </div>
       </div>
 
+      {/* Manage buttons */}
+      <div className="flex flex-row justify-between w-full space-x-4">
+        <AppButton className="flex w-full bg-general-pink hover:bg-general-pink-hover text-[24px] font-bold py-5" onClick={() => {
+          router.push("/manage-songs")
+        }}>
+          Manage songs
+        </AppButton>
+
+        <AppButton className="flex w-full bg-general-blue hover:bg-general-blue-hover text-[24px] font-bold py-5">
+          Manage albums
+        </AppButton>
+      </div>
       {/* Displaying User's details */}
       <div className="flex flex-col w-full space-y-4">
         {userDisplayDetails.map((userDetail, idx) => {
@@ -80,16 +94,10 @@ export default function ArtistProfile() {
 
       {/* Displaying buttons */}
       <div className="flex flex-col w-full space-y-2">
-        <AppButton
-          variant="secondary"
-          className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl"
-        >
+        <AppButton className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl">
           Change profile
         </AppButton>
-        <AppButton
-          variant="secondary"
-          className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl"
-        >
+        <AppButton className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl">
           Change password
         </AppButton>
       </div>

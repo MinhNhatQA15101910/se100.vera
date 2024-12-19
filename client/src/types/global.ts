@@ -7,6 +7,7 @@ export interface Song {
   totalListeningHours: number;
   musicUrl: string;
   musicPublicId: string;
+  lyricUrl: string | null;
 }
 
 export interface User {

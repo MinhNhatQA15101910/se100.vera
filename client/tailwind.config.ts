@@ -14,7 +14,9 @@ module.exports = {
     extend: {
       colors: {
         'general-pink': '#EE10B0',
+        'general-blue': '#0E9EEF',
         'general-pink-hover': '#F342C4',
+        'general-blue-hover': '#42AEF3',
         'general-white': '#FFFFFF',
         'general-theme': '#181818',
         background: 'hsl(var(--background))',

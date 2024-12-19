@@ -136,10 +136,12 @@ export default function TrendingSongs() {
         </TableBody>
       </Table>
       <AppButton
-        className={`flex flex-row w-fit space-x-1 items-center general-grayscale-hover py-1 px-3 rounded-sm`}
+        className={`flex flex-row w-fit space-x-1 items-center hover:bg-slate-700/10 py-1 px-3 rounded-sm group duration-200 transition-colors`}
       >
-        <Plus className="text-general-white h-5 w-5" />
-        <span>View</span>
+        <Plus className="text-general-white/50 h-5 w-5 group-hover:text-general-white duration-200 transition-colors" />
+        <span className="text-general-white/50 group-hover:text-general-white duration-200 transition-colors">
+          View
+        </span>
       </AppButton>
     </div>
   );

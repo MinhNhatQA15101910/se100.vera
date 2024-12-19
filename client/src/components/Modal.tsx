@@ -7,7 +7,6 @@ interface ModalProps {
   isOpen: boolean;
   onChange: (open: boolean) => void;
   title: string;
-  description: string;
   children: React.ReactNode;
 }
 
@@ -15,7 +14,6 @@ const Modal: React.FC<ModalProps> = ({
   isOpen,
   onChange,
   title,
-  description,
   children,
 }) => {
   return (
@@ -30,9 +28,6 @@ const Modal: React.FC<ModalProps> = ({
             <Dialog.Title className="text-xl text-center font-bold mb-4">
               {title}
             </Dialog.Title>
-            <Dialog.Description className="mb-5 text-sm leading-normal text-center text-general-white">
-              {description}
-            </Dialog.Description>
             <div>{children}</div>
             <Dialog.Close asChild>
               <button className="text-neutral-400 hover:text-white absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:outline-none">

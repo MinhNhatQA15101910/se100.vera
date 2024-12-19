@@ -175,7 +175,7 @@ const MusicPlayerContent = () => {
         <div className="flex w-1/4 min-w-[180px] h-full items-center gap-3">
           <DynamicImage
             alt="Artist Image"
-            src={activeSong.musicUrl}
+            src={"https://picsum.photos/400/400?random=42"}
             className="w-14 h-14"
           />
           <div className="flex flex-col">

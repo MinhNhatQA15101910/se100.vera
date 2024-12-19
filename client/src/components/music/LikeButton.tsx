@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
 
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { FaHeart } from 'react-icons/fa';
 interface LikeButtonProps {
   songId: string;
 }
@@ -22,17 +22,17 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
     }
   }, [songId]);
 
-  const Icon = isLiked ? AiFillHeart : AiOutlineHeart;
-
   const handleLike = async () => {
-    //TODO: implement liking here and update the heart
     setIsLiked(!isLiked);
     router.refresh();
   };
 
   return (
-    <button onClick={handleLike} className="hover:opacity-75 transition">
-      <Icon color={isLiked ? '#EE10B0' : '#ffffff'} size={25} />
+    <button onClick={handleLike}>
+      <FaHeart
+        size={25}
+        className={`hover:text-general-pink-hover transition-colors duration-200 ${isLiked ? 'text-general-pink' : ''}`}
+      />
     </button>
   );
 };
