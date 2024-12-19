@@ -92,10 +92,6 @@ public class AutoMapperProfiles : Profile
                 photos => photos.MapFrom(p => p.Photo.Url)
             );
         CreateMap<AlbumPhoto, FileDto>();
-        CreateMap<SongGenre, Genre>()
-            .ForMember(
-                g => g.GenreName,
-                s => s.MapFrom(x => x.Genre.GenreName)
-            );
+        CreateMap<SongGenre, Genre>();
     }
 }

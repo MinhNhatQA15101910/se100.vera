@@ -20,6 +20,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
+        services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<ISongRepository, SongRepository>();
         services.AddScoped<ISongGenreRepository, SongGenreRepository>();
         services.AddScoped<ISongPhotoRepository, SongPhotoRepository>();

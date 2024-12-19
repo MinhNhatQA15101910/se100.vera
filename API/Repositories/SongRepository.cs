@@ -10,7 +10,10 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
 {
     public async Task<SongDto?> GetSongByIdAsync(int id)
     {
-        var song = await context.Songs.FindAsync(id);
+        var song = await context.Songs
+        .Include(s => s.Genres)
+        .ThenInclude(g => g.Genre)
+        .SingleOrDefaultAsync(s => s.Id == id);
         return mapper.Map<SongDto>(song);
     }
 

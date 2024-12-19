@@ -25,6 +25,11 @@ public class SongsController(
         {
             return NotFound();
         }
+        // var genresList = await songGenreRepository.GetSongGenreAsync(id);
+        // if (genresList != null)
+        // {
+        //     song.Genres = genresList.Select(sg => sg.GenreId.ToString()).ToList();
+        // }
 
         return song;
     }
@@ -100,7 +105,7 @@ public class SongsController(
                 var songGenre = new SongGenre
                 {
                     SongId = song.Id,
-                    GenreId = int.Parse(genreId)
+                    GenreId = genreId
                 };
                 songGenreRepository.AddSongGenre(songGenre);
             }
