@@ -17,7 +17,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({
   totalDuration,
 }) => {
   return (
-    <Link href="/playlist_detail">
+    <Link href="/album-detail">
       <div className="p-4 bg-[#1F1F1F] rounded-lg cursor-pointer hover:bg-gray-700 transition">
         <Image
           src={image}

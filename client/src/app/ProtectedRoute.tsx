@@ -25,6 +25,8 @@ const ProtectedRoute: React.FC<IProtectedRoute> = ({ children }) => {
     '/artist-detail',
     '/album-detail',
     '/recently-added',
+    '/your-playlist',
+    '/playlist-detail',
   ];
 
   useEffect(() => {

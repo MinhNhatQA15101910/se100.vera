@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {  Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import Image from 'next/image';
 
 export default function TrendingSongs() {
@@ -127,7 +127,7 @@ export default function TrendingSongs() {
               </TableCell>
               <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                 <div className="flex items-center justify-end space-x-4">
-                  <LikeButton songId={"KEKEKEEKE"}/>
+                  <LikeButton songId={'KEKEKEEKE'} />
                   <span className="text-gray-400 mx-auto">{song.duration}</span>
                 </div>
               </TableCell>

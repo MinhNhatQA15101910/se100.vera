@@ -14,10 +14,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/ui/tableV2';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
+import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
+import FavouriteButton from '@/components/ui/favouriteButton';
 
 const AlbumDetailDemo: React.FC = () => {
   const albumImage = 'https://via.placeholder.com/268';
@@ -33,7 +35,38 @@ const AlbumDetailDemo: React.FC = () => {
       views: '1.2M',
       duration: '2:36',
     },
-    // ... rest of the songs array
+    {
+      id: 1,
+      title: 'Sorforc',
+      releaseDate: 'Nov 4, 2023',
+      genre: 'Pop',
+      views: '1.2M',
+      duration: '2:36',
+    },
+    {
+      id: 1,
+      title: 'Sorforc',
+      releaseDate: 'Nov 4, 2023',
+      genre: 'Pop',
+      views: '1.2M',
+      duration: '2:36',
+    },
+    {
+      id: 1,
+      title: 'Sorforc',
+      releaseDate: 'Nov 4, 2023',
+      genre: 'Pop',
+      views: '1.2M',
+      duration: '2:36',
+    },
+    {
+      id: 1,
+      title: 'Sorforc',
+      releaseDate: 'Nov 4, 2023',
+      genre: 'Pop',
+      views: '1.2M',
+      duration: '2:36',
+    },
   ];
 
   const [songs, setSongs] = useState(initialSongs);
@@ -47,9 +80,9 @@ const AlbumDetailDemo: React.FC = () => {
     if (!sortConfig || sortConfig.key !== column) return null;
 
     return sortConfig.direction === 'ascending' ? (
-      <FaSortAmountUpAlt className="text-primary" />
+      <FaSortAmountUpAlt className="text-general-pink" />
     ) : (
-      <FaSortAmountDown className="text-primary" />
+      <FaSortAmountDown className="text-general-pink" />
     );
   };
 
@@ -128,65 +161,68 @@ const AlbumDetailDemo: React.FC = () => {
                 </div>
               </div>
 
-              <div className="rounded-lg overflow-hidden bg-black/30">
+              <div className="rounded-lg overflow-hidden bg-black/30 ">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>#</TableHead>
-                      <TableHead>
-                        <Button
-                          variant="ghost"
-                          onClick={() => sortSongs('title')}
-                          className="flex items-center space-x-1"
-                        >
-                          <span>Title</span>
-                          {getSortIcon('title')}
-                        </Button>
-                      </TableHead>
-                      <TableHead>
-                        <Button
-                          variant="ghost"
-                          onClick={() => sortSongs('releaseDate')}
-                          className="flex items-center space-x-1"
-                        >
-                          <span>Release Date</span>
-                          {getSortIcon('releaseDate')}
-                        </Button>
-                      </TableHead>
-                      <TableHead>
-                        <Button
-                          variant="ghost"
-                          onClick={() => sortSongs('genre')}
-                          className="flex items-center space-x-1"
-                        >
-                          <span>Genre</span>
-                          {getSortIcon('genre')}
-                        </Button>
-                      </TableHead>
-                      <TableHead>
-                        <Button
-                          variant="ghost"
-                          onClick={() => sortSongs('views')}
-                          className="flex items-center space-x-1"
-                        >
-                          <span>Views</span>
-                          {getSortIcon('views')}
-                        </Button>
-                      </TableHead>
-                      <TableHead>
-                        <Button
-                          variant="ghost"
-                          onClick={() => sortSongs('duration')}
-                          className="flex items-center space-x-1"
-                        >
-                          <span>Time</span>
-                          {getSortIcon('duration')}
-                        </Button>
-                      </TableHead>
-                    </TableRow>
+                    <TableHead
+                      className=" text-general-pink font-bold"
+                      style={{ width: '5%' }}
+                    >
+                      #
+                    </TableHead>
+                    <TableHead style={{ width: '35%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('title')}
+                        className="flex items-center space-x-1 text-general-pink font-bold"
+                      >
+                        <span>Title</span>
+                        {getSortIcon('title')}
+                      </Button>
+                    </TableHead>
+                    <TableHead style={{ width: '15%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('releaseDate')}
+                        className="flex items-center space-x-1  text-general-pink font-bold"
+                      >
+                        <span>Release Date</span>
+                        {getSortIcon('releaseDate')}
+                      </Button>
+                    </TableHead>
+                    <TableHead style={{ width: '15%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('genre')}
+                        className="flex items-center space-x-1  text-general-pink font-bold"
+                      >
+                        <span>Genre</span>
+                        {getSortIcon('genre')}
+                      </Button>
+                    </TableHead>
+                    <TableHead style={{ width: '15%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('views')}
+                        className="flex items-center space-x-1  text-general-pink font-bold"
+                      >
+                        <span>Views</span>
+                        {getSortIcon('views')}
+                      </Button>
+                    </TableHead>
+                    <TableHead style={{ width: '15%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('duration')}
+                        className="flex items-center space-x-1  text-general-pink font-bold"
+                      >
+                        <span>Time</span>
+                        {getSortIcon('duration')}
+                      </Button>
+                    </TableHead>
                   </TableHeader>
 
-                  <TableBody>
+                  <TableBody className="text-white">
                     {songs.map((song, index) => (
                       <TableRow key={song.id}>
                         <TableCell>{index + 1}</TableCell>
@@ -200,8 +236,10 @@ const AlbumDetailDemo: React.FC = () => {
                               className="rounded-md"
                             />
                             <div>
-                              <p className="font-medium">{song.title}</p>
-                              <p className="text-muted-foreground text-sm">
+                              <p className="font-bold text-white">
+                                {song.title}
+                              </p>
+                              <p className="text-muted-foreground text-sm text-white">
                                 Artist Name
                               </p>
                             </div>
@@ -212,19 +250,13 @@ const AlbumDetailDemo: React.FC = () => {
                         <TableCell>{song.views}</TableCell>
                         <TableCell>
                           <div className="flex items-center">
-                            <span className="mr-3">{song.duration}</span>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => toggleFavorite(song.id)}
-                              className="text-primary text-2xl"
-                            >
-                              {favorites.includes(song.id) ? (
-                                <MdOutlineFavorite />
-                              ) : (
-                                <MdOutlineFavoriteBorder />
-                              )}
-                            </Button>
+                            <span>{song.duration}</span>
+                            <div className="ml-4">
+                              <FavouriteButton songId={''} />
+                            </div>
+                            <div className="ml-4">
+                              <AddToPlaylistButton songId={''} />
+                            </div>
                           </div>
                         </TableCell>
                       </TableRow>
