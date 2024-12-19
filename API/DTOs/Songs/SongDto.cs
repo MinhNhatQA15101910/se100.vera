@@ -1,7 +1,3 @@
-using API.DTOs.Files;
-using API.DTOs.Users;
-using API.Entities;
-
 namespace API.DTOs.Songs;
 
 public class SongDto

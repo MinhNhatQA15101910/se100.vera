@@ -2,6 +2,7 @@ using API.DTOs.Users;
 using API.DTOs.Songs;
 using API.Entities;
 using API.DTOs.Files;
+using API.DTOs.Albums;
 
 namespace API.Helpers;
 
@@ -90,6 +91,20 @@ public class AutoMapperProfiles : Profile
             .ForMember(
                 g => g.GenreName,
                 s => s.MapFrom(x => x.Genre.GenreName)
+            );
+        CreateMap<NewAlbumDto, Album>();
+        CreateMap<Album, AlbumDto>()
+            .ForMember(
+                a => a.PhotoUrl,
+                o => o.MapFrom(
+                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
+                )
+            )
+            .ForMember(
+                a => a.Photos,
+                o => o.MapFrom(
+                    s => s.Photos.Select(x => x.Photo.Url).ToList()
+                )
             );
     }
 }
