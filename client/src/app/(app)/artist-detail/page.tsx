@@ -7,6 +7,17 @@ import { FaSortAmountDown, FaSortAmountUpAlt } from 'react-icons/fa';
 import { IoArrowBack } from 'react-icons/io5';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import Image from 'next/image';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/tableV2';
+import { Button } from '@/components/ui/button';
+import LikeButton from '@/components/music/LikeButton';
+import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
 
 const initialSongs = [
   {
@@ -262,7 +273,7 @@ export default function ArtistDetailPage() {
   };
 
   return (
-    <div className="flex w-full h-screen overflow-hidden">
+    <div className="flex min-h-screen w-full overflow-hidden">
       <div className="flex flex-col w-full overflow-hidden">
         <div className="bg-[#181818] min-h-screen text-white overflow-y-auto">
           <div className="max-w-6xl mx-auto py-8 px-4">
@@ -294,100 +305,119 @@ export default function ArtistDetailPage() {
             {/* Popular Tracks */}
             <div className="mb-12">
               <h2 className="text-4xl font-bold mb-4">Popular</h2>
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="p-3 text-white">#</th>
-                    <th
-                      className="p-3 text-white cursor-pointer"
-                      onClick={() => sortSongs('title')}
+              <div className="w-full flex flex-col bg-transparent text-general-white items-center custom1-table p-4">
+                <Table>
+                  <TableHeader>
+                    <TableHead
+                      className=" text-white text-lg font-bold"
+                      style={{ width: '5%' }}
                     >
-                      <div className="flex items-center space-x-1">
+                      #
+                    </TableHead>
+                    <TableHead style={{ width: '35%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('title')}
+                        className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      >
                         <span>Title</span>
                         {getSortIcon('title')}
-                      </div>
-                    </th>
-                    <th
-                      className="p-3 text-white cursor-pointer"
-                      onClick={() => sortSongs('releaseDate')}
-                    >
-                      <div className="flex items-center space-x-1">
-                        <span>Release Date</span>
+                      </Button>
+                    </TableHead>
+                    <TableHead style={{ width: '15%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('releaseDate')}
+                        className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      >
+                        <span>Release</span>
                         {getSortIcon('releaseDate')}
-                      </div>
-                    </th>
-                    <th
-                      className="p-3 text-white cursor-pointer"
-                      onClick={() => sortSongs('genre')}
-                    >
-                      <div className="flex items-center space-x-1">
+                      </Button>
+                    </TableHead>
+                    <TableHead style={{ width: '15%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('genre')}
+                        className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      >
                         <span>Genre</span>
                         {getSortIcon('genre')}
-                      </div>
-                    </th>
-                    <th
-                      className="p-3 text-white cursor-pointer"
-                      onClick={() => sortSongs('views')}
-                    >
-                      <div className="flex items-center space-x-1">
+                      </Button>
+                    </TableHead>
+                    <TableHead style={{ width: '15%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('views')}
+                        className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      >
                         <span>Views</span>
                         {getSortIcon('views')}
-                      </div>
-                    </th>
-                    <th
-                      className="p-3 text-white cursor-pointer"
-                      onClick={() => sortSongs('duration')}
-                    >
-                      <div className="flex items-center space-x-1">
+                      </Button>
+                    </TableHead>
+                    <TableHead style={{ width: '15%' }}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => sortSongs('duration')}
+                        className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      >
                         <span>Time</span>
                         {getSortIcon('duration')}
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {songs.slice(0, visibleSongs).map((song, index) => (
-                    <tr
-                      key={song.id}
-                      className="border-b border-gray-700 hover:bg-gray-800 transition "
-                    >
-                      <td className="p-3 text-white">{index + 1}</td>
-                      <td className="p-3 flex items-center space-x-3">
-                        <Image
-                          src="https://via.placeholder.com/50"
-                          alt={`${song.title} Thumbnail`}
-                          width={0}
-                          height={0}
-                          className="w-12 h-12 rounded-md"
-                        />
-                        <div>
-                          <p className="text-white font-medium">{song.title}</p>
-                          <p className="text-gray-400 text-sm">Artist Name</p>
-                        </div>
-                      </td>
-                      <td className="p-3 text-white">{song.releaseDate}</td>
-                      <td className="p-3 text-white">{song.genre}</td>
-                      <td className="p-3 text-white">{song.views}</td>
-                      <td>
-                        <div className="flex items-center">
-                          <p className="p-3 text-white">{song.duration}</p>
-                          <button
-                            onClick={() => toggleFavorite(song.id)}
-                            className="text-[#EE10B0] text-2xl"
-                          >
-                            {favorites.includes(song.id) ? (
-                              <MdOutlineFavorite />
-                            ) : (
-                              <MdOutlineFavoriteBorder />
-                            )}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </Button>
+                    </TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {songs.map((song, index) => (
+                      <TableRow
+                        key={song.id}
+                        className="border-none cursor-pointer hover:bg-transparent group"
+                      >
+                        <TableCell className="font-bold text-lg">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
+                          <div className="flex items-center space-x-4">
+                            <Image
+                              src="https://via.placeholder.com/50"
+                              alt={`${song.title} Thumbnail`}
+                              width={55}
+                              height={55}
+                              className="rounded-md"
+                            />
+                            <div>
+                              <p className="font-bold text-white">
+                                {song.title}
+                              </p>
+                              <p className="text-muted-foreground text-sm text-white">
+                                Artist Name
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                          {song.releaseDate}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                          {song.genre}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                          {song.views}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                          <div className="flex items-center">
+                            <span>{song.duration}</span>
+                            <div className="ml-4">
+                              <LikeButton songId={''} />
+                            </div>
+                            <div className="ml-4">
+                              <AddToPlaylistButton songId={''} />
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
               <div className="text-center mt-6">
                 {visibleSongs < songs.length && (
                   <button

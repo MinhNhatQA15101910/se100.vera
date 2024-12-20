@@ -17,7 +17,7 @@ const AddToPlaylistButton: React.FC<AddToPlaylistProps> = ({ songId }) => {
       <button onClick={() => setIsModalOpen(true)} className="">
         <PiPlaylistBold
           className="text-general-pink hover:text-pink-600 focus:outline-none"
-          size={24}
+          size={20}
         />
       </button>
 
@@ -26,7 +26,6 @@ const AddToPlaylistButton: React.FC<AddToPlaylistProps> = ({ songId }) => {
         isOpen={isModalOpen}
         onChange={setIsModalOpen}
         title="CHOOSE YOUR PLAYLIST"
-        description=""
       >
         <ChoosePlaylistCard />
       </Modal>

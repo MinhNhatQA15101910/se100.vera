@@ -72,7 +72,6 @@ export default function ChoosePlaylistCard() {
         isOpen={isModalOpen}
         onChange={setModalOpen}
         title="CREATE A PLAYLIST"
-        description=""
       >
         <CreatePlaylistCard onClose={() => setModalOpen(false)} />
       </Modal>
