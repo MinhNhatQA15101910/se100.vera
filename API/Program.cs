@@ -1,7 +1,6 @@
 using API.Data;
 using API.Entities;
 using API.Extensions;
-using API.Helpers;
 using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
