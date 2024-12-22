@@ -6,7 +6,6 @@ using API.Helpers;
 
 namespace API.Controllers;
 
-[Authorize]
 public class SongsController(
     ISongRepository songRepository,
     IMapper mapper,
