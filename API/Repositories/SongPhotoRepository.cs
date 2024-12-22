@@ -13,13 +13,11 @@ public class SongPhotoRepository(DataContext context) : ISongPhotoRepository
       context.SongPhotos.Add(songPhoto);
    }
 
-   public async Task<SongPhoto?> GetSongPhotoAsync(int songId, int photoId)
+   public async Task<List<SongPhoto>?> GetSongPhotoAsync(int songId)
    {
       return await context.SongPhotos
-            .SingleOrDefaultAsync(
-                up => up.SongId == songId &&
-                up.PhotoId == photoId
-            );
+            .Where(sp => sp.SongId == songId)
+            .ToListAsync();
    }
 
    public void RemoveSongPhoto(SongPhoto songPhoto)

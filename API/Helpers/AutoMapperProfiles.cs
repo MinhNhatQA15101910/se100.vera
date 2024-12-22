@@ -2,6 +2,7 @@ using API.DTOs.Users;
 using API.DTOs.Songs;
 using API.Entities;
 using API.DTOs.Files;
+using API.DTOs.Albums;
 
 namespace API.Helpers;
 
@@ -47,6 +48,12 @@ public class AutoMapperProfiles : Profile
                 )
             )
             .ForMember(
+                d => d.SongPhotoPublicId,
+                o => o.MapFrom(
+                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.PublicId
+                )
+            )
+            .ForMember(
                 d => d.Genres,
                 o => o.MapFrom(
                     s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
@@ -86,10 +93,57 @@ public class AutoMapperProfiles : Profile
                 photos => photos.MapFrom(p => p.Photo.Url)
             );
         CreateMap<AlbumPhoto, FileDto>();
-        CreateMap<SongGenre, Genre>()
+        CreateMap<SongGenre, Genre>();
+        CreateMap<NewAlbumDto, Album>();
+        CreateMap<Album, AlbumDto>()
             .ForMember(
-                g => g.GenreName,
-                s => s.MapFrom(x => x.Genre.GenreName)
+                a => a.PhotoUrl,
+                o => o.MapFrom(
+                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
+                )
+            )
+            .ForMember(
+                a => a.Photos,
+                o => o.MapFrom(
+                    s => s.Photos.Select(x => x.Photo.Url).ToList()
+                )
+            );
+        CreateMap<AlbumSong, SongDto>()
+            .ForMember(
+                s => s.Id,
+                o => o.MapFrom(x => x.Song.Id)
+            )
+            .ForMember(
+                s => s.SongName,
+                o => o.MapFrom(x => x.Song.SongName)
+            )
+            .ForMember(
+                s => s.PublisherName,
+                o => o.MapFrom(x => x.Song.Publisher.UserName)
+            )
+            .ForMember(
+                s => s.PublisherImageUrl,
+                o => o.MapFrom(x => x.Song.Publisher.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
+            )
+            .ForMember(
+                s => s.Genres,
+                o => o.MapFrom(x => x.Song.Genres.Select(x => x.Genre.GenreName).ToList())
+            )
+            .ForMember(
+                s => s.TotalView,
+                o => o.MapFrom(x => x.Song.TotalListeningHours)
+            )
+            .ForMember(
+                s => s.MusicUrl,
+                o => o.MapFrom(x => x.Song.MusicUrl)
+            )
+            .ForMember(
+                s => s.LyricUrl,
+                o => o.MapFrom(x => x.Song.LyricUrl)
+            )
+            .ForMember(
+                s => s.SongPhotoUrl,
+                o => o.MapFrom(x => x.Song.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
             );
     }
 }
