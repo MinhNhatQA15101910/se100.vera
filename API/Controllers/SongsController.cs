@@ -3,6 +3,7 @@ using API.Interfaces;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
+using API.Repositories;
 
 namespace API.Controllers;
 
@@ -12,8 +13,8 @@ public class SongsController(
     IFileService fileService,
     IPhotoRepository photoRepository,
     ISongPhotoRepository songPhotoRepository,
-    ISongGenreRepository songGenreRepository
-
+    ISongGenreRepository songGenreRepository,
+    IGenreRepository genreRepository
 ) : BaseApiController
 {
     [HttpGet("{id:int}")]
@@ -100,7 +101,8 @@ public class SongsController(
                 var songGenre = new SongGenre
                 {
                     SongId = song.Id,
-                    GenreId = genreId
+                    GenreId = genreId,
+                    Genre = await genreRepository.GetGenreByIdAsync(genreId)
                 };
                 songGenreRepository.AddSongGenre(songGenre);
             }
