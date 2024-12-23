@@ -9,18 +9,20 @@ interface IAppButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'submit' | 'reset' | 'button' | undefined;
   disabled?: boolean;
+  asChild?: boolean;
 }
 
 export const AppButton: React.FC<IAppButtonProps> = ({
   children,
-  className,
+  className = '',
   onClick,
-  type,
-  disabled,
+  type = 'button',
+  disabled = false,
+  asChild = false,
 }) => {
   return (
     <Button
-      variant={'default'}
+      asChild={asChild}
       type={type}
       className={className}
       onClick={onClick}
