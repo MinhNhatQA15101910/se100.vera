@@ -48,6 +48,12 @@ public class AutoMapperProfiles : Profile
                 )
             )
             .ForMember(
+                d => d.SongPhotoPublicId,
+                o => o.MapFrom(
+                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.PublicId
+                )
+            )
+            .ForMember(
                 d => d.Genres,
                 o => o.MapFrom(
                     s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
@@ -87,11 +93,7 @@ public class AutoMapperProfiles : Profile
                 photos => photos.MapFrom(p => p.Photo.Url)
             );
         CreateMap<AlbumPhoto, FileDto>();
-        CreateMap<SongGenre, Genre>()
-            .ForMember(
-                g => g.GenreName,
-                s => s.MapFrom(x => x.Genre.GenreName)
-            );
+        CreateMap<SongGenre, Genre>();
         CreateMap<NewAlbumDto, Album>();
         CreateMap<Album, AlbumDto>()
             .ForMember(
