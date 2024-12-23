@@ -17,6 +17,8 @@ module.exports = {
         'general-blue': '#0E9EEF',
         'general-pink-hover': '#F342C4',
         'general-blue-hover': '#42AEF3',
+        'general-pink-border': '#D00E9E',
+        'general-blue-border': '#0C8CD7',
         'general-white': '#FFFFFF',
         'general-theme': '#181818',
         background: 'hsl(var(--background))',
