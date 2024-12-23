@@ -1,4 +1,4 @@
-import { Role } from "./declaration";
+import { Role } from './declaration';
 
 export interface Song {
   id: number;
@@ -6,8 +6,12 @@ export interface Song {
   description: string | null;
   totalListeningHours: number;
   musicUrl: string;
+  createdAt: string;
+  updatedAt: string;
   musicPublicId: string;
   lyricUrl: string | null;
+  artists: string[];
+  image: string;
 }
 
 export interface User {
@@ -24,4 +28,12 @@ export interface User {
   created: string;
   photos: Array<{ id: number; url: string; isMain: boolean }>;
   token: string;
+}
+
+export interface PaginatedResponses<T> {
+  data: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
 }

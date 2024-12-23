@@ -4,19 +4,20 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 interface IErrorResponse {
   code: string;
-  description: string
+  description: string;
 }
 
-interface ApiResponse {
-  data: IErrorResponse;
+interface ApiResponse<T> {
+  data: T;
   status: number;
+  headers: Headers;
   ok: boolean;
 }
 
 async function client<T>(
   endpoint: string,
   config: RequestInit = {}
-): Promise<T> {
+): Promise<ApiResponse<T>> {
   if (!baseURL) {
     throw new Error('API URL is not configured');
   }
@@ -30,46 +31,51 @@ async function client<T>(
       ...config,
       headers: {
         'Content-Type': 'application/json',
-        ...config.headers,
+        ...(config.headers || {}),
       },
     });
 
+    // Log response status and headers for debugging
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+
     if (!response.ok) {
-      const errorData = await response.json() as IErrorResponse;
-      const apiResponse: ApiResponse = {
+      const errorData = (await response.json()) as IErrorResponse;
+      toast.error(errorData.description || 'An error occurred');
+      throw {
         data: errorData,
         status: response.status,
-        ok: false
+        ok: false,
+        headers: response.headers,
       };
-
-      toast.error(errorData.description || 'An error occurred');
-      throw apiResponse;
     }
 
     const contentType = response.headers.get('Content-Type');
     if (contentType && contentType.includes('application/json')) {
       const data = await response.json();
-      const apiResponse: ApiResponse = {
-        data: data,
+      return {
+        data,
         status: response.status,
-        ok: true
+        headers: response.headers,
+        ok: true,
       };
-      return apiResponse.data as T;
     }
 
-    return null as T;
+    return {
+      data: null as unknown as T,
+      status: response.status,
+      headers: response.headers,
+      ok: true,
+    };
   } catch (error) {
     if (error instanceof Error) {
-      const apiResponse: ApiResponse = {
-        data: {
-          code: 'UNEXPECTED_ERROR',
-          description: error.message || 'An unexpected error occurred'
-        },
+      toast.error(error.message || 'An unexpected error occurred');
+      throw {
+        data: { code: 'UNEXPECTED_ERROR', description: error.message },
         status: 500,
-        ok: false
+        ok: false,
+        headers: new Headers(),
       };
-      toast.error(apiResponse.data.description);
-      throw apiResponse;
     }
     throw error;
   }
