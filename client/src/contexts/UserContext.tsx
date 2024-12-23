@@ -80,7 +80,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         },
         body: JSON.stringify({ email }),
       });
-      return response;
+      return response.data;
     } catch (error) {
       console.error('Email check failed:', error);
       throw error;
@@ -127,13 +127,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         body: JSON.stringify(tempSignupCreds),
       });
 
-      if (!response || !response.token) {
+      if (!response || !response.data.token) {
         throw new Error('Invalid response from server');
       }
 
-      setToken(response.token);
+      setToken(response.data.token);
       setIsAuthenticated(true);
-      setUserDetails(response);
+      setUserDetails(response.data);
       router.push('/login');
     } catch (error) {
       console.error('Signup failed:', error);
@@ -157,22 +157,22 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         body: JSON.stringify(loginCreds),
       });
 
-      if (!response || !response.token) {
+      if (!response || !response.data.token) {
         throw new Error('Invalid response from server');
       }
 
       if (loginCreds.rememberMe) {
         localStorage.setItem('userDetails', JSON.stringify(response));
-        document.cookie = `auth_token=${response.token}; path=/; max-age=604800; SameSite=Strict; Secure`;
+        document.cookie = `auth_token=${response.data.token}; path=/; max-age=604800; SameSite=Strict; Secure`;
       } else {
         // sessionStorage.setItem('userDetails', JSON.stringify(response));
         // sessionStorage.setItem('rememberedEmail', loginCreds.email);
-        document.cookie = `auth_token=${response.token}; path=/; SameSite=Strict; Secure`;
+        document.cookie = `auth_token=${response.data.token}; path=/; SameSite=Strict; Secure`;
       }
 
-      setToken(response.token);
+      setToken(response.data.token);
       setIsAuthenticated(true);
-      setUserDetails(response);
+      setUserDetails(response.data);
       router.push('/');
     } catch (error) {
       console.error('Login failed:', error);

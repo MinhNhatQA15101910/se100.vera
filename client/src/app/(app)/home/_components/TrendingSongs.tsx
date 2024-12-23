@@ -31,7 +31,9 @@ export default function TrendingSongs() {
     );
   } else if (error) {
     return (
-      <div className="w-full text-center py-8 text-general-white">{error.message}</div>
+      <div className="w-full text-center py-8 text-general-white">
+        {error.message}
+      </div>
     );
   }
 
@@ -55,47 +57,50 @@ export default function TrendingSongs() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data && data.songs?.map((song, idx) => (
-            <TableRow
-              key={song.id + idx}
-              className="border-none cursor-pointer hover:bg-transparent group"
-            >
-              <TableCell className="font-medium">#{idx}</TableCell>
-              <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
-                <div className="flex items-center space-x-4">
-                  <Image
-                    src={song.image}
-                    alt={song.songName}
-                    width={55}
-                    height={55}
-                    className="object-cover"
-                  />
-                  <div>
-                    <div className="font-semibold">{song.songName}</div>
-                    <div className="text-sm text-gray-400">
-                      {'con cac artist ngu'}
+          {data &&
+            data.songs?.slice(0, 10).map((song, idx) => (
+              <TableRow
+                key={song.id + idx}
+                className="border-none cursor-pointer hover:bg-transparent group"
+              >
+                <TableCell className="font-medium">#{idx}</TableCell>
+                <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
+                  <div className="flex items-center space-x-4">
+                    <Image
+                      src={
+                        song.image || 'https://picsum.photos/400/400?random=11'
+                      }
+                      alt={song.songName}
+                      width={55}
+                      height={55}
+                      className="object-cover"
+                    />
+                    <div>
+                      <div className="font-semibold">{song.songName}</div>
+                      <div className="text-sm text-gray-400">
+                        {'con cac artist ngu'}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                {song.createdAt}
-              </TableCell>
-              <TableCell className="hidden lg:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] max-w-[200px] truncate">
-                {'Album con cac tao'}
-              </TableCell>
-              <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
-                <div className="flex items-center justify-end space-x-4">
-                  <LikeButton songId={song.id} />
-                  <span className="text-gray-400 mx-auto">{'3:00'}</span>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+                <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                  {song.createdAt || "10/10/2024"}
+                </TableCell>
+                <TableCell className="hidden lg:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] max-w-[200px] truncate">
+                  {'Album con cac tao'}
+                </TableCell>
+                <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
+                  <div className="flex items-center justify-end space-x-4">
+                    <LikeButton songId={song.id} />
+                    <span className="text-gray-400 mx-auto">{'3:00'}</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
       <AppButton
-        className={`flex flex-row w-fit space-x-1 items-center hover:bg-slate-700/10 py-1 px-3 rounded-sm group duration-200 transition-colors`}
+        className={`flex flex-row w-fit space-x-1 items-center hover:bg-slate-700/10 py-1 px-3 rounded-sm group duration-200 transition-colors ${data && data.songs.length < 10 ? "hidden" : ""}`}
       >
         <Plus className="text-general-white/50 h-5 w-5 group-hover:text-general-white duration-200 transition-colors" />
         <span className="text-general-white/50 group-hover:text-general-white duration-200 transition-colors">

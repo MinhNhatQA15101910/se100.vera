@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppButton } from '@/components/ui/AppButton';
 import Modal from '@/components/Modal';
 import ActivateArtistForm from './ActivateArtistForm';
+import { formatDate } from '@/lib/utils';
 
 export default function ListenerProfile() {
   const { userDetails } = useUser();
@@ -27,7 +28,7 @@ export default function ListenerProfile() {
     },
     {
       title: 'Date of birth',
-      detail: userDetails?.dateOfBirth?.replace(/-/g, '/') || 'N/A',
+      detail: formatDate(userDetails?.dateOfBirth || "N/A"),
     },
   ];
 

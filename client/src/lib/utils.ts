@@ -11,3 +11,7 @@ export function generatePincode() {
   const pin = randomBytes(3).readUIntLE(0, 3) % 1000000;
   return pin.toString().padStart(6, '0');
 }
+
+export function formatDate(date: string) {
+  return date.replace(/-/g, '/');
+}
