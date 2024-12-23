@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { GenderType } from '@/types/declaration';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/Label';
 import { Checkbox } from '@/components/ui/check-box';
 
 type GenderSelectionProps = {

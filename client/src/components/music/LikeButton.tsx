@@ -7,7 +7,7 @@ import { useUser } from '@/contexts/UserContext';
 
 import { FaHeart } from 'react-icons/fa';
 interface LikeButtonProps {
-  songId: string;
+  songId: number;
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {

@@ -1,16 +1,15 @@
 'use client';
 
-import { Search } from 'lucide-react';
 import React from 'react';
 import { Input } from './ui/Input';
 
 const SearchBarBox = () => {
   return (
-    <div className="relative w-[300px]">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+    <div className="relative flex-1 pr-10">
       <Input
-        className="pl-10 bg-zinc-900 border-none text-white placeholder:text-muted-foreground"
-        placeholder="Search For Musics, Artists, ..."
+        className="w-full bg-zinc-900/90 text-sm text-white placeholder:text-muted-foreground rounded-lg"
+        placeholder="🔍 Search For Musics, Artists..."
+        type="search"
       />
     </div>
   );

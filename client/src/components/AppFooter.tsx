@@ -1,15 +1,18 @@
 'use client';
 
 import { useUser } from '@/contexts/UserContext';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Phone } from 'lucide-react';
 
 export default function Footer() {
   const { isAuthenticated } = useUser();
+  const pathname = usePathname();
+  const ignorePathnames = ['/manage-songs', '/upload-song', '/manage-albums'];
 
   return (
     <footer
-      className={`relative text-white p-8 ${!isAuthenticated && 'hidden'}`}
+      className={`relative text-white p-8 ${!isAuthenticated || ignorePathnames.includes(pathname) ? 'hidden' : ''}`}
     >
       {/* Curved top edge */}
       <div className="mt-8"></div>
@@ -42,7 +45,7 @@ export default function Footer() {
               <Link href="#" className="hover:text-pink-500 transition-colors">
                 <Facebook size={30} />
               </Link>
-              <Link href="#" className="hover:text-pink-500 transition-colors">
+              <Link href="#" className="hover:text-pink-500 transition-colors"> 
                 <Instagram size={30} />
               </Link>
               <Link href="#" className="hover:text-pink-500 transition-colors">

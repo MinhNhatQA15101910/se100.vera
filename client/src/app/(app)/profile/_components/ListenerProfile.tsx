@@ -6,18 +6,11 @@ import { useUser } from '@/contexts/UserContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppButton } from '@/components/ui/AppButton';
 import Modal from '@/components/Modal';
-import FormContainer from '@/components/FormContainer';
-import { Label } from '@/components/ui/Label';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/textarea';
+import ActivateArtistForm from './ActivateArtistForm';
 
 export default function ListenerProfile() {
   const { userDetails } = useUser();
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    artistName: '',
-    description: '',
-  });
 
   const userDisplayDetails = [
     {
@@ -44,14 +37,6 @@ export default function ListenerProfile() {
 
   const closeDialog = () => {
     setDialogOpen(false);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
   };
 
   return (
@@ -102,14 +87,10 @@ export default function ListenerProfile() {
         >
           Activate Artist Account
         </AppButton>
-        <AppButton
-          className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl"
-        >
+        <AppButton className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl">
           Change Profile
         </AppButton>
-        <AppButton
-          className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl"
-        >
+        <AppButton className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl">
           Change Password
         </AppButton>
       </div>
@@ -120,25 +101,7 @@ export default function ListenerProfile() {
         onChange={closeDialog}
         title="ACTIVATE ARTIST ACCOUNT"
       >
-        <FormContainer className="flex mt-4 flex-col w-full">
-          <Label htmlFor="artistName">Artist name</Label>
-          <Input
-            id="artistName"
-            placeholder="Artist name like Hanzo the Dev"
-            type="text"
-            value={formData.artistName}
-            onChange={handleInputChange}
-          />
-          <Label htmlFor="description">Description</Label>
-          <Textarea id='description' placeholder="Type your message here." />
-          <AppButton
-            onClick={closeDialog}
-            type="submit"
-            className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-10 rounded-xl"
-          >
-            ACTIVATE
-          </AppButton>
-        </FormContainer>
+        <ActivateArtistForm />
       </Modal>
     </div>
   );

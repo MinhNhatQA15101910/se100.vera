@@ -12,11 +12,12 @@ const UserProfile = () => {
   return (
     <div className="flex flex-col w-full justify-center items-center">
       {/* Render User follows LISTENER / ARTIST */}
-      {userDetails?.roles[0] === "Artist" ? (
+      {/* {userDetails?.roles[0] === "Artist" ? (
         <ArtistProfile />
       ) : (
         <ListenerProfile />
-      )}
+      )} */}
+      <ListenerProfile />
     </div>
   );
 };

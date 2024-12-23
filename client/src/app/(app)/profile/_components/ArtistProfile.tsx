@@ -65,13 +65,21 @@ export default function ArtistProfile() {
 
       {/* Manage buttons */}
       <div className="flex flex-row justify-between w-full space-x-4">
-        <AppButton className="flex w-full bg-general-pink hover:bg-general-pink-hover text-[24px] font-bold py-5" onClick={() => {
-          router.push("/manage-songs")
-        }}>
+        <AppButton
+          className="flex w-full bg-general-pink hover:bg-general-pink-hover text-[24px] font-bold py-5"
+          onClick={() => {
+            router.push('/manage-songs');
+          }}
+        >
           Manage songs
         </AppButton>
 
-        <AppButton className="flex w-full bg-general-blue hover:bg-general-blue-hover text-[24px] font-bold py-5">
+        <AppButton
+          className="flex w-full bg-general-blue hover:bg-general-blue-hover text-[24px] font-bold py-5"
+          onClick={() => {
+            router.push('/manage-albums');
+          }}
+        >
           Manage albums
         </AppButton>
       </div>
