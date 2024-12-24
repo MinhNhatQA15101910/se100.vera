@@ -1,7 +1,6 @@
 using API.Data;
 using API.Entities;
 using API.Extensions;
-using API.Helpers;
 using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,10 +32,10 @@ try
     await context.Database.MigrateAsync();
     await Seed.SeedPhotos(context);
     await Seed.SeedUsers(context, userManager, roleManager);
+    await Seed.SeedGenres(context);
     await Seed.SeedSongs(context);
     await Seed.SeedAlbums(context);
     await Seed.SeedPlaylists(context);
-    await Seed.SeedGenres(context);
 }
 catch (Exception ex)
 {

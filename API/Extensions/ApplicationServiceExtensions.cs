@@ -19,8 +19,14 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAlbumPhotoRepository, AlbumPhotoRepository>();
+        services.AddScoped<IAlbumRepository, AlbumRepository>();
+        services.AddScoped<IAlbumSongRepository, AlbumSongRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
+        services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<ISongRepository, SongRepository>();
+        services.AddScoped<ISongGenreRepository, SongGenreRepository>();
+        services.AddScoped<ISongPhotoRepository, SongPhotoRepository>();
         services.AddScoped<IUserPhotoRepository, UserPhotoRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

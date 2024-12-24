@@ -1,18 +1,19 @@
 using API.Data;
 using API.DTOs.Songs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
-using API.Services;
 
 namespace API.Repositories;
 
 public class SongRepository(DataContext context, IMapper mapper) : ISongRepository
 {
-    public async Task<SongDto?> GetSongByIdAsync(int id)
+    public async Task<Song?> GetSongByIdAsync(int id)
     {
-        var song = await context.Songs.FindAsync(id);
-
-        return mapper.Map<SongDto>(song);
+        return await context.Songs
+        .Include(s => s.Genres)
+        .ThenInclude(g => g.Genre)
+        .SingleOrDefaultAsync(s => s.Id == id);
     }
 
     public async Task<Song> AddSongAsync(NewSongDto newSongDto)
@@ -25,23 +26,31 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
         return song;
     }
 
-    public async Task<bool> AddPhotoAsync(Song song, Photo photo, bool isMain)
+    public Task<bool> DeleteSongAsync(int id)
     {
-        // Add photo to SongPhoto
+        throw new NotImplementedException();
+    }
 
-        var songPhoto = new SongPhoto
+    public async Task<PagedList<SongDto>> GetSongsAsync(SongParams songParams)
+    {
+        var query = context.Songs.AsQueryable();
+
+        if (songParams.SongName != null)
         {
-            SongId = song.Id,
-            Song = song,
-            PhotoId = photo.Id,
-            Photo = photo,
-            IsMain = isMain
+            query = query.Where(s => s.SongName.Contains(songParams.SongName));
+        }
+
+        query = songParams.OrderBy switch
+        {
+            "songName" => songParams.SortBy == "asc" ? query.OrderBy(s => s.SongName) : query.OrderByDescending(s => s.SongName),
+            _ => query.OrderBy(s => s.SongName)
         };
 
-        await context.SongPhotos.AddAsync(songPhoto);
-
-        return true;
-
+        return await PagedList<SongDto>.CreateAsync(
+            query.ProjectTo<SongDto>(mapper.ConfigurationProvider),
+            songParams.PageNumber,
+            songParams.PageSize
+        );
     }
 
     public async Task<bool> SaveChangesAsync()
