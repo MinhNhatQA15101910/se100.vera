@@ -60,4 +60,32 @@ public class GenresController(
             mapper.Map<GenreDto>(genre)
         );
     }
+
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> UpdateGenre(int id, AddUpdateGenreDto updateGenreDto)
+    {
+        var genre = await genreRepository.GetGenreByIdAsync(id);
+        if (genre == null)
+        {
+            return NotFound();
+        }
+
+        // Check if genre already exists
+        var existingGenre = await genreRepository.GetGenreByNameAsync(updateGenreDto.GenreName);
+        if (existingGenre != null && existingGenre.Id != id)
+        {
+            return BadRequest("Genre already exists");
+        }
+
+        mapper.Map(updateGenreDto, genre);
+        genre.UpdatedAt = DateTime.UtcNow;
+
+        if (!await genreRepository.SaveChangesAsync())
+        {
+            return BadRequest("Failed to update genre");
+        }
+
+        return NoContent();
+    }
 }
