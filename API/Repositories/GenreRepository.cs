@@ -1,10 +1,12 @@
 using API.Interfaces;
 using API.Entities;
 using API.Data;
+using API.Helpers;
+using API.DTOs.Genres;
 
 namespace API.Repositories;
 
-public class GenreRepository(DataContext context) : IGenreRepository
+public class GenreRepository(DataContext context, IMapper mapper) : IGenreRepository
 {
    public async Task<Genre> AddGenreAsync(Genre genre)
    {
@@ -24,9 +26,17 @@ public class GenreRepository(DataContext context) : IGenreRepository
       return await context.Genres.FindAsync(id);
    }
 
-   public async Task<List<Genre>> GetGenresAsync()
+   public async Task<PagedList<GenreDto>> GetGenresAsync(PaginationParams paginationParams)
    {
-      return await context.Genres.ToListAsync();
+      var query = context.Genres.AsQueryable();
+
+      query = query.OrderBy(g => g.GenreName);
+
+      return await PagedList<GenreDto>.CreateAsync(
+         query.ProjectTo<GenreDto>(mapper.ConfigurationProvider),
+         paginationParams.PageNumber,
+         paginationParams.PageSize
+      );
    }
 
    public async Task<bool> SaveChangesAsync()

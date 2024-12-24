@@ -3,7 +3,6 @@ using API.Interfaces;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
-using API.Repositories;
 
 namespace API.Controllers;
 
