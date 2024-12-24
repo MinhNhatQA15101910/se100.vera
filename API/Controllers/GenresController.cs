@@ -1,4 +1,5 @@
 using API.DTOs.Genres;
+using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
@@ -30,5 +31,33 @@ public class GenresController(
         Response.AddPaginationHeader(genres);
 
         return Ok(genres);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<GenreDto>> AddGenre(AddUpdateGenreDto newGenreDto)
+    {
+        // Check if genre already exists
+        var existingGenre = await genreRepository.GetGenreByNameAsync(newGenreDto.GenreName);
+        if (existingGenre != null)
+        {
+            return BadRequest("Genre already exists");
+        }
+
+        // Add genre
+        var genre = mapper.Map<Genre>(newGenreDto);
+
+        genreRepository.AddGenre(genre);
+
+        if (!await genreRepository.SaveChangesAsync())
+        {
+            return BadRequest("Failed to add genre");
+        }
+
+        return CreatedAtAction(
+            nameof(GetGenreById),
+            new { id = genre.Id },
+            mapper.Map<GenreDto>(genre)
+        );
     }
 }

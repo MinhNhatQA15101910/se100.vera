@@ -147,5 +147,6 @@ public class AutoMapperProfiles : Profile
                 o => o.MapFrom(x => x.Song.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
             );
         CreateMap<Genre, GenreDto>();
+        CreateMap<AddUpdateGenreDto, Genre>();
     }
 }
