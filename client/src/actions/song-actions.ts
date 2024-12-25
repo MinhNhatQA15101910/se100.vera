@@ -21,8 +21,6 @@ export async function getAllSongs(
 ): Promise<SongResponse> {
   const token = await getAuthTokenFromServerCookies();
 
-  console.log('Token from server:', token);
-
   try {
     const response = await client<Song[]>(
       `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
@@ -34,13 +32,8 @@ export async function getAllSongs(
       }
     );
 
-    console.log('Fetched Responses: ', response);
-    console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
-
     const paginationHeader = response.headers.get('Pagination');
     if (!paginationHeader) {
-      console.warn('Headers from server:', response.headers);
       throw new Error('Pagination data not found in headers');
     }
 

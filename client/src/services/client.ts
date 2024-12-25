@@ -35,10 +35,6 @@ async function client<T>(
       },
     });
 
-    // Log response status and headers for debugging
-    console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
-
     if (!response.ok) {
       const errorData = (await response.json()) as IErrorResponse;
       toast.error(errorData.description || 'An error occurred');

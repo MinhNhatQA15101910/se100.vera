@@ -222,27 +222,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    const storedUserDetails = localStorage.getItem('userDetails');
+    const getCookie = (name: string): string | null => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+      return null;
+    };
 
-    if (storedUserDetails) {
-      try {
-        const parsedUserDetails = JSON.parse(storedUserDetails);
-        if (parsedUserDetails && parsedUserDetails.token) {
-          setToken(parsedUserDetails.token);
-          setIsAuthenticated(true);
-          setUserDetails(parsedUserDetails);
-        } else {
-          localStorage.removeItem('userDetails');
-          setIsAuthenticated(false);
-          setUserDetails(null);
-        }
-      } catch (error) {
-        console.error('Error parsing stored user details:', error);
-        localStorage.removeItem('userDetails');
-        setIsAuthenticated(false);
-        setUserDetails(null);
-      }
+    const authToken = getCookie('auth_token');
+
+    if (authToken) {
+      setToken(authToken);
+      setIsAuthenticated(true);
+      // Note: You may want to fetch user details from an API here using the token
     } else {
+      setToken(null);
       setIsAuthenticated(false);
       setUserDetails(null);
 
