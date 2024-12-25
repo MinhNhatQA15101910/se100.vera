@@ -19,15 +19,10 @@ public class GenreRepository(DataContext context) : IGenreRepository
       throw new NotImplementedException();
    }
 
-   public async Task<Genre> GetGenreByIdAsync(int id)
+   public async Task<Genre?> GetGenreByIdAsync(int id)
    {
 
-      var genre = await context.Genres.FindAsync(id);
-      if (genre == null)
-      {
-         throw new KeyNotFoundException($"Genre with id {id} not found.");
-      }
-      return genre;
+      return await context.Genres.SingleOrDefaultAsync(p => p.Id == id);
    }
 
    public async Task<List<Genre>> GetGenresAsync()
