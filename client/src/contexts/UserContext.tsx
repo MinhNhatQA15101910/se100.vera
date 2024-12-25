@@ -162,11 +162,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (loginCreds.rememberMe) {
-        localStorage.setItem('userDetails', JSON.stringify(response));
+        localStorage.setItem('userDetails', JSON.stringify(response.data));
         document.cookie = `auth_token=${response.data.token}; path=/; max-age=604800; SameSite=Strict; Secure`;
       } else {
-        // sessionStorage.setItem('userDetails', JSON.stringify(response));
-        // sessionStorage.setItem('rememberedEmail', loginCreds.email);
         document.cookie = `auth_token=${response.data.token}; path=/; SameSite=Strict; Secure`;
       }
 
@@ -207,7 +205,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setLoadingState(true);
     try {
       localStorage.removeItem('userDetails');
-      localStorage.removeItem('rememberedEmail');
       document.cookie =
         'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
       setToken(null);
@@ -230,11 +227,20 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const authToken = getCookie('auth_token');
+    const storedUserDetails = localStorage.getItem('userDetails');
 
-    if (authToken) {
-      setToken(authToken);
-      setIsAuthenticated(true);
-      // Note: You may want to fetch user details from an API here using the token
+    if (authToken && storedUserDetails) {
+      try {
+        const parsedUserDetails = JSON.parse(storedUserDetails) as UserDto;
+        setToken(authToken);
+        setIsAuthenticated(true);
+        setUserDetails(parsedUserDetails);
+      } catch (error) {
+        console.error('Error parsing stored user details:', error);
+        setToken(null);
+        setIsAuthenticated(false);
+        setUserDetails(null);
+      }
     } else {
       setToken(null);
       setIsAuthenticated(false);
