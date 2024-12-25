@@ -8,7 +8,7 @@ public interface ISongRepository
 {
     Task<Song?> GetSongByIdAsync(int id);
     Task<Song> AddSongAsync(NewSongDto newSongDto);
-    Task<bool> DeleteSongAsync(int id);
+    void RemoveSong(Song song);
     Task<PagedList<SongDto>> GetSongsAsync(SongParams songParams);
     Task<bool> SaveChangesAsync();
 }

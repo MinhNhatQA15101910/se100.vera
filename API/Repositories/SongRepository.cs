@@ -26,9 +26,9 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
         return song;
     }
 
-    public Task<bool> DeleteSongAsync(int id)
+    public void RemoveSong(Song song)
     {
-        throw new NotImplementedException();
+        context.Songs.Remove(song);
     }
 
     public async Task<PagedList<SongDto>> GetSongsAsync(SongParams songParams)
