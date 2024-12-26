@@ -125,7 +125,35 @@ public class Seed
         await context.SaveChangesAsync();
 
         await SeedSongGenres(context);
+        await SeedSongPhotos(context);
         //await SeedSongArtist(context);
+    }
+
+    private static async Task SeedSongPhotos(DataContext context)
+    {
+        var songs = await context.Songs.ToListAsync();
+        var photoId = 10;
+
+        foreach (var song in songs)
+        {
+            var count = 5;
+            var isMain = true;
+            while (count-- > 0)
+            {
+                var songPhoto = new SongPhoto
+                {
+                    SongId = song.Id,
+                    PhotoId = photoId++,
+                    IsMain = isMain
+                };
+
+                context.SongPhotos.Add(songPhoto);
+
+                isMain = false;
+            }
+        }
+
+        await context.SaveChangesAsync();
     }
 
     public static async Task SeedSongGenres(DataContext context)

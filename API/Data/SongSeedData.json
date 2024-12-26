@@ -1,142 +1,86 @@
 [
   {
+    "SongName": "Attention",
+    "Description": "A captivating pop-funk track that delves into the complexities of modern relationships. Released in 2017 as the lead single from Puth's second studio album, Voicenotes, the song features a catchy bassline, smooth vocals, and a slick, minimalist production style.",
+    "PublisherId": 3,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735208972/Vera/songs/1/audio/qqblzgrar99akgpw8mha.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735208983/Vera/songs/1/lyrics/wosjttaxttuvxocfslnd.lrc"
+  },
+  {
+    "SongName": "Baby",
+    "Description": "Baby by Justin Bieber is a high-energy pop track that became a global sensation upon its release in 2010 as the lead single from Bieber's debut album, My World 2.0. Featuring a guest verse from rapper Ludacris, the song combines infectious melodies, a memorable hook, and a catchy beat that captures the innocence and heartbreak of young love. With its relatable lyrics and Bieber's smooth vocals, Baby quickly became a cultural phenomenon, propelling him to superstardom and solidifying its place as a pop anthem of the 2010s.",
+    "PublisherId": 3,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735210230/Vera/songs/2/audio/zcimahycqvk3gnqkoemf.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735210290/Vera/songs/2/lyrics/oof0idzenesvio7wo1el.lrc"
+  },
+  {
+    "SongName": "Believer",
+    "Description": "Believer by Imagine Dragons is a powerful alternative rock anthem that delves into themes of resilience, self-discovery, and growth through adversity. Released in 2017 as the lead single from their album Evolve, the song features a driving beat, dynamic vocals, and a soaring chorus that exudes raw emotion and intensity. With its pounding percussion and empowering lyrics, Believer reflects the band's signature style while delivering a message of turning pain into strength, making it a compelling anthem for overcoming challenges and embracing personal transformation.",
+    "PublisherId": 4,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735210518/Vera/songs/3/audio/qextgtfhhrcx6kg6jnl2.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735210559/Vera/songs/3/lyrics/pbqkkwymvr2fh4lf7jss.lrc"
+  },
+  {
+    "SongName": "Despacito",
+    "Description": "Despacito by Luis Fonsi featuring Daddy Yankee is a globally acclaimed reggaeton-pop hit that redefined Latin music's presence on the world stage. Released in 2017, the song blends infectious rhythms, sensual lyrics, and a vibrant melody that celebrates love, passion, and the beauty of Puerto Rican culture. Its catchy chorus and irresistible beat made it an instant favorite, topping charts in multiple countries and becoming the most-streamed song of all time. The remix featuring Justin Bieber further amplified its success, solidifying Despacito as a cultural phenomenon and a landmark moment in global music history.",
+    "PublisherId": 4,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735211798/Vera/songs/4/audio/tybtj0tycnjyogipnvdx.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735211842/Vera/songs/4/lyrics/yj8vy3ritjq6df4ofa3w.lrc"
+  },
+  {
+    "SongName": "Die With A Smile",
+    "Description": "Die With A Smile by Vance Joy is a heartfelt indie-folk track that captures the bittersweet essence of life’s fleeting moments. With its gentle acoustic guitar melody and Joy's emotive vocals, the song reflects on embracing life's beauty and impermanence with grace and gratitude. Its poetic lyrics weave a story of love, hope, and finding peace even in the face of inevitable endings. Die With A Smile resonates deeply, inviting listeners to cherish the present and live fully, making it a poignant addition to Vance Joy's introspective and soul-stirring discography.",
+    "PublisherId": 5,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735212113/Vera/songs/5/audio/ofitwypmpitxotvqiktz.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212153/Vera/songs/5/lyrics/c69metk78r2m67breqc0.lrc"
+  },
+  {
+    "SongName": "Girls Like You",
+    "Description": "Girls Like You by VAN VU is a heartfelt indie-folk track that captures the bittersweet essence of life’s fleeting moments. With its gentle acoustic guitar melody and Joy's emotive vocals, the song reflects on embracing life's beauty and impermanence with grace and gratitude. Its poetic lyrics weave a story of love, hope, and finding peace even in the face of inevitable endings. Die With A Smile resonates deeply, inviting listeners to cherish the present and live fully, making it a poignant addition to Vance Joy's introspective and soul-stirring discography.",
+    "PublisherId": 5,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735212578/Vera/songs/6/audio/yujyhhqikqrnydwik5y5.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212583/Vera/songs/6/lyrics/lgkjwlusdl8bxppzvi2z.lrc"
+  },
+  {
+    "SongName": "Haru Haru",
+    "Description": "Haru Haru by BIGBANG is a poignant K-pop ballad that explores the complexities of love, heartbreak, and forgiveness. Released in 2008 as the lead single from their album Stand Up, the song showcases the group's vocal prowess, emotional depth, and powerful storytelling. With its haunting melody, heartfelt lyrics, and soulful harmonies, Haru Haru resonates with listeners on a profound level, capturing the pain and longing of lost love. The song's music video, which features a dramatic narrative and intense performances, further enhances its emotional impact, solidifying its status as a timeless classic in the K-pop genre.",
+    "PublisherId": 6,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735212730/Vera/songs/7/audio/xjfuwvzhvpyhapbruj7y.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212728/Vera/songs/7/lyrics/fnolz2rdkxurok2zsoq8.lrc"
+  },
+  {
+    "SongName": "Legend Never Die",
+    "Description": "Legend Never Die by League of Legends is an epic collaboration between the popular online game and various artists, including Against the Current and Mako. Released in 2017 as the theme song for the 2017 League of Legends World Championship, the song features powerful vocals, a driving beat, and an anthemic chorus that celebrates resilience, determination, and the spirit of competition. With its inspirational lyrics and dynamic production, Legend Never Die captures the essence of the game's competitive spirit and the dedication of its players, making it a rousing anthem for gamers and fans alike.",
+    "PublisherId": 6,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735213046/Vera/songs/8/audio/yaxgzqm6rvqnyapkp7ls.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213043/Vera/songs/8/lyrics/twlr4tjtmjsbecy99wwx.lrc"
+  },
+  {
+    "SongName": "Old Town Road",
+    "Description": "Old Town Road by Lil Nas X featuring Billy Ray Cyrus is a groundbreaking country-trap crossover hit that defied genre boundaries and captivated audiences worldwide. Released in 2019, the song blends elements of hip-hop, country, and pop, creating a unique sound that resonated with listeners of all ages. With its catchy melody, infectious beat, and playful lyrics, Old Town Road became a cultural phenomenon, topping charts and breaking records to become one of the best-selling singles of all time. The remix featuring Billy Ray Cyrus added a new dimension to the song, further expanding its appeal and solidifying its place in music history.",
+    "PublisherId": 7,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735213304/Vera/songs/9/audio/mvd7xdfwc5smkszkllcy.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213306/Vera/songs/9/lyrics/jnhbj3qcoprvy6pjh5yn.lrc"
+  },
+  {
+    "SongName": "See You Again",
+    "Description": "See You Again by Wiz Khalifa featuring Charlie Puth is a heartfelt hip-hop ballad that pays tribute to the late actor Paul Walker and captures the emotions of loss, remembrance, and friendship. Released in 2015 as the theme song for the film Furious 7, the song became a global sensation, topping charts and touching the hearts of millions with its poignant lyrics and soulful melody. With its heartfelt message, powerful vocals, and emotional resonance, See You Again became an anthem of love and loss, connecting listeners across the world and leaving a lasting impact on popular culture.",
+    "PublisherId": 7,
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735213886/Vera/songs/10/audio/bldvj9hguzlibgb9gxy7.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213883/Vera/songs/10/lyrics/xn92zlcbfv7kmsq7lfa9.lrc"
+  },
+  {
     "SongName": "Shape of You",
-    "Description": "A catchy pop song by Ed Sheeran about love and attraction.",
-    "PublisherId": 3,
-    "MusicUrl": "https://example.com/music/shape-of-you.mp3",
-    "LyricUrl": "https://example.com/lyrics/shape-of-you.txt"
-  },
-  {
-    "SongName": "Bohemian Rhapsody",
-    "Description": "A rock classic by Queen featuring unique structure and vocals.",
-    "PublisherId": 4,
-    "MusicUrl": "https://example.com/music/bohemian-rhapsody.mp3",
-    "LyricUrl": "https://example.com/lyrics/bohemian-rhapsody.txt"
-  },
-  {
-    "SongName": "Blinding Lights",
-    "Description": "A synthwave-inspired hit by The Weeknd.",
-    "PublisherId": 5,
-    "MusicUrl": "https://example.com/music/blinding-lights.mp3",
-    "LyricUrl": "https://example.com/lyrics/blinding-lights.txt"
-  },
-  {
-    "SongName": "Imagine",
-    "Description": "A timeless anthem for peace by John Lennon.",
-    "PublisherId": 6,
-    "MusicUrl": "https://example.com/music/imagine.mp3",
-    "LyricUrl": "https://example.com/lyrics/imagine.txt"
-  },
-  {
-    "SongName": "Hotel California",
-    "Description": "A classic rock masterpiece by Eagles.",
-    "PublisherId": 7,
-    "MusicUrl": "https://example.com/music/hotel-california.mp3",
-    "LyricUrl": "https://example.com/lyrics/hotel-california.txt"
-  },
-  {
-    "SongName": "Rolling in the Deep",
-    "Description": "A powerful soul-pop anthem by Adele.",
+    "Description": "Shape of You by Ed Sheeran is a chart-topping pop hit that showcases the singer-songwriter's versatile musical style and infectious melodies. Released in 2017 as the lead single from his album ÷ (Divide), the song features a catchy beat, playful lyrics, and a danceable rhythm that quickly became a favorite among fans and critics alike. With its upbeat vibe, romantic themes, and Sheeran's soulful vocals, Shape of You became a global phenomenon, topping charts in multiple countries and earning critical acclaim for its catchy hooks and irresistible charm.",
     "PublisherId": 8,
-    "MusicUrl": "https://example.com/music/rolling-in-the-deep.mp3",
-    "LyricUrl": "https://example.com/lyrics/rolling-in-the-deep.txt"
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735214043/Vera/songs/11/audio/vjozgoqd8lpymwlumdjh.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735214041/Vera/songs/11/lyrics/fezvezv6ufrrhabib4rb.lrc"
   },
   {
-    "SongName": "Let It Be",
-    "Description": "An iconic song by The Beatles with a message of hope.",
-    "PublisherId": 3,
-    "MusicUrl": "https://example.com/music/let-it-be.mp3",
-    "LyricUrl": "https://example.com/lyrics/let-it-be.txt"
-  },
-  {
-    "SongName": "Stairway to Heaven",
-    "Description": "A rock epic by Led Zeppelin.",
-    "PublisherId": 4,
-    "MusicUrl": "https://example.com/music/stairway-to-heaven.mp3",
-    "LyricUrl": "https://example.com/lyrics/stairway-to-heaven.txt"
-  },
-  {
-    "SongName": "Sweet Child O' Mine",
-    "Description": "A hard rock hit by Guns N' Roses.",
-    "PublisherId": 5,
-    "MusicUrl": "https://example.com/music/sweet-child-o-mine.mp3",
-    "LyricUrl": "https://example.com/lyrics/sweet-child-o-mine.txt"
-  },
-  {
-    "SongName": "Billie Jean",
-    "Description": "A pop sensation by Michael Jackson with a captivating bassline.",
-    "PublisherId": 6,
-    "MusicUrl": "https://example.com/music/billie-jean.mp3",
-    "LyricUrl": "https://example.com/lyrics/billie-jean.txt"
-  },
-  {
-    "SongName": "Smells Like Teen Spirit",
-    "Description": "A grunge anthem by Nirvana.",
-    "PublisherId": 7,
-    "MusicUrl": "https://example.com/music/smells-like-teen-spirit.mp3",
-    "LyricUrl": "https://example.com/lyrics/smells-like-teen-spirit.txt"
-  },
-  {
-    "SongName": "Hey Jude",
-    "Description": "An emotional and uplifting song by The Beatles.",
+    "SongName": "Wavin' Flag",
+    "Description": "Wavin' Flag by K'naan is an uplifting anthem that celebrates unity, hope, and resilience in the face of adversity. Released in 2009 as the official song for the FIFA World Cup, the track features a powerful message of solidarity, compassion, and the power of music to inspire change. With its infectious melody, uplifting chorus, and poignant lyrics, Wavin' Flag became a global sensation, resonating with audiences around the world and becoming an anthem of hope and unity. The song's success led to multiple versions and collaborations, further amplifying its impact and spreading its message of positivity and empowerment.",
     "PublisherId": 8,
-    "MusicUrl": "https://example.com/music/hey-jude.mp3",
-    "LyricUrl": "https://example.com/lyrics/hey-jude.txt"
-  },
-  {
-    "SongName": "Purple Rain",
-    "Description": "A soulful rock ballad by Prince.",
-    "PublisherId": 3,
-    "MusicUrl": "https://example.com/music/purple-rain.mp3",
-    "LyricUrl": "https://example.com/lyrics/purple-rain.txt"
-  },
-  {
-    "SongName": "Thriller",
-    "Description": "A groundbreaking pop hit by Michael Jackson.",
-    "PublisherId": 4,
-    "MusicUrl": "https://example.com/music/thriller.mp3",
-    "LyricUrl": "https://example.com/lyrics/thriller.txt"
-  },
-  {
-    "SongName": "Wonderwall",
-    "Description": "A Britpop classic by Oasis.",
-    "PublisherId": 5,
-    "MusicUrl": "https://example.com/music/wonderwall.mp3",
-    "LyricUrl": "https://example.com/lyrics/wonderwall.txt"
-  },
-  {
-    "SongName": "I Will Always Love You",
-    "Description": "A heartfelt ballad by Whitney Houston.",
-    "PublisherId": 6,
-    "MusicUrl": "https://example.com/music/i-will-always-love-you.mp3",
-    "LyricUrl": "https://example.com/lyrics/i-will-always-love-you.txt"
-  },
-  {
-    "SongName": "Lose Yourself",
-    "Description": "A motivational rap hit by Eminem.",
-    "PublisherId": 7,
-    "MusicUrl": "https://example.com/music/lose-yourself.mp3",
-    "LyricUrl": "https://example.com/lyrics/lose-yourself.txt"
-  },
-  {
-    "SongName": "Someone Like You",
-    "Description": "A moving ballad by Adele.",
-    "PublisherId": 8,
-    "MusicUrl": "https://example.com/music/someone-like-you.mp3",
-    "LyricUrl": "https://example.com/lyrics/someone-like-you.txt"
-  },
-  {
-    "SongName": "Creep",
-    "Description": "An alternative rock anthem by Radiohead.",
-    "PublisherId": 3,
-    "MusicUrl": "https://example.com/music/creep.mp3",
-    "LyricUrl": "https://example.com/lyrics/creep.txt"
-  },
-  {
-    "SongName": "Halo",
-    "Description": "A powerful ballad by Beyoncé.",
-    "PublisherId": 4,
-    "MusicUrl": "https://example.com/music/halo.mp3",
-    "LyricUrl": "https://example.com/lyrics/halo.txt"
+    "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735214219/Vera/songs/12/audio/s8f4upeay0pksd1uym1s.mp3",
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735214214/Vera/songs/12/lyrics/iblaloksffym13gxke9j.lrc"
   }
 ]
