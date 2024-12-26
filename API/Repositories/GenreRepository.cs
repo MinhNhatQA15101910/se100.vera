@@ -1,11 +1,18 @@
-using API.Interfaces;
-using API.Entities;
 using API.Data;
+using API.DTOs.Genres;
+using API.Entities;
+using API.Helpers;
+using API.Interfaces;
 
 namespace API.Repositories;
 
-public class GenreRepository(DataContext context) : IGenreRepository
+public class GenreRepository(DataContext context, IMapper mapper) : IGenreRepository
 {
+   public void AddGenre(Genre genre)
+   {
+      context.Genres.Add(genre);
+   }
+
    public async Task<Genre> AddGenreAsync(Genre genre)
    {
       await context.Genres.AddAsync(genre);
@@ -21,13 +28,26 @@ public class GenreRepository(DataContext context) : IGenreRepository
 
    public async Task<Genre?> GetGenreByIdAsync(int id)
    {
-
-      return await context.Genres.SingleOrDefaultAsync(p => p.Id == id);
+      return await context.Genres.FindAsync(id);
    }
 
-   public async Task<List<Genre>> GetGenresAsync()
+   public async Task<Genre?> GetGenreByNameAsync(string name)
    {
-      return await context.Genres.ToListAsync();
+      return await context.Genres
+        .SingleOrDefaultAsync(s => s.GenreName.ToUpper() == name.ToUpper());
+   }
+
+   public async Task<PagedList<GenreDto>> GetGenresAsync(PaginationParams paginationParams)
+   {
+      var query = context.Genres.AsQueryable();
+
+      query = query.OrderBy(g => g.GenreName);
+
+      return await PagedList<GenreDto>.CreateAsync(
+         query.ProjectTo<GenreDto>(mapper.ConfigurationProvider),
+         paginationParams.PageNumber,
+         paginationParams.PageSize
+      );
    }
 
    public async Task<bool> SaveChangesAsync()

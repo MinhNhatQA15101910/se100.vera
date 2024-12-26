@@ -3,8 +3,6 @@ using API.Interfaces;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
-using API.Repositories;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace API.Controllers;
 
