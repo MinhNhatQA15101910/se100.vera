@@ -151,5 +151,42 @@ public class AutoMapperProfiles : Profile
         CreateMap<AddUpdateGenreDto, Genre>();
         CreateMap<NewPlaylistDto, Playlist>();
         CreateMap<Playlist, PlaylistDto>();
+        CreateMap<PlaylistSong, SongDto>()
+            .ForMember(
+                s => s.Id,
+                o => o.MapFrom(x => x.Song.Id)
+            )
+            .ForMember(
+                s => s.SongName,
+                o => o.MapFrom(x => x.Song.SongName)
+            )
+            .ForMember(
+                s => s.PublisherName,
+                o => o.MapFrom(x => x.Song.Publisher.UserName)
+            )
+            .ForMember(
+                s => s.PublisherImageUrl,
+                o => o.MapFrom(x => x.Song.Publisher.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
+            )
+            .ForMember(
+                s => s.Genres,
+                o => o.MapFrom(x => x.Song.Genres.Select(x => x.Genre.GenreName).ToList())
+            )
+            .ForMember(
+                s => s.TotalView,
+                o => o.MapFrom(x => x.Song.TotalListeningHours)
+            )
+            .ForMember(
+                s => s.MusicUrl,
+                o => o.MapFrom(x => x.Song.MusicUrl)
+            )
+            .ForMember(
+                s => s.LyricUrl,
+                o => o.MapFrom(x => x.Song.LyricUrl)
+            )
+            .ForMember(
+                s => s.SongPhotoUrl,
+                o => o.MapFrom(x => x.Song.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
+            );
     }
 }
