@@ -151,11 +151,11 @@ public class AuthController(
         return Ok();
     }
 
-    [HttpPost("verify-pincode")]
-    public ActionResult VerifyPincode(VerifyPincodeDto verifyPincodeDto)
-    {
-        
-    }
+    // [HttpPost("verify-pincode")]
+    // public ActionResult VerifyPincode(VerifyPincodeDto verifyPincodeDto)
+    // {
+
+    // }
 
     private async Task<bool> UserExists(string email)
     {
