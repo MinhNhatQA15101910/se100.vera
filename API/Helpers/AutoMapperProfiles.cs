@@ -68,15 +68,79 @@ public class AutoMapperProfiles : Profile
                 )
             )
             .ForMember(
-                d => d.Artists,
-                o => o.MapFrom(
-                    s => s.Artists.Select(sa => sa.Artist).ToList()
-                )
-            )
-            .ForMember(
                 d => d.Genres,
                 o => o.MapFrom(
                     s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
+                )
+            );
+        CreateMap<ArtistSong, UserDto>()
+            .ForMember(
+                d => d.Id,
+                o => o.MapFrom(
+                    s => s.Artist.Id
+                )
+            )
+            .ForMember(
+                d => d.Email,
+                o => o.MapFrom(
+                    s => s.Artist.Email
+                )
+            )
+            .ForMember(
+                d => d.FirstName,
+                o => o.MapFrom(
+                    s => s.Artist.FirstName
+                )
+            )
+            .ForMember(
+                d => d.LastName,
+                o => o.MapFrom(
+                    s => s.Artist.LastName
+                )
+            )
+            .ForMember(
+                d => d.ArtistName,
+                o => o.MapFrom(
+                    s => s.Artist.ArtistName
+                )
+            )
+            .ForMember(
+                d => d.PhotoUrl,
+                o => o.MapFrom(
+                    s => s.Artist.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
+                )
+            )
+            .ForMember(
+                d => d.Gender,
+                o => o.MapFrom(s => s.Artist.Gender)
+            )
+            .ForMember(
+                d => d.DateOfBirth,
+                o => o.MapFrom(s => s.Artist.DateOfBirth)
+            )
+            .ForMember(
+                d => d.About,
+                o => o.MapFrom(s => s.Artist.About)
+            )
+            .ForMember(
+                d => d.CreatedAt,
+                o => o.MapFrom(s => s.Artist.CreatedAt)
+            )
+            .ForMember(
+                d => d.Photos,
+                o => o.MapFrom(
+                    s => s.Artist.Photos.Select(x => new FileDto
+                    {
+                        Id = x.Photo.Id,
+                        Url = x.Photo.Url,
+                        IsMain = x.IsMain
+                    })
+                )
+            )
+            .ForMember(
+                d => d.Roles,
+                o => o.MapFrom(
+                    s => s.Artist.UserRoles.Select(x => x.Role.Name)
                 )
             );
         CreateMap<NewSongDto, Song>()
