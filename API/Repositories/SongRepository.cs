@@ -11,8 +11,9 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     public async Task<Song?> GetSongByIdAsync(int id)
     {
         return await context.Songs
-        .Include(s => s.Genres)
-        .ThenInclude(g => g.Genre)
+        .Include(s => s.Genres).ThenInclude(g => g.Genre)
+        .Include(s => s.Publisher).ThenInclude(p => p.UserName)
+        .Include(s => s.Artists).ThenInclude(sa => sa.Artist).ThenInclude(a => a.UserName)
         .SingleOrDefaultAsync(s => s.Id == id);
     }
 

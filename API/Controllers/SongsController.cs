@@ -10,10 +10,14 @@ public class SongsController(
     ISongRepository songRepository,
     IMapper mapper,
     IFileService fileService,
+    IAlbumSongRepository albumSongRepository,
+    IArtistSongRepository artistSongRepository,
+    IGenreRepository genreRepository,
     IPhotoRepository photoRepository,
+    IPlaylistSongRepository playlistSongRepository,
     ISongPhotoRepository songPhotoRepository,
     ISongGenreRepository songGenreRepository,
-    IGenreRepository genreRepository
+    IUserRepository userRepository
 ) : BaseApiController
 {
     [HttpGet("{id:int}")]
@@ -45,6 +49,22 @@ public class SongsController(
             return BadRequest("Audio file is required.");
         }
 
+        if (newSongDto.ArtistIds == null)
+        {
+            return BadRequest("At least one artist is required.");
+        }
+        else
+        {
+            foreach (var artistId in newSongDto.ArtistIds)
+            {
+                var artist = await userRepository.GetUserByIdAsync(artistId);
+                if (artist == null)
+                {
+                    return BadRequest("Invalid artist id.");
+                }
+            }
+        }
+
         if (newSongDto.GenreIds == null)
         {
             return BadRequest("At least one genre is required.");
@@ -62,6 +82,22 @@ public class SongsController(
         }
 
         var song = await songRepository.AddSongAsync(newSongDto);
+
+        var publisher = await userRepository.GetUserByIdAsync(userId);
+        if (publisher == null)
+        {
+            return BadRequest("Invalid publisher id.");
+        }
+        song.Publisher = publisher;
+
+        foreach (var artistId in newSongDto.ArtistIds)
+        {
+            var artistSong = new ArtistSong
+            {
+                ArtistId = artistId,
+                SongId = song.Id
+            };
+        }
 
         foreach (var genreId in newSongDto.GenreIds)
         {
@@ -168,7 +204,7 @@ public class SongsController(
 
         mapper.Map(updateSongDto, song);
 
-        var songGenres = await songGenreRepository.GetSongGenreAsync(song.Id);
+        var songGenres = await songGenreRepository.GetSongGenresAsync(song.Id);
         if (songGenres != null)
         {
             foreach (var songGenre in songGenres)
@@ -316,6 +352,39 @@ public class SongsController(
             return NotFound();
         }
 
+        var albumSongs = await albumSongRepository.GetAlbumSongsAsync(song.Id);
+        if (albumSongs != null)
+        {
+            return BadRequest("Song is in an album.");
+        }
+
+        var playlistSongs = await playlistSongRepository.GetPlaylistSongsAsync(song.Id);
+        if (playlistSongs != null)
+        {
+            foreach (var playlistSong in playlistSongs)
+            {
+                playlistSongRepository.RemovePlaylistSong(playlistSong);
+            }
+        }
+
+        var artistSongs = await artistSongRepository.GetArtistSongsAsync(song.Id);
+        if (artistSongs != null)
+        {
+            foreach (var artistSong in artistSongs)
+            {
+                artistSongRepository.RemoveArtistSong(artistSong);
+            }
+        }
+
+        var songGenres = await songGenreRepository.GetSongGenresAsync(song.Id);
+        if (songGenres != null)
+        {
+            foreach (var songGenre in songGenres)
+            {
+                songGenreRepository.RemoveSongGenre(songGenre);
+            }
+        }
+
         var songPhotos = await songPhotoRepository.GetSongPhotoAsync(song.Id);
         if (songPhotos != null)
         {
@@ -345,18 +414,6 @@ public class SongsController(
         {
             var deleteResult = await fileService.DeleteFileAsync(song.LyricPublicId, ResourceType.Raw);
             if (deleteResult.Error != null) return BadRequest("Delete lyric file from cloudinary failed: " + deleteResult.Error.Message);
-        }
-
-        if (song.Genres != null)
-        {
-            var songGenres = await songGenreRepository.GetSongGenreAsync(song.Id);
-            if (songGenres != null)
-            {
-                foreach (var songGenre in songGenres)
-                {
-                    songGenreRepository.RemoveSongGenre(songGenre);
-                }
-            }
         }
 
         songRepository.RemoveSong(song);

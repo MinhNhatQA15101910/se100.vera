@@ -16,6 +16,13 @@ public class PlaylistSongRepository(DataContext context) : IPlaylistSongReposito
       return await context.PlaylistSongs.FindAsync(playlistId, songId);
    }
 
+   public Task<List<PlaylistSong>> GetPlaylistSongsAsync(int playlistId)
+   {
+      return context.PlaylistSongs
+            .Where(x => x.PlaylistId == playlistId)
+            .ToListAsync();
+   }
+
    public void RemovePlaylistSong(PlaylistSong playlistSong)
    {
       context.PlaylistSongs.Remove(playlistSong);

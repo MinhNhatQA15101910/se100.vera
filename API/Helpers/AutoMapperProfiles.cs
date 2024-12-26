@@ -44,6 +44,18 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<Song, SongDto>()
             .ForMember(
+                d => d.PublisherName,
+                o => o.MapFrom(
+                    s => s.Publisher.ArtistName
+                )
+            )
+            .ForMember(
+                d => d.PublisherImageUrl,
+                o => o.MapFrom(
+                    s => s.Publisher.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
+                )
+            )
+            .ForMember(
                 d => d.SongPhotoUrl,
                 o => o.MapFrom(
                     s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
@@ -56,26 +68,24 @@ public class AutoMapperProfiles : Profile
                 )
             )
             .ForMember(
+                d => d.Artists,
+                o => o.MapFrom(
+                    s => s.Artists.Select(sa => sa.Artist).ToList()
+                )
+            )
+            .ForMember(
                 d => d.Genres,
                 o => o.MapFrom(
                     s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
                 )
             );
-        // .ForMember(
-        //     d => d.Artists,
-        //     o => o.MapFrom(
-        //         s => s.Artists.Select(x => new UserDto
-        //         {
-        //             Id = x.Artist.Id,
-        //             FirstName = x.Artist.FirstName,
-        //             LastName = x.Artist.LastName,
-        //             Email = x.Artist.Email,
-        //             Gender = x.Artist.Gender,
-        //             PhotoUrl = x.Artist.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
-        //         })
-        //     )
-        // );
-        CreateMap<NewSongDto, Song>();
+        CreateMap<NewSongDto, Song>()
+        .ForMember(
+            s => s.Artists,
+            o => o.MapFrom(
+                s => s.ArtistIds.Select(x => new ArtistSong { ArtistId = x }).ToList()
+            )
+        );
         CreateMap<SongPhoto, FileDto>()
             .ForMember(
                 f => f.Id,
@@ -85,6 +95,7 @@ public class AutoMapperProfiles : Profile
                 f => f.Url,
                 photos => photos.MapFrom(p => p.Photo.Url)
             );
+
         CreateMap<UserPhoto, FileDto>()
             .ForMember(
                 f => f.Id,

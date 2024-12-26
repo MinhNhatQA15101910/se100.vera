@@ -22,6 +22,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IAlbumPhotoRepository, AlbumPhotoRepository>();
         services.AddScoped<IAlbumRepository, AlbumRepository>();
         services.AddScoped<IAlbumSongRepository, AlbumSongRepository>();
+        services.AddScoped<IArtistSongRepository, ArtistSongRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
         services.AddScoped<IPlaylistRepository, PlaylistRepository>();
         services.AddScoped<IPlaylistSongRepository, PlaylistSongRepository>();
