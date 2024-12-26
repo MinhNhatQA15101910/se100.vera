@@ -20,7 +20,6 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ imageUrl, name }) => {
             className="w-full h-full object-cover"
           />
         </div>
-        {/* Artist Name */}
         <span className="text-white text-md font-medium">{name}</span>
       </div>
     </Link>

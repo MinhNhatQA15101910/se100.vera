@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
-
-import { FaHeart } from 'react-icons/fa';
+import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 interface LikeButtonProps {
   songId: number;
 }
@@ -29,10 +28,17 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
 
   return (
     <button onClick={handleLike}>
-      <FaHeart
-        size={25}
-        className={`hover:text-general-pink-hover transition-colors duration-200 ${isLiked ? 'text-general-pink' : ''}`}
-      />
+      {isLiked ? (
+        <MdFavorite
+          size={20}
+          className="text-general-pink hover:text-general-pink-hover transition-colors duration-200"
+        />
+      ) : (
+        <MdFavoriteBorder
+          size={20}
+          className="text-general-pink hover:text-general-pink-hover transition-colors duration-200"
+        />
+      )}
     </button>
   );
 };

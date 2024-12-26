@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import DynamicImage from '../custom/DynamicImage';
 
 type AlbumCardProps = {
   image: string;
@@ -14,12 +15,10 @@ const AlbumCard: React.FC<AlbumCardProps> = ({ image, title, artist }) => {
     <Link href="/album-detail">
       <div className="p-4 bg-[#1F1F1F] rounded-lg cursor-pointer hover:bg-gray-700 transition">
         <div className="relative w-full aspect-square">
-          <Image
+          <DynamicImage
             src={image}
             alt={title}
-            fill
             className="object-cover rounded-md"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
         <h3 className="text-white text-lg font-bold mt-3 text-nowrap">
