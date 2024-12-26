@@ -31,6 +31,7 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             // Include song username info
             .Include(a => a.Songs).ThenInclude(albumSong => albumSong.Song)
             .ThenInclude(s => s.Publisher).ThenInclude(p => p.Photos).ThenInclude(pp => pp.Photo)
+            // Execute query
             .FirstOrDefaultAsync(a => a.Id == id);
     }
 
