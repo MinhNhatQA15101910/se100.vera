@@ -5,6 +5,12 @@ using API.Interfaces;
 
 namespace API.Controllers;
 
+class UserMap
+{
+    public string? Pincode { get; set; }
+    public RegisterDto? RegisterDto { get; set; }
+}
+
 public class AuthController(
     IEmailService emailService,
     ITokenService tokenService,
@@ -12,20 +18,52 @@ public class AuthController(
     IMapper mapper
 ) : BaseApiController
 {
+    private Dictionary<string, UserMap> pincodeMap = [];
+
     [HttpPost("validate-signup")]
     public async Task<ActionResult<UserDto>> ValidateSignup(RegisterDto registerDto)
     {
+        // Check if email already exists
         if (await UserExists(registerDto.Email))
         {
             return BadRequest("Email already exists.");
         }
 
-        var result = await userManager.PasswordValidators.First().ValidateAsync(userManager, null!, registerDto.Password);
+        // Check if password is valid
+        var result = await userManager.PasswordValidators.First().ValidateAsync(
+            userManager,
+            null!,
+            registerDto.Password
+        );
 
         if (!result.Succeeded)
         {
             return BadRequest(result.Errors);
         }
+
+        // Send pincode email
+        var displayName = registerDto.FirstName;
+        var email = registerDto.Email;
+        var pincode = GeneratePincode();
+        var subject = "VERA ACCOUNT VERIFICATION CODE";
+        var message = await System.IO.File.ReadAllTextAsync("./Assets/EmailContent.html");
+        message = message.Replace("{{hideEmail}}", HideEmail(email));
+        message = message.Replace("{{pincode}}", pincode);
+
+        await emailService.SendEmailAsync(
+            new EmailMessage(
+                displayName,
+                email,
+                subject,
+                message
+            )
+        );
+
+        pincodeMap[email] = new UserMap
+        {
+            Pincode = pincode,
+            RegisterDto = registerDto
+        };
 
         return Ok(true);
     }
@@ -113,6 +151,12 @@ public class AuthController(
         return Ok();
     }
 
+    [HttpPost("verify-pincode")]
+    public ActionResult VerifyPincode(VerifyPincodeDto verifyPincodeDto)
+    {
+        
+    }
+
     private async Task<bool> UserExists(string email)
     {
         return await userManager.Users.AnyAsync(x => x.NormalizedEmail == email.ToUpper());
@@ -131,5 +175,11 @@ public class AuthController(
         var hiddenEmailName = emailNameFirstChar + new string('*', emailNameLength - 2) + emailNameLastChar;
 
         return $"{hiddenEmailName}@{emailDomain}";
+    }
+
+    private static string GeneratePincode()
+    {
+        var random = new Random();
+        return random.Next(100000, 999999).ToString();
     }
 }
