@@ -19,4 +19,6 @@ public class NewSongDto
 
     [Required]
     public required List<int> GenreIds { get; set; }
+
+    public required List<int> ArtistIds { get; set; }
 }
