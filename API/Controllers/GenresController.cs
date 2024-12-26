@@ -33,6 +33,14 @@ public class GenresController(
         return Ok(genres);
     }
 
+    [HttpGet("all")]
+    public async Task<ActionResult<IEnumerable<GenreDto>>> GetAllGenres()
+    {
+        var genres = await genreRepository.GetAllGenresAsync();
+
+        return Ok(genres);
+    }
+
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<GenreDto>> AddGenre(AddUpdateGenreDto newGenreDto)

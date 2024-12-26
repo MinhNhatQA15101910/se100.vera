@@ -7,7 +7,6 @@ using API.Interfaces;
 
 namespace API.Controllers;
 
-[Authorize]
 public class UsersController(
     IPhotoRepository photoRepository,
     IUserPhotoRepository userPhotoRepository,
@@ -38,9 +37,10 @@ public class UsersController(
     }
 
     [HttpPatch("change-password")]
+    [Authorize]
     public async Task<ActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(User.GetEmail());
+        var existingUser = await userRepository.GetUserByEmailAsync(User.GetEmail()!);
         if (existingUser == null)
         {
             return Unauthorized("User with this email does not exist.");
@@ -162,5 +162,21 @@ public class UsersController(
         Response.AddPaginationHeader(users);
 
         return Ok(users);
+    }
+
+    [Authorize]
+    [HttpGet("artists")]
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetArtists([FromQuery] UserParams userParams)
+    {
+        if (User.GetEmail() != null)
+        {
+            userParams.CurrentEmail = User.GetEmail();
+        }
+
+        var artists = await userRepository.GetArtistsAsync(userParams);
+
+        Response.AddPaginationHeader(artists);
+
+        return Ok(artists);
     }
 }

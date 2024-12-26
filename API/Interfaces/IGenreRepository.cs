@@ -13,4 +13,5 @@ public interface IGenreRepository
    Task<bool> DeleteGenreAsync(int id);
    Task<bool> SaveChangesAsync();
    void AddGenre(Genre genre);
+   Task<IEnumerable<GenreDto>> GetAllGenresAsync();
 }
