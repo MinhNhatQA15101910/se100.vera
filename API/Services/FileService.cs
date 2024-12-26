@@ -18,9 +18,12 @@ public class FileService : IFileService
         _cloudinary = new Cloudinary(acc);
     }
 
-    public async Task<DeletionResult> DeleteFileAsync(string publicId)
+    public async Task<DeletionResult> DeleteFileAsync(string publicId, ResourceType resourceType)
     {
-        var deletionParams = new DeletionParams(publicId);
+        var deletionParams = new DeletionParams(publicId)
+        {
+            ResourceType = resourceType
+        };
 
         var deletionResult = await _cloudinary.DestroyAsync(deletionParams);
         return deletionResult;

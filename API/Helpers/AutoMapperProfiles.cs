@@ -3,6 +3,7 @@ using API.DTOs.Songs;
 using API.Entities;
 using API.DTOs.Files;
 using API.DTOs.Albums;
+using API.DTOs.Playlists;
 using API.DTOs.Genres;
 
 namespace API.Helpers;
@@ -148,5 +149,7 @@ public class AutoMapperProfiles : Profile
             );
         CreateMap<Genre, GenreDto>();
         CreateMap<AddUpdateGenreDto, Genre>();
+        CreateMap<NewPlaylistDto, Playlist>();
+        CreateMap<Playlist, PlaylistDto>();
     }
 }
