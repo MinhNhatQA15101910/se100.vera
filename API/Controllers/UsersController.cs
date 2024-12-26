@@ -140,7 +140,7 @@ public class UsersController(
 
         if (photo.PublicId != null)
         {
-            var result = await fileService.DeleteFileAsync(photo.PublicId);
+            var result = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
             if (result.Error != null) return BadRequest(result.Error.Message);
         }
 

@@ -188,7 +188,7 @@ public class SongsController(
 
         if (song.MusicPublicId != null)
         {
-            var deleteResult = await fileService.DeleteFileAsync(song.MusicPublicId);
+            var deleteResult = await fileService.DeleteFileAsync(song.MusicPublicId, ResourceType.Video);
             if (deleteResult.Error != null) return BadRequest("Delete song file from cloudinary failed: " + deleteResult.Error.Message);
         }
 
@@ -203,7 +203,7 @@ public class SongsController(
         {
             if (song.LyricPublicId != null)
             {
-                var deleteResult = await fileService.DeleteFileAsync(song.LyricPublicId);
+                var deleteResult = await fileService.DeleteFileAsync(song.LyricPublicId, ResourceType.Raw);
                 if (deleteResult.Error != null) return BadRequest("Delete lyric file from cloudinary failed: " + deleteResult.Error.Message);
             }
 
@@ -232,7 +232,7 @@ public class SongsController(
                     {
                         if (photo.PublicId != null)
                         {
-                            var deleteResult = await fileService.DeleteFileAsync(photo.PublicId);
+                            var deleteResult = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
                             if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
                         }
                         photoRepository.RemovePhoto(photo);
@@ -276,7 +276,7 @@ public class SongsController(
                     {
                         if (photo.PublicId != null)
                         {
-                            var deleteResult = await fileService.DeleteFileAsync(photo.PublicId);
+                            var deleteResult = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
                             if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
                         }
                         photoRepository.RemovePhoto(photo);
@@ -326,7 +326,7 @@ public class SongsController(
                 {
                     if (photo.PublicId != null)
                     {
-                        var deleteResult = await fileService.DeleteFileAsync(photo.PublicId);
+                        var deleteResult = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
                         if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
                     }
                     photoRepository.RemovePhoto(photo);
@@ -337,13 +337,13 @@ public class SongsController(
 
         if (song.MusicPublicId != null)
         {
-            var deleteResult = await fileService.DeleteFileAsync(song.MusicPublicId);
+            var deleteResult = await fileService.DeleteFileAsync(song.MusicPublicId, ResourceType.Video);
             if (deleteResult.Error != null) return BadRequest("Delete song file from cloudinary failed: " + deleteResult.Error.Message);
         }
 
         if (song.LyricPublicId != null)
         {
-            var deleteResult = await fileService.DeleteFileAsync(song.LyricPublicId);
+            var deleteResult = await fileService.DeleteFileAsync(song.LyricPublicId, ResourceType.Raw);
             if (deleteResult.Error != null) return BadRequest("Delete lyric file from cloudinary failed: " + deleteResult.Error.Message);
         }
 
