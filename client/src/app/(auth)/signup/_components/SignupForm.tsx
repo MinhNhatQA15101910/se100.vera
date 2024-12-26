@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/Label';
+import { Label, LabelInputContainer } from '@/components/ui/label';
 import { Input } from '@/components/ui/Input';
 import { AppButton } from '@/components/ui/AppButton';
 import Separator from '@/components/Separator';
@@ -12,7 +12,6 @@ import { useLoading } from '@/contexts/LoadingContext';
 import { useUser } from '@/contexts/UserContext';
 import { z } from 'zod';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
 import { GenderType, UserType } from '@/types/declaration';
 import GenderSelection from './GenderSelection';
 

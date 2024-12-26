@@ -78,7 +78,7 @@ export default function TrendingSongs() {
                     <div>
                       <div className="font-semibold">{song.songName}</div>
                       <div className="text-sm text-gray-400">
-                        {'con cac artist ngu'}
+                        {'artist dep trai'}
                       </div>
                     </div>
                   </div>
@@ -87,7 +87,7 @@ export default function TrendingSongs() {
                   {song.createdAt || "10/10/2024"}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] max-w-[200px] truncate">
-                  {'Album con cac tao'}
+                  {'Album cua toi'}
                 </TableCell>
                 <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                   <div className="flex items-center justify-end space-x-4">

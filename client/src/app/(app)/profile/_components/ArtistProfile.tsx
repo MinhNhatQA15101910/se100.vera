@@ -37,7 +37,7 @@ export default function ArtistProfile() {
         <div className="flex flex-col space-y-1.5 p-6">
           <div className="flex items-center gap-6">
             <Avatar className="w-[25%] h-auto border-4 border-white/10">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarImage src={userDetails?.photoUrl || "https://github.com/shadcn.png"} alt="@shadcn" />
               <AvatarFallback>Load chưa xong</AvatarFallback>
             </Avatar>
             <div className="flex flex-col justify-center">

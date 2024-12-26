@@ -17,7 +17,7 @@ const UserProfile = () => {
       ) : (
         <ListenerProfile />
       )} */}
-      <ListenerProfile />
+      <ArtistProfile />
     </div>
   );
 };

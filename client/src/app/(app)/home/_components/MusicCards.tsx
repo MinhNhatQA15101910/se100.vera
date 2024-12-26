@@ -1,10 +1,14 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronRight } from 'lucide-react';
 import SongCard from '@/components/music/SongCard';
 
-import { weeklyTopSongs, newReleaseSongs } from '@/actions/song-actions';
+import { getAllSongs } from '@/actions/song-actions';
+import { useLoading } from '@/contexts/LoadingContext';
 
 const ViewAllCard = () => {
   return (
@@ -18,6 +22,18 @@ const ViewAllCard = () => {
 };
 
 const MusicCards = () => {
+  const {setLoadingState} = useLoading();
+  const { data, isLoading } = useQuery({
+    queryKey: ['songs', 'home'],
+    queryFn: () => getAllSongs(2, 4),
+  });
+
+  useEffect(() => {
+    setLoadingState(isLoading);
+  }, [isLoading, setLoadingState]);
+
+  
+
   return (
     <div className="w-[90%] flex flex-col bg-transparent text-general-white">
       <div className="flex flex-col w-full space-y-4">
@@ -27,7 +43,7 @@ const MusicCards = () => {
             Weekly Top <span className="text-pink-500">Songs</span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {weeklyTopSongs.slice(0, 5).map((song, index) => (
+            {data?.songs.slice(0, 5).map((song, index) => (
               <SongCard key={index} song={song} />
             ))}
             <ViewAllCard />
@@ -40,7 +56,7 @@ const MusicCards = () => {
             New Release <span className="text-pink-500">Songs</span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {newReleaseSongs.slice(0, 5).map((song, index) => (
+            {data?.songs.slice(0, 5).map((song, index) => (
               <SongCard key={index} song={song} />
             ))}
             <ViewAllCard />

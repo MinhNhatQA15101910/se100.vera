@@ -6,7 +6,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/Label';
+import { Label, LabelInputContainer } from '@/components/ui/label';
 import { Input } from '@/components/ui/Input';
 import Separator from '@/components/Separator';
 import { Checkbox } from '@/components/ui/check-box';

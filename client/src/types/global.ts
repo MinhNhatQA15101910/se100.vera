@@ -4,13 +4,12 @@ export interface Song {
   id: number;
   songName: string;
   description: string | null;
-  totalListeningHours: number;
+  totalView: number; // nho sua lai ko la bu
   musicUrl: string;
   createdAt: string;
   updatedAt: string;
   musicPublicId: string;
   lyricUrl: string | null;
-  artists: string[];
   image: string;
 }
 

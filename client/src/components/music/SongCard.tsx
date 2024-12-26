@@ -9,7 +9,13 @@ import usePlayerStore from '@/stores/player-store';
 
 const SongCard = ({ song }: { song: Song }) => {
   const { setActiveTrack } = usePlayerStore();
-  const handlePlayMusic = () => {};
+  const handlePlayMusic = () => { 
+    console.log("song cua tao: ", song)
+    setActiveTrack({
+      ...song,
+      // musicUrl: "/sounds/robber-vtas.mp3"
+    })
+  };
 
   return (
     <div className="group border border-zinc-100/10 hover:bg-zinc-100/10 rounded-md hover:cursor-pointer transition-colors duration-400 relative">

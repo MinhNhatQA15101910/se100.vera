@@ -77,7 +77,7 @@ const VolumeControl = ({ volume, onVolumeChange }: VolumeControlProps) => {
 
   return (
     <div className="flex items-center gap-2">
-      <AppButton variant="ghost" className="h-9 w-9" onClick={toggleMute}>
+      <AppButton className="h-9 w-9" onClick={toggleMute}>
         {volume === 0 ? (
           <VolumeX className="h-4 w-4" />
         ) : (
