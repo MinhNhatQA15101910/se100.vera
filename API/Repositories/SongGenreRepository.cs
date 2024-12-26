@@ -21,7 +21,7 @@ public class SongGenreRepository(DataContext context) : ISongGenreRepository
 
    public void RemoveSongGenre(SongGenre songGenre)
    {
-      throw new NotImplementedException();
+      context.SongGenres.Remove(songGenre);
    }
 
    public async Task<bool> SaveChangesAsync()

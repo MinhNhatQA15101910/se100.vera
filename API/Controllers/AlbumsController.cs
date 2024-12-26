@@ -85,7 +85,7 @@ public class AlbumsController(
 
     [HttpPut("add-song/{id:int}")]
     [Authorize(Roles = "Artist")]
-    public async Task<ActionResult> AddSongToAlbum(int id, AddSongDto addSongDto)
+    public async Task<ActionResult> AddSongToAlbum(int id, AddRemoveSongDto addSongDto)
     {
         var album = await albumRepository.GetAlbumByIdAsync(id);
         if (album == null)
@@ -121,6 +121,53 @@ public class AlbumsController(
         if (!await albumRepository.SaveChangesAsync())
         {
             return BadRequest("Failed to add song to album.");
+        }
+
+        return NoContent();
+    }
+
+    [HttpPut("remove-song/{id:int}")]
+    [Authorize(Roles = "Artist")]
+    public async Task<ActionResult> RemoveSongFromAlbum(int id, AddRemoveSongDto removeSongDto)
+    {
+        var album = await albumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
+
+        // Validate if the album belongs to the artist
+        var userId = User.GetUserId();
+        if (album.PublisherId != userId)
+        {
+            return Unauthorized("The album does not belong to you.");
+        }
+
+        var song = await songRepository.GetSongByIdAsync(removeSongDto.SongId);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        // Validate if the song belongs to the artist
+        if (song.PublisherId != userId)
+        {
+            return Unauthorized("The song does not belong to you.");
+        }
+
+        // Validate if the song is in the album
+        var albumSong = await albumSongRepository.GetAlbumSongAsync(album.Id, song.Id);
+        if (albumSong == null)
+        {
+            return NotFound("Song not found in album.");
+        }
+
+        // Remove song from album
+        albumSongRepository.RemoveAlbumSong(albumSong);
+
+        if (!await albumRepository.SaveChangesAsync())
+        {
+            return BadRequest("Failed to remove song from album.");
         }
 
         return NoContent();

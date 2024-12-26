@@ -1,6 +1,6 @@
 namespace API.DTOs.Albums;
 
-public class AddSongDto
+public class AddRemoveSongDto
 {
     [Required]
     public int SongId { get; set; }

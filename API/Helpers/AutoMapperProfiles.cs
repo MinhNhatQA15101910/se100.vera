@@ -3,6 +3,7 @@ using API.DTOs.Songs;
 using API.Entities;
 using API.DTOs.Files;
 using API.DTOs.Albums;
+using API.DTOs.Genres;
 
 namespace API.Helpers;
 
@@ -145,5 +146,7 @@ public class AutoMapperProfiles : Profile
                 s => s.SongPhotoUrl,
                 o => o.MapFrom(x => x.Song.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
             );
+        CreateMap<Genre, GenreDto>();
+        CreateMap<AddUpdateGenreDto, Genre>();
     }
 }
