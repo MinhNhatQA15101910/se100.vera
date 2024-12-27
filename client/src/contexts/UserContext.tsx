@@ -160,12 +160,17 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       if (!response || !response.data.token) {
         throw new Error('Invalid response from server');
       }
-
       if (loginCreds.rememberMe) {
-        localStorage.setItem('userDetails', JSON.stringify(response.data));
+        localStorage.setItem(
+          'userDetails',
+          JSON.stringify({ ...response.data, token: '' })
+        );
         document.cookie = `auth_token=${response.data.token}; path=/; max-age=604800; SameSite=Strict; Secure`;
+        document.cookie = `userDetails=${encodeURIComponent(JSON.stringify(response.data))}; path=/; max-age=604800; SameSite=Strict; Secure`;
       } else {
+        // For non-remember-me, set session cookies that expire when browser closes
         document.cookie = `auth_token=${response.data.token}; path=/; SameSite=Strict; Secure`;
+        document.cookie = `userDetails=${encodeURIComponent(JSON.stringify(response.data))}; path=/; SameSite=Strict; Secure`;
       }
 
       setToken(response.data.token);
@@ -207,6 +212,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.removeItem('userDetails');
       document.cookie =
         'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
+        document.cookie =
+          'userDetails=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
       setToken(null);
       setIsAuthenticated(false);
       setUserDetails(null);

@@ -27,12 +27,20 @@ async function client<T>(
     : `/${endpoint}`;
 
   try {
+    // Check if the body is FormData, and don't override Content-Type in that case
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      ...(config.headers || {}),
+    });
+
+    // If the body is FormData, remove the Content-Type header
+    if (config.body instanceof FormData) {
+      headers.delete('Content-Type');
+    }
+
     const response = await fetch(`${baseURL}${normalizedEndpoint}`, {
       ...config,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(config.headers || {}),
-      },
+      headers,
     });
 
     if (!response.ok) {

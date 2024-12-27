@@ -8,7 +8,7 @@ import { Facebook, Instagram, Twitter, Phone } from 'lucide-react';
 export default function Footer() {
   const { isAuthenticated } = useUser();
   const pathname = usePathname();
-  const ignorePathnames = ['/manage-songs', '/upload-song', '/manage-albums'];
+  const ignorePathnames = ['/manage-songs', '/upload-song', '/manage-albums', '/upload-album'];
 
   return (
     <footer

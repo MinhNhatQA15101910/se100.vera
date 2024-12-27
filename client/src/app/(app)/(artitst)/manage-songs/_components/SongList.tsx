@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 import Image from 'next/image';
@@ -70,13 +72,13 @@ const SongList = () => {
               </TableCell>
               <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                 <div className="flex items-center justify-end space-x-2">
-                  <LikeButton songId={'KEKEKEEKE'} />
+                  <LikeButton songId={1} />
                   <span className="text-gray-400 mx-auto">{song.duration}</span>
                 </div>
               </TableCell>
               <TableCell className="text-center bg-[#2E2E2E] group-hover:bg-[#595959] space-x-2">
                 <EditSongButton songId={song.id} />
-                <DeleteSongButton songId={song.id}/>
+                <DeleteSongButton songId={song.id} />
               </TableCell>
             </TableRow>
           ))}

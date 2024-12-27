@@ -13,13 +13,28 @@ export interface Song {
   image: string;
 }
 
+export interface Genre {
+  id: number;
+  genreName: string;
+}
+
+export interface Album {
+  id: number,
+  albumName: string;
+  description: string;
+  totalListeningHours: number,
+  totalSongs: number;
+  createdAt: string;
+  updatedAt: string;
+  publisherId: number
+}
 export interface User {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
   role: Role;
-  artistName: string | null;
+  artistName: string | "";
   photoUrl: string | null;
   gender: string;
   dateOfBirth: string;

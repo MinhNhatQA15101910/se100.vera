@@ -16,15 +16,17 @@ import {
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Music, FileText, ImagePlus, X, Search } from 'lucide-react';
+import { Music, FileText, X } from 'lucide-react';
 import { AppButton } from '@/components/ui/AppButton';
+import { useQuery } from '@tanstack/react-query';
+import { getAllGenres } from '@/actions/genre-actions';
+import GenreSelect from './GenreSelect';
+import ArtistSelect from './ArtistSelect';
+import DynamicImage from '@/components/custom/DynamicImage';
+import { getAllAritst } from '@/actions/user-actions';
+import { useAddSongMutation } from '../_hooks/useSongMutation';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   songName: z.string().min(1, 'Song name is required'),
@@ -61,17 +63,36 @@ const formSchema = z.object({
       'File size must be less than 5MB'
     ),
   genreIds: z.array(z.number()).min(1, 'At least one genre is required'),
+  coAritstIds: z.array(z.number()).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export default function UploadForm() {
+  const router = useRouter();
+  const { data: genresData } = useQuery({
+    queryKey: ['genres', 'upload_song'],
+    queryFn: async () => {
+      return await getAllGenres({ pageSize: 30 });
+    },
+  });
+
+  const { data: artistsData } = useQuery({
+    queryKey: ['user_artist', 'upload_song'],
+    queryFn: async () => {
+      return (await getAllAritst()).artist.filter(
+        (artist) => artist.artistName !== null && artist.artistName !== ''
+      );
+    },
+  });
+  const addSongMutation = useAddSongMutation();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       songName: '',
-      description: '',
       genreIds: [],
+      coAritstIds: [],
     },
   });
 
@@ -105,13 +126,32 @@ export default function UploadForm() {
       maxFiles: 1,
     });
   };
-
   const musicDropzone = CreateDropzone('musicFile');
   const lyricDropzone = CreateDropzone('lyricFile');
   const photoDropzone = CreateDropzone('photoFiles');
 
   const onSubmit = (data: FormValues) => {
-    console.log('Form submitted:', data);
+    console.log('data form Form and gay me: ', data);
+    addSongMutation.mutate(
+      {
+        songName: data.songName,
+        description: data.description || '',
+        lyricFile: data.lyricFile,
+        musicFile: data.musicFile,
+        photoFiles: [data.photoFiles],
+        genreIds: data.genreIds,
+        artistIds: data.coAritstIds || [],
+      },
+      {
+        onSuccess: () => {
+          toast.success('Song uploaded successfully!');
+          router.push('/home');
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      }
+    );
   };
 
   return (
@@ -204,7 +244,7 @@ export default function UploadForm() {
             />
 
             {/* Song's Artwork and Side datas */}
-            <div className="flex flex-row w-full">
+            <div className="flex flex-row w-[100%]">
               <FormField
                 control={form.control}
                 name="photoFiles"
@@ -213,7 +253,7 @@ export default function UploadForm() {
                     <FormControl>
                       <div
                         {...photoDropzone.getRootProps()}
-                        className={`border-2 border-dashed border-gray-600 rounded-lg p-6 flex items-center justify-between cursor-pointer ${
+                        className={` h-full w-full aspect-square border-2 border-dashed border-gray-600 rounded-lg p-6 flex items-center justify-center cursor-pointer ${
                           photoDropzone.isDragActive
                             ? 'border-general-pink'
                             : ''
@@ -221,11 +261,14 @@ export default function UploadForm() {
                       >
                         <input {...photoDropzone.getInputProps()} />
                         {field.value ? (
-                          <></>
+                          <DynamicImage
+                            alt={field.value.name}
+                            src={URL.createObjectURL(field.value)}
+                          />
                         ) : (
                           <div className="flex flex-col items-center gap-4">
                             <FileText className="w-8 h-8" />
-                            <span>Add New Artwork</span>
+                            <span className="text-nowrap">Add New Artwork</span>
                           </div>
                         )}
                       </div>
@@ -234,7 +277,7 @@ export default function UploadForm() {
                   </FormItem>
                 )}
               />
-              <div className="flex flex-col space-y-6 p-4 bg-background text-foreground">
+              <div className="flex flex-col space-y-6 p-4 text-foreground w-[100%]">
                 <FormField
                   control={form.control}
                   name="songName"
@@ -253,7 +296,7 @@ export default function UploadForm() {
                     </FormItem>
                   )}
                 />
-
+                {/* Specify Added Genres */}
                 <FormField
                   control={form.control}
                   name="genreIds"
@@ -262,74 +305,100 @@ export default function UploadForm() {
                       <FormLabel className="text-base">
                         Genre <span className="text-destructive">*</span>
                       </FormLabel>
+                      {/* Display selected genres */}
                       <div className="flex flex-wrap gap-2 mb-2">
-                        <Badge variant="secondary" className="gap-1">
-                          Pop
-                          <X className="h-3 w-3 cursor-pointer" />
-                        </Badge>
-                        <Badge variant="secondary" className="gap-1">
-                          Classical
-                          <X className="h-3 w-3 cursor-pointer" />
-                        </Badge>
+                        {field.value.map((genreId) => {
+                          const genreName = genresData?.find(
+                            (genre) => genre.id === genreId
+                          )?.genreName;
+                          return (
+                            <Badge
+                              key={genreId}
+                              variant="secondary"
+                              className="gap-1"
+                            >
+                              {genreName}
+                              <X
+                                className="h-3 w-3 cursor-pointer"
+                                onClick={() => {
+                                  field.onChange(
+                                    field.value.filter((id) => id !== genreId)
+                                  );
+                                }}
+                              />
+                            </Badge>
+                          );
+                        })}
                       </div>
-                      <FormControl>
-                        <Select>
-                          <SelectTrigger className="bg-background border-input">
-                            <SelectValue placeholder="Choose song genre" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pop">Pop</SelectItem>
-                            <SelectItem value="classical">Classical</SelectItem>
-                            <SelectItem value="rock">Rock</SelectItem>
-                            <SelectItem value="jazz">Jazz</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                      <GenreSelect
+                        genresData={genresData || []}
+                        field={field}
+                      />
                     </FormItem>
                   )}
                 />
-
+                {/*Specify Added Artists*/}
                 <FormField
                   control={form.control}
-                  name="lyricFile"
+                  name="coAritstIds"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">
                         Co-artists (Optional)
                       </FormLabel>
+                      {/* Display selected artists */}
                       <div className="flex flex-wrap gap-2 mb-2">
-                        <Badge variant="secondary" className="gap-1">
-                          DuyVip
-                          <X className="h-3 w-3 cursor-pointer" />
-                        </Badge>
-                        <Badge variant="secondary" className="gap-1">
-                          DuyVipVaiCaL
-                          <X className="h-3 w-3 cursor-pointer" />
-                        </Badge>
+                        {field.value?.map((artistId) => {
+                          const artistName = artistsData?.find(
+                            (artist) => artist.id === artistId
+                          )?.artistName;
+                          return (
+                            <Badge
+                              key={artistId}
+                              variant="secondary"
+                              className="gap-1"
+                            >
+                              {artistName}
+                              <X
+                                className="h-3 w-3 cursor-pointer"
+                                onClick={() => {
+                                  field.onChange(
+                                    field.value?.filter(
+                                      (id) => id !== artistId
+                                    ) || []
+                                  );
+                                }}
+                              />
+                            </Badge>
+                          );
+                        })}
                       </div>
-                      <FormControl>
-                        <div className="relative">
-                          <svg
-                            className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
-                            fill="none"
-                            height="24"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            width="24"
-                          >
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.3-4.3" />
-                          </svg>
-                        </div>
-                      </FormControl>
+                      <ArtistSelect
+                        artistsData={artistsData || []}
+                        field={field}
+                      />
                     </FormItem>
                   )}
                 />
               </div>
             </div>
+            {/*Song's Description*/}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe your song Why - When - How - Where - What - Who should be fine."
+                      className="flex flex-col w-full min-h-[25vh] border-general-pink/30 rounded-lg text-general-white"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Upload Button */}
             <div className="flex justify-center">

@@ -12,7 +12,7 @@ import {
   FaHeart,
   FaPlus,
   FaCog,
-  FaMask,
+  FaPersonBooth,
   FaSignOutAlt,
 } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
@@ -46,7 +46,7 @@ const sidebarSections = [
   {
     title: 'General',
     items: [
-      { name: 'Profile', icon: FaMask, href: '/profile' },
+      { name: 'Profile', icon: FaPersonBooth, href: '/profile' },
       { name: 'Settings', icon: FaCog, href: '/settings' },
       { name: 'Logout', icon: FaSignOutAlt, href: '#' },
     ],

@@ -1,11 +1,12 @@
-"use client"
+import React from 'react';
+import UploadForm from './_components/UploadForm';
 
-import React from 'react'
-
-const UploadAlbum = () => { 
+const page = () => {
   return (
-    <div>UploadAlbum</div>
-  )
-}
+    <div className="flex flex-col items-center w-[100%] min-h-screen">
+      <UploadForm />
+    </div>
+  );
+};
 
-export default UploadAlbum
+export default page;

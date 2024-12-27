@@ -3,7 +3,11 @@
 import { Song } from '@/types/global';
 import client from '@/services/client';
 
-import { getAuthTokenFromServerCookies } from './actions';
+import {
+  getAuthTokenFromServerCookies,
+  getUserFromServerCookies,
+} from './utils';
+import { consoleLogFormData } from '@/lib/utils';
 
 export interface SongsResponse {
   songs: Song[];
@@ -18,10 +22,20 @@ export interface SongsResponse {
 export interface AddSongPayload {
   songName: string;
   description: string;
-  lyricFile: File;
   musicFile: File;
-  photoFiles: File[];
+  photoFiles?: File[];
+  lyricFile?: File;
   genreIds: number[];
+  artistIds: number[];
+}
+
+export interface UpdateSongPayload {
+  songName?: string;
+  description?: string;
+  lyricFile?: File;
+  musicFile?: File;
+  photoFiles?: File[];
+  genreIds?: number[];
 }
 
 export interface AddSongResponse {
@@ -75,40 +89,25 @@ export async function getSongById(songId: number): Promise<Song> {
 
     return response.data;
   } catch (error) {
-    console.error('Error in getAllSongs:', error);
+    console.error('Error in getSongById:', error);
     throw error;
   }
 }
 
 // Only Artist can Add Songs
-export async function addSong(
-  payload: AddSongPayload
-): Promise<AddSongResponse> {
+export async function addSong(formData: FormData): Promise<AddSongResponse> {
   const token = await getAuthTokenFromServerCookies();
 
   try {
-    const formData = new FormData();
-    formData.append('songName', payload.songName);
-    formData.append('description', payload.description);
-    formData.append('lyricFile', payload.lyricFile);
-    formData.append('musicFile', payload.musicFile);
-    payload.photoFiles.forEach((file, index) =>
-      formData.append(`photoFiles[${index}]`, file)
-    );
-    formData.append('genreIds', JSON.stringify(payload.genreIds));
+    consoleLogFormData('i am fon: ', formData);
 
     const response = await client<Song>('/api/songs', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: formData,
     });
-
-    if (!response.headers.get('Content-Type')?.includes('application/json')) {
-      throw new Error('Response does not contain valid JSON data');
-    }
 
     return {
       id: response.data.id,
@@ -116,9 +115,28 @@ export async function addSong(
     };
   } catch (error) {
     console.error('Error in addSong:', error);
-    throw {
-      success: false,
-      message: 'Failed to add song',
-    };
+    throw error;
+  }
+}
+
+
+// Only Artist can delete a song
+export async function deleteSong({
+  songId,
+}: {
+  songId: number;
+}): Promise<void> {
+  const token = await getAuthTokenFromServerCookies();
+
+  try {
+    await client(`/api/songs/${songId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('delete a song error: ', error);
+    throw error;
   }
 }
