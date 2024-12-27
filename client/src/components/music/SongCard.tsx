@@ -7,14 +7,14 @@ import PlayButton from './PlayButton';
 import { Song } from '@/types/global';
 import usePlayerStore from '@/stores/player-store';
 
-const SongCard = ({ song }: { song: Song }) => {
+const SongCard = ({ song }: { song: any }) => {
   const { setActiveTrack } = usePlayerStore();
-  const handlePlayMusic = () => { 
-    console.log("song cua tao: ", song)
+  const handlePlayMusic = () => {
+    console.log('song cua tao: ', song);
     setActiveTrack({
       ...song,
       // musicUrl: "/sounds/robber-vtas.mp3"
-    })
+    });
   };
 
   return (
