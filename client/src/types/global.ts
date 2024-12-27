@@ -10,6 +10,7 @@ export interface Song {
   updatedAt: string;
   musicPublicId: string;
   lyricUrl: string | null;
+  songPhotoUrl: string;
   image: string;
 }
 
@@ -28,6 +29,11 @@ export interface Album {
   updatedAt: string;
   publisherId: number
 }
+
+export interface Playlist {
+  id: number
+}
+
 export interface User {
   id: number;
   firstName: string;

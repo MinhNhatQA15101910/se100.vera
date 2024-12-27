@@ -15,9 +15,9 @@ const MusicCards = () => {
     queryFn: () => getAllSongs(2, 4),
   });
 
-  // useEffect(() => {
-  //   setLoadingState(isLoading);
-  // }, [isLoading, setLoadingState]);
+  useEffect(() => {
+    setLoadingState(isLoading);
+  }, [isLoading, setLoadingState]);
 
   return (
     <div className="w-[90%] flex flex-col bg-transparent text-general-white">

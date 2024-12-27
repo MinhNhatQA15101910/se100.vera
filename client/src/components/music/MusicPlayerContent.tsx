@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/tooltip';
 import DynamicImage from '../custom/DynamicImage';
 import usePlayerStore from '@/stores/player-store';
-import useSound from 'use-sound';
+import useSound from 'use-sound'; 
 
 interface PlaybackControlProps {
   isPlaying: boolean;
@@ -110,7 +110,7 @@ const MusicPlayerContent = () => {
 
   const [progress, setProgress] = React.useState(0);
 
-  const [play, { pause, sound }] = useSound("/sounds/robber-vtas.mp3" || '', {
+  const [play, { pause, sound }] = useSound(activeSong?.musicUrl || "/sounds/robber-vtas.mp3", {
     volume: volume,
     onplay: () => onPlay(),
     onend: () => {
