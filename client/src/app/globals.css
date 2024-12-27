@@ -2,15 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: #181818;
+}
+
 :root {
+  --theme-color: #181818;
   --main-text-color: #ffffff --separator-color: #d9dadc;
   --general-pink: #ee10b0;
+  --general-pink-hover: #f342c4;
   --general-blue: rgba(14, 158, 239, 0.92) 127.01%;
 }
 
 .app-background {
   background-color: #181818;
-  display: flex;
   height: 100%;
 }
 
@@ -48,7 +53,7 @@
 }
 
 .general-grayscale-hover {
-  background-color: #2E2E2E;
+  background-color: #2e2e2e;
   transition: background-color 200ms;
 }
 
@@ -56,21 +61,43 @@
   background-color: #595959;
 }
 
-table {
-  border-collapse: separate;
-  border-spacing: 0 1em;
+.custom1-table {
+  table {
+    border-collapse: separate;
+    border-spacing: 0 1em;
 
-  td:nth-child(2),
-  th:nth-child(2) {
-    border-radius: 10px 0 0 10px;
-    overflow: hidden;
-  }
+    td:nth-child(2),
+    th:nth-child(2) {
+      border-radius: 10px 0 0 10px;
+      overflow: hidden;
+    }
 
-  td:last-child,
-  th:last-child {
-    border-radius: 0 10px 10px 0;
+    td:last-child,
+    th:last-child {
+      border-radius: 0 10px 10px 0;
+    }
   }
 }
+
+.manage-songs-table {
+  table {
+    border-collapse: separate;
+    border-spacing: 0 1em;
+
+    td:nth-child(2),
+    th:nth-child(2) {
+      width: fit-content;
+      border-radius: 10px 0 0 10px;
+      overflow: hidden;
+    }
+
+    td:last-child,
+    th:last-child {
+      border-radius: 0 10px 10px 0;
+    }
+  }
+}
+
 @keyframes border-pulse {
   0% {
     border-color: rgba(238, 16, 176, 0.15);
@@ -155,4 +182,47 @@ table {
   body {
     @apply bg-background text-foreground;
   }
+
+  h2 {
+    @apply text-general-white;
+  }
+
+  textarea {
+    @apply text-general-pink;
+  }
+
+  label {
+    @apply text-general-white;
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollable {
+  overflow-y: auto;
+}
+
+.scrollable::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: var(--general-pink);
+  border-radius: 4px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background-color: var(--theme-color);
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover {
+  background-color: var(--general-pink-hover);
 }

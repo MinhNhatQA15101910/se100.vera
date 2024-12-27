@@ -26,6 +26,13 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
       throw new NotImplementedException();
    }
 
+   public async Task<IEnumerable<GenreDto>> GetAllGenresAsync()
+   {
+      return await context.Genres
+         .ProjectTo<GenreDto>(mapper.ConfigurationProvider)
+         .ToListAsync();
+   }
+
    public async Task<Genre?> GetGenreByIdAsync(int id)
    {
       return await context.Genres.FindAsync(id);

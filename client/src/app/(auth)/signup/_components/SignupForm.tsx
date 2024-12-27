@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/Label';
+import { Label, LabelInputContainer } from '@/components/ui/label';
 import { Input } from '@/components/ui/Input';
 import { AppButton } from '@/components/ui/AppButton';
 import Separator from '@/components/Separator';
@@ -12,7 +12,6 @@ import { useLoading } from '@/contexts/LoadingContext';
 import { useUser } from '@/contexts/UserContext';
 import { z } from 'zod';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
 import { GenderType, UserType } from '@/types/declaration';
 import GenderSelection from './GenderSelection';
 
@@ -25,7 +24,9 @@ const signupSchema = z
       .string()
       .min(8, 'Password must be at least 8 characters')
       .max(50, 'Password must be shorter than 50 characters'),
-    gender: z.string(),
+    gender: z.enum(['male', 'female'], {
+      errorMap: () => ({ message: 'Gender must be either male or female' }),
+    }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -34,18 +35,18 @@ const signupSchema = z
   });
 
 const SignupForm = () => {
-  const { setIsLoading } = useLoading();
-  const { signup } = useUser();
+  const { setLoadingState } = useLoading();
+  const { verifyEmailSignup } = useUser();
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
     email: '',
     password: '',
-    gender: '',
+    gender: 'male',
     confirmPassword: '',
   });
   const [isRole, setIsRole] = useState<UserType>('Listener');
-  const [isGender, setIsGender] = useState<GenderType>('');
+  const [isGender, setIsGender] = useState<GenderType>('male');
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
     {}
   );
@@ -69,10 +70,13 @@ const SignupForm = () => {
     setErrors({});
 
     try {
-      setIsLoading(true);
-      const validatedData = signupSchema.parse(formData);
+      setLoadingState(true);
+      const validatedData = signupSchema.parse({
+        ...formData,
+        gender: isGender,
+      });
 
-      await signup({
+      await verifyEmailSignup({
         email: validatedData.email,
         password: validatedData.password,
         firstName: validatedData.firstname,
@@ -80,8 +84,6 @@ const SignupForm = () => {
         gender: isGender,
         role: isRole,
       });
-
-      toast.success('Successfully signed up!');
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors: { [key: string]: string } = {};
@@ -91,12 +93,9 @@ const SignupForm = () => {
           }
         });
         setErrors(formattedErrors);
-      } else {
-        toast.error('Signup failed. Please try again.');
-        console.error(error);
-      }
+      } 
     } finally {
-      setIsLoading(false);
+      setLoadingState(false);
     }
   };
 
@@ -144,9 +143,12 @@ const SignupForm = () => {
         </div>
 
         <GenderSelection isGender={isGender} setIsGender={setIsGender} />
+        {errors.gender && (
+          <span className="text-red-500 text-sm mt-1">{errors.gender}</span>
+        )}
 
         <LabelInputContainer className="mb-4">
-          <Label htmlFor="email">Email Address or Username</Label>
+          <Label htmlFor="email">Email Address</Label>
           <Input
             id="email"
             placeholder="musicinmyhear@gmail.com"
@@ -193,7 +195,7 @@ const SignupForm = () => {
             className="bg-general-pink hover:bg-general-pink-hover rounded-full h-12 w-[120px] group"
             type="submit"
           >
-            <p className="font-bold text-[14px] text-gray-950  group-hover:text-gray-700 transition-colors duration-200">
+            <p className="font-bold text-[14px] text-gray-950 group-hover:text-gray-700 transition-colors duration-200">
               SIGN UP
             </p>
           </AppButton>

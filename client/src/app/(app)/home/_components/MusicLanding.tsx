@@ -1,3 +1,5 @@
+'use client';
+
 import { AppButton } from '@/components/ui/AppButton';
 import { Input } from '@/components/ui/Input';
 import { Search } from 'lucide-react';

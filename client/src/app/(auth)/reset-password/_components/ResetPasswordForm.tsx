@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import FormContainer from '@/components/FormContainer';
 import Image from 'next/image';
-import { Label } from '@/components/ui/Label';
-import { Input } from '@/components/ui/Input';
-import { LabelInputContainer } from '@/components/ui/Label';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { LabelInputContainer } from '@/components/ui/label';
 import { AppButton } from '@/components/ui/AppButton';
 import { useUser } from '@/contexts/UserContext';
 import * as z from 'zod';
@@ -17,7 +17,7 @@ const resetPasswordSchema = z.object({
 
 const ResetPasswordForm = () => {
   const { resetPassword } = useUser();
-  const { setIsLoading } = useLoading();
+  const { setLoadingState } = useLoading();
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
     {}
   );
@@ -44,7 +44,7 @@ const ResetPasswordForm = () => {
     setErrors({});
 
     try {
-      setIsLoading(true);
+      setLoadingState(true);
       const validatedData = resetPasswordSchema.parse(formData);
 
       await resetPassword({
@@ -63,7 +63,7 @@ const ResetPasswordForm = () => {
         console.error(error);
       }
     } finally {
-      setIsLoading(false);
+      setLoadingState(false);
     }
   };
 

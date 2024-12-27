@@ -6,7 +6,7 @@ import MetaData from './_components/MetaData';
 
 const page = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full min-h-screen space-y-4">
+    <div className="flex flex-col items-center justify-center min-h-screen h-full w-full space-y-4">
       <MusicLanding />
       <MusicCards />
       <TrendingSongs />

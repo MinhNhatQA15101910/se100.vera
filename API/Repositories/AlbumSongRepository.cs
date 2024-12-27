@@ -16,6 +16,13 @@ public class AlbumSongRepository(DataContext context) : IAlbumSongRepository
         return await context.AlbumSongs.FindAsync(albumId, songId);
     }
 
+    public Task<List<AlbumSong>> GetAlbumSongsAsync(int songId)
+    {
+        return context.AlbumSongs
+            .Where(x => x.SongId == songId)
+            .ToListAsync();
+    }
+
     public void RemoveAlbumSong(AlbumSong albumSong)
     {
         context.AlbumSongs.Remove(albumSong);

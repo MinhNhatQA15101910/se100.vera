@@ -7,49 +7,28 @@ import client from '@/services/client';
 import { useLoading } from './LoadingContext';
 import { toast } from 'react-toastify';
 
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface SignupCredentials {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  gender: string;
-  role?: 'Listener' | 'Artist';
-}
-
-interface ResetPasswordCredentials {
-  email: string;
-}
-
-interface UserDto {
-  id: number;
-  firstName: string;
-  lastName: string;
-  artistName: string | null;
-  photoUrl: string | null;
-  gender: string;
-  dateOfBirth: string;
-  about: string | null;
-  created: string;
-  photos: Array<{ id: number; url: string; isMain: boolean }>;
-  token: string;
-}
+import {
+  LoginCredentials,
+  SignupCredentials,
+  ResetPasswordCredentials,
+  UserDto,
+  SendEmailDto,
+} from '@/types/auth';
 
 interface IUserContext {
   token: string | null;
   setToken: (token: string | null) => void;
   isAuthenticated: boolean;
+  userDetails: UserDto | null;
   login: (loginCreds: LoginCredentials | null) => Promise<void>;
-  signup: (signupCreds: SignupCredentials) => Promise<void>;
+  signup: () => Promise<void>;
+  verifyEmailSignup: (signupCreds: SignupCredentials) => Promise<void>;
   resetPassword: (
     resetPasswordCreds: ResetPasswordCredentials
   ) => Promise<void>;
   logout: () => void;
   checkEmailExists: (email: string) => Promise<boolean>;
+  sendEmail: (sendEmailDto: SendEmailDto) => Promise<void>;
 }
 
 const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -57,65 +36,118 @@ const UserContext = createContext<IUserContext | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const { setIsLoading } = useLoading();
+  const [tempSignupCreds, setTempSignupCreds] = useState<SignupCredentials>({
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    gender: 'male',
+    role: 'Listener',
+  });
+  const [userDetails, setUserDetails] = useState<UserDto | null>(null);
+  const { setLoadingState } = useLoading();
 
   const router = useRouter();
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-
-    if (storedToken && storedToken !== '') {
-      setToken(storedToken);
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-
-      if (
-        !window.location.pathname.match(
-          /\/(login|signup|verify-code|reset-password)/
-        )
-      ) {
-        router.push('/login');
-      }
+  const sendEmail = async (sendEmailDto: SendEmailDto): Promise<void> => {
+    setLoadingState(true);
+    try {
+      await client<SendEmailDto>('/api/auth/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+        body: JSON.stringify(sendEmailDto),
+      });
+    } catch (error) {
+      console.error('Send email error:', error);
+    } finally {
+      setLoadingState(false);
     }
-  }, [router]);
+  };
 
   const checkEmailExists = async (email: string): Promise<boolean> => {
+    if (!email) {
+      throw new Error('Email is required');
+    }
+
     try {
-      const repsonse = await client<boolean>('/api/auth/email-exists', {
+      const response = await client<boolean>('/api/auth/email-exists', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email }),
       });
-      return repsonse;
+      return response.data;
     } catch (error) {
       console.error('Email check failed:', error);
       throw error;
     }
   };
 
-  const signup = async (signupCreds: SignupCredentials): Promise<void> => {
+  const verifyEmailSignup = async (
+    signupCreds: SignupCredentials
+  ): Promise<void> => {
+    if (await checkEmailExists(signupCreds.email)) {
+      throw new Error('Email already exists!');
+    }
+
+    setLoadingState(true);
     try {
-      const response = await client<UserDto>('/api/auth/signup', {
+      await client('/api/auth/validate-signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(signupCreds),
       });
+      setTempSignupCreds(signupCreds);
+    } catch (error) {
+      console.error('Verify email failed:', error);
+    } finally {
+      setLoadingState(false);
+    }
+  };
 
-      if (response.token) {
-        setToken(response.token);
-        setIsAuthenticated(true);
+  const signup = async (): Promise<void> => {
+    if (!tempSignupCreds) {
+      throw new Error('Signup credentials are required');
+    }
+
+    setLoadingState(true);
+    try {
+      const response = await client<UserDto>('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+        body: JSON.stringify(tempSignupCreds),
+      });
+
+      if (!response || !response.data.token) {
+        throw new Error('Invalid response from server');
       }
+
+      setToken(response.data.token);
+      setIsAuthenticated(true);
+      setUserDetails(response.data);
+      router.push('/login');
     } catch (error) {
       console.error('Signup failed:', error);
+      throw error;
+    } finally {
+      setLoadingState(false);
     }
   };
 
   const login = async (loginCreds: LoginCredentials | null): Promise<void> => {
+    if (!loginCreds) {
+      throw new Error('Login credentials are required');
+    }
+
     try {
       const response = await client<UserDto>('/api/auth/login', {
         method: 'POST',
@@ -125,19 +157,39 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         body: JSON.stringify(loginCreds),
       });
 
-      if (response.token) {
-        localStorage.setItem('authToken', response.token);
-        setToken(response.token);
-        setIsAuthenticated(true);
+      if (!response || !response.data.token) {
+        throw new Error('Invalid response from server');
       }
+      if (loginCreds.rememberMe) {
+        localStorage.setItem(
+          'userDetails',
+          JSON.stringify({ ...response.data, token: '' })
+        );
+        document.cookie = `auth_token=${response.data.token}; path=/; max-age=604800; SameSite=Strict; Secure`;
+        document.cookie = `userDetails=${encodeURIComponent(JSON.stringify(response.data))}; path=/; max-age=604800; SameSite=Strict; Secure`;
+      } else {
+        // For non-remember-me, set session cookies that expire when browser closes
+        document.cookie = `auth_token=${response.data.token}; path=/; SameSite=Strict; Secure`;
+        document.cookie = `userDetails=${encodeURIComponent(JSON.stringify(response.data))}; path=/; SameSite=Strict; Secure`;
+      }
+
+      setToken(response.data.token);
+      setIsAuthenticated(true);
+      setUserDetails(response.data);
+      router.push('/');
     } catch (error) {
-      console.error('Login failed: ', error);
+      console.error('Login failed:', error);
+      throw error;
     }
   };
 
   const resetPassword = async (
     resetPasswordCreds: ResetPasswordCredentials
-  ) => {
+  ): Promise<void> => {
+    if (!resetPasswordCreds || !resetPasswordCreds.email) {
+      throw new Error('Email is required for password reset');
+    }
+
     try {
       await client<UserDto>('/api/auth/reset-password', {
         method: 'POST',
@@ -146,23 +198,67 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         },
         body: JSON.stringify(resetPasswordCreds),
       });
-      toast(`password resested:  ${resetPasswordCreds.email}`);
+      toast.success(
+        `Password reset email sent to: ${resetPasswordCreds.email}`
+      );
     } catch (error) {
-      console.error('Login failed: ', error);
+      console.error('Password reset failed:', error);
+      throw error;
+    }
+  };
+  const logout = (): void => {
+    setLoadingState(true);
+    try {
+      localStorage.removeItem('userDetails');
+      document.cookie =
+        'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
+        document.cookie =
+          'userDetails=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
+      setToken(null);
+      setIsAuthenticated(false);
+      setUserDetails(null);
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setLoadingState(false);
     }
   };
 
-  const logout = (): void => {
-    setIsLoading(true);
-    try {
-      localStorage.removeItem('authToken');
+  useEffect(() => {
+    const getCookie = (name: string): string | null => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+      return null;
+    };
+
+    const authToken = getCookie('auth_token');
+    const storedUserDetails = localStorage.getItem('userDetails');
+
+    if (authToken && storedUserDetails) {
+      try {
+        const parsedUserDetails = JSON.parse(storedUserDetails) as UserDto;
+        setToken(authToken);
+        setIsAuthenticated(true);
+        setUserDetails(parsedUserDetails);
+      } catch (error) {
+        console.error('Error parsing stored user details:', error);
+        setToken(null);
+        setIsAuthenticated(false);
+        setUserDetails(null);
+      }
+    } else {
       setToken(null);
       setIsAuthenticated(false);
-    } catch (error) {
-      console.error(error);
+      setUserDetails(null);
+
+      const publicRoutes = /\/(login|signup|verify-code|reset-password)/;
+      if (!publicRoutes.test(window.location.pathname)) {
+        router.push('/login');
+      }
     }
-    setIsLoading(false);
-  };
+  }, [router]);
 
   const value = {
     login,
@@ -173,6 +269,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     resetPassword,
     isAuthenticated,
     checkEmailExists,
+    userDetails,
+    sendEmail,
+    verifyEmailSignup,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

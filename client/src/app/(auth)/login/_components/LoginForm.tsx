@@ -4,13 +4,12 @@ import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
-import { CheckedState } from '@radix-ui/react-checkbox';
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/Label';
+import { Label, LabelInputContainer } from '@/components/ui/label';
 import { Input } from '@/components/ui/Input';
 import Separator from '@/components/Separator';
-import { Checkbox } from '@/components/ui/CheckBox';
+import { Checkbox } from '@/components/ui/check-box';
 import { AppButton } from '@/components/ui/AppButton';
 import LoginFeatures from './LoginFeatures';
 import ToSignup from './ToSignup';
@@ -22,7 +21,7 @@ const loginSchema = z.object({
 
 const LoginForm = () => {
   const { login } = useUser();
-  const { isLoading, setIsLoading } = useLoading();
+  const { isLoading, setLoadingState } = useLoading();
   const [isRememberMe, setIsRememberMe] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -32,13 +31,6 @@ const LoginForm = () => {
     email?: string;
     password?: string;
   }>({});
-
-  const handleRememberMe = (checked: CheckedState) => {
-    setIsRememberMe(checked === true);
-    if (checked === false) {
-      localStorage.removeItem('rememberedEmail');
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -60,16 +52,13 @@ const LoginForm = () => {
 
     try {
       const validatedData = loginSchema.parse(formData);
-      setIsLoading(true);
+      setLoadingState(true);
 
       await login({
         email: validatedData.email,
         password: validatedData.password,
+        rememberMe: isRememberMe,
       });
-
-      if (isRememberMe) {
-        localStorage.setItem('rememberedEmail', validatedData.email);
-      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors: { [key: string]: string } = {};
@@ -81,7 +70,7 @@ const LoginForm = () => {
         setErrors(formattedErrors);
       }
     } finally {
-      setIsLoading(false);
+      setLoadingState(false);
     }
   };
 
@@ -148,7 +137,7 @@ const LoginForm = () => {
           <div className="flex items-center space-x-2 group">
             <Checkbox
               checked={isRememberMe}
-              onCheckedChange={handleRememberMe}
+              onCheckedChange={() => setIsRememberMe((prevState) => !prevState)}
               id="rememberMe"
               className={`w-6 h-6 rounded-md ${
                 isRememberMe ? 'bg-general-pink' : 'bg-transparent'

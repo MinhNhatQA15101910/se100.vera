@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { Button } from './button';
 
 interface IAppButtonProps {
   children: React.ReactNode;
@@ -9,23 +9,26 @@ interface IAppButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'submit' | 'reset' | 'button' | undefined;
   disabled?: boolean;
+  asChild?: boolean;
 }
 
 export const AppButton: React.FC<IAppButtonProps> = ({
   children,
-  className,
+  className = '',
   onClick,
-  type,
-  disabled,
+  type = 'button',
+  disabled = false,
+  asChild = false,
 }) => {
   return (
-    <button
+    <Button
+      asChild={asChild}
       type={type}
-      className={cn('', className)}
+      className={className}
       onClick={onClick}
       disabled={disabled}
     >
       {children}
-    </button>
+    </Button>
   );
 };

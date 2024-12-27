@@ -6,6 +6,7 @@ namespace API.Services;
 public class FileService : IFileService
 {
     private readonly Cloudinary _cloudinary;
+    private readonly string _folderRoot = "Vera-MLA/";
 
     public FileService(IOptions<CloudinarySettings> config)
     {
@@ -18,9 +19,12 @@ public class FileService : IFileService
         _cloudinary = new Cloudinary(acc);
     }
 
-    public async Task<DeletionResult> DeleteFileAsync(string publicId)
+    public async Task<DeletionResult> DeleteFileAsync(string publicId, ResourceType resourceType)
     {
-        var deletionParams = new DeletionParams(publicId);
+        var deletionParams = new DeletionParams(publicId)
+        {
+            ResourceType = resourceType
+        };
 
         var deletionResult = await _cloudinary.DestroyAsync(deletionParams);
         return deletionResult;
@@ -36,7 +40,7 @@ public class FileService : IFileService
             var uploadParams = new VideoUploadParams
             {
                 File = new FileDescription(file.FileName, stream),
-                Folder = "Vera - Music listening app/audio/" + folderPath
+                Folder = _folderRoot + folderPath
             };
 
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -54,7 +58,7 @@ public class FileService : IFileService
             var uploadParams = new RawUploadParams
             {
                 File = new FileDescription(file.FileName, stream),
-                Folder = "Vera - Music listening app/lyrics" + folderPath
+                Folder = _folderRoot + folderPath
             };
 
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -73,12 +77,7 @@ public class FileService : IFileService
             var uploadParams = new ImageUploadParams
             {
                 File = new FileDescription(file.FileName, stream),
-                Transformation = new Transformation()
-                    .Height(500)
-                    .Width(500)
-                    .Crop("fill")
-                    .Gravity("face"),
-                Folder = "Vera - Music listening app/images/" + folderPath
+                Folder = _folderRoot + folderPath
             };
 
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
