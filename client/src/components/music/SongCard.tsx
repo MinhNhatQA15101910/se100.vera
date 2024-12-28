@@ -4,10 +4,9 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import PlayButton from './PlayButton';
 
-import { Song } from '@/types/global';
 import usePlayerStore from '@/stores/player-store';
 
-const SongCard = ({ song }: { song: Song }) => {
+const SongCard = ({ song }: { song: any }) => {
   const { setActiveTrack } = usePlayerStore();
   const handlePlayMusic = () => {
     setActiveTrack({

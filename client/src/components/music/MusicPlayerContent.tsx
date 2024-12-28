@@ -56,17 +56,19 @@ const ControlButton = ({
   icon: Icon,
   onClick,
   tooltip,
-}: ControlButtonProps) => (
+  iconColor = 'white',
+}: ControlButtonProps & { iconColor?: string }) => (
   <Tooltip>
     <TooltipTrigger asChild>
       <AppButton className="h-9 w-9 group" onClick={onClick}>
-        <Icon className="h-4 w-4 group-hover:scale-110 group-hover:text-general-pink-hover" />
+        <Icon
+          className={`h-4 w-4 text-${iconColor} group-hover:scale-110 group-hover:text-general-pink-hover transition-transform`}
+        />
       </AppButton>
     </TooltipTrigger>
     {tooltip && <TooltipContent>{tooltip}</TooltipContent>}
   </Tooltip>
 );
-
 interface VolumeControlProps {
   volume: number;
   onVolumeChange: (value: number) => void;
@@ -99,6 +101,7 @@ const MusicPlayerContent = () => {
   const [mounted, setMounted] = React.useState(false);
   const {
     isPlaying,
+    isLyricMode,
     onPause,
     onPlay,
     volume,
@@ -106,6 +109,8 @@ const MusicPlayerContent = () => {
     onPrevious,
     onNext,
     activeSong,
+    setCurrentDuration,
+    toggleLyricMode,
   } = usePlayerStore();
 
   const [progress, setProgress] = React.useState(0);
@@ -143,6 +148,7 @@ const MusicPlayerContent = () => {
     const interval = setInterval(() => {
       const currentProgress = (sound.seek() / sound.duration()) * 100 || 0;
       setProgress(currentProgress);
+      setCurrentDuration(sound.seek());
     }, 100);
 
     return () => clearInterval(interval);
@@ -175,7 +181,7 @@ const MusicPlayerContent = () => {
         <div className="flex w-1/4 min-w-[180px] h-full items-center gap-3">
           <DynamicImage
             alt="Artist Image"
-            src={"https://picsum.photos/400/400?random=42"}
+            src={'https://picsum.photos/400/400?random=42'}
             className="w-14 h-14"
           />
           <div className="flex flex-col">
@@ -226,8 +232,16 @@ const MusicPlayerContent = () => {
 
         {/* Volume & Additional Controls */}
         <div className="flex w-1/4 min-w-[180px] justify-end gap-4">
-          <ControlButton icon={Mic2} tooltip="Lyrics" />
-          <VolumeControl volume={volume * 100} onVolumeChange={handleVolumeChange} />
+          <ControlButton
+            icon={Mic2}
+            tooltip="Lyrics"
+            onClick={toggleLyricMode}
+            iconColor={isLyricMode ? 'general-pink' : 'white'}
+          />
+          <VolumeControl
+            volume={volume * 100}
+            onVolumeChange={handleVolumeChange}
+          />
         </div>
       </div>
     </div>

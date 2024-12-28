@@ -53,9 +53,9 @@ const sidebarSections = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ paddingBottom = '0' }) => {
   const { logout, isAuthenticated } = useUser();
-  const {setLoadingState} = useLoading();
+  const { setLoadingState } = useLoading();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -68,55 +68,62 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`hidden sticky top-0 animated-border h-full z-2 md:flex flex-col min-h-screen text-white max-w-fit p-6 border-r border-r-general-pink shadow-[8px_0px_24.2px_0px_rgba(238,16,176,0.15)] animate-[border-pulse_2s_ease-in-out_infinite] ${!isAuthenticated && 'hidden'}`}
+      className={`h-screen hidden sticky top-0 animated-border z-2 md:flex flex-col min-h-screen text-white max-w-fit p-6 border-r border-r-general-pink shadow-[8px_0px_24.2px_0px_rgba(238,16,176,0.15)] animate-[border-pulse_2s_ease-in-out_infinite] ${!isAuthenticated && 'hidden'}`}
     >
-      {/* Logo */}
-      <h1 className="title-text-gradient mb-8">VERA</h1>
-      {sidebarSections.map((section, index) => (
-        <div
-          key={section.title}
-          className={index !== sidebarSections.length - 1 ? 'mb-4' : ''}
-        >
-          <h3 className="sidebar-second-header tracking-wide mb-3 whitespace-nowrap">
-            {section.title}
-          </h3>
-          <ul>
-            {section.items.map((item) => (
-              <li key={item.name} className="flex flex-col">
-                {item.name === 'Logout' ? (
-                  <button
-                    onClick={handleLogout}
-                    className={`group flex items-center space-x-3 p-2`}
-                  >
-                    <item.icon
-                      className={`text-xs group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
-                    />
-                    <span
-                      className={`sub-header whitespace-nowrap group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
+      <div
+        className="overflow-y-scroll"
+        style={{
+          paddingBottom,
+        }}
+      >
+        {/* Logo */}
+        <h1 className="title-text-gradient mb-8">VERA</h1>
+        {sidebarSections.map((section, index) => (
+          <div
+            key={section.title}
+            className={index !== sidebarSections.length - 1 ? 'mb-4' : ''}
+          >
+            <h3 className="sidebar-second-header tracking-wide mb-3 whitespace-nowrap">
+              {section.title}
+            </h3>
+            <ul>
+              {section.items.map((item) => (
+                <li key={item.name} className="flex flex-col">
+                  {item.name === 'Logout' ? (
+                    <button
+                      onClick={handleLogout}
+                      className={`group flex items-center space-x-3 p-2`}
                     >
-                      {item.name}
-                    </span>
-                  </button>
-                ) : (
-                  <Link
-                    href={item.href}
-                    className={`group flex items-center space-x-3 hover:bg-slate-400/20 p-2 rounded-md`}
-                  >
-                    <item.icon
-                      className={`text-xs group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
-                    />
-                    <span
-                      className={`sub-header whitespace-nowrap group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
+                      <item.icon
+                        className={`text-xs group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
+                      />
+                      <span
+                        className={`sub-header whitespace-nowrap group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
+                      >
+                        {item.name}
+                      </span>
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`group flex items-center space-x-3 hover:bg-slate-400/20 p-2 rounded-md`}
                     >
-                      {item.name}
-                    </span>
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+                      <item.icon
+                        className={`text-xs group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
+                      />
+                      <span
+                        className={`sub-header whitespace-nowrap group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
+                      >
+                        {item.name}
+                      </span>
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
