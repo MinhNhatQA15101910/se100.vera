@@ -123,6 +123,7 @@ const Sidebar = ({ paddingBottom = '0' }) => {
             </ul>
           </div>
         ))}
+        <div className="h-20"></div>
       </div>
     </div>
   );
