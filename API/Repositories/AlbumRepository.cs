@@ -23,6 +23,8 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
         return await context.Albums
             // Include album photos navigation
             .Include(a => a.Photos).ThenInclude(ap => ap.Photo)
+            // Include artists
+            .Include(a => a.Artists).ThenInclude(aa => aa.Artist)
             // Include song photos
             .Include(a => a.Songs).ThenInclude(albumSong => albumSong.Song)
             .ThenInclude(s => s.Photos).ThenInclude(sp => sp.Photo)

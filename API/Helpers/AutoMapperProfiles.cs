@@ -5,6 +5,7 @@ using API.DTOs.Files;
 using API.DTOs.Albums;
 using API.DTOs.Playlists;
 using API.DTOs.Genres;
+using API.DTOs.Artists;
 
 namespace API.Helpers;
 
@@ -189,6 +190,15 @@ public class AutoMapperProfiles : Profile
             .ForMember(
                 s => s.Song,
                 o => o.MapFrom(x => x.Song)
+            );
+        CreateMap<ArtistAlbum, ArtistDto>()
+            .ForMember(
+                a => a.Id,
+                o => o.MapFrom(x => x.Artist.Id)
+            )
+            .ForMember(
+                a => a.ArtistName,
+                o => o.MapFrom(x => x.Artist.ArtistName)
             );
         CreateMap<Genre, GenreDto>();
         CreateMap<AddUpdateGenreDto, Genre>();
