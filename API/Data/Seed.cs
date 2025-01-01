@@ -335,6 +335,35 @@ public class Seed
         }
 
         await context.SaveChangesAsync();
+
+        await SeedPlaylistSongs(context);
+    }
+
+    private static async Task SeedPlaylistSongs(DataContext context)
+    {
+        var playlists = await context.Playlists.ToListAsync();
+        var songId = 1;
+
+        foreach (var playlist in playlists)
+        {
+            var playlistSongs = new List<PlaylistSong>
+            {
+                new() {
+                    PlaylistId = playlist.Id,
+                    SongId = ((songId - 1) % 12) + 1
+                },
+                new() {
+                    PlaylistId = playlist.Id,
+                    SongId = (songId % 12) + 1,
+                }
+            };
+
+            context.PlaylistSongs.AddRange(playlistSongs);
+
+            songId += 2;
+        }
+
+        await context.SaveChangesAsync();
     }
 
     public static async Task SeedGenres(DataContext context)

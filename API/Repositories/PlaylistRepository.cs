@@ -20,7 +20,6 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
    public Task<Playlist?> GetPlaylistByIdAsync(int id)
    {
       return context.Playlists
-         .Include(p => p.Photos).ThenInclude(pp => pp.Photo)
          .Include(p => p.Songs).ThenInclude(ps => ps.Song).ThenInclude(s => s.Photos).ThenInclude(sp => sp.Photo)
          .FirstOrDefaultAsync(p => p.Id == id);
    }

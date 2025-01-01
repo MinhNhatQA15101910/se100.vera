@@ -8,5 +8,4 @@ public class Photo
     public List<UserPhoto> Users { get; set; } = [];
     public List<SongPhoto> Songs { get; set; } = [];
     public List<AlbumPhoto> Albums { get; set; } = [];
-    public List<PlaylistPhoto> Playlists { get; set; } = [];
 }
