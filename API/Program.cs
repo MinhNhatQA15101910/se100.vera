@@ -34,7 +34,7 @@ try
     await Seed.SeedUsers(context, userManager, roleManager);
     await Seed.SeedGenres(context);
     await Seed.SeedSongs(context);
-    // await Seed.SeedAlbums(context);
+    await Seed.SeedAlbums(context);
     // await Seed.SeedPlaylists(context);
 }
 catch (Exception ex)

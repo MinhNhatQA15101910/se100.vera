@@ -187,6 +187,7 @@ public class Seed
 
             context.ArtistSongs.Add(songArtist);
         }
+
         await context.SaveChangesAsync();
     }
 
@@ -208,6 +209,72 @@ public class Seed
         foreach (var album in albums)
         {
             context.Albums.Add(album);
+        }
+
+        await context.SaveChangesAsync();
+
+        await SeedAlbumGenres(context);
+        await SeedAlbumPhotos(context);
+        await SeedArtistAlbums(context);
+    }
+
+    private static async Task SeedArtistAlbums(DataContext context)
+    {
+        var albums = await context.Albums.ToListAsync();
+
+        foreach (var album in albums)
+        {
+            var artistAlbums = new List<ArtistAlbum>
+            {
+                new() {
+                    AlbumId = album.Id,
+                    ArtistId = album.PublisherId
+                },
+                new() {
+                    AlbumId = album.Id,
+                    ArtistId = ((album.PublisherId - 2) % 6) + 3
+                }
+            };
+
+            context.ArtistAlbums.AddRange(artistAlbums);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAlbumGenres(DataContext context)
+    {
+        var albums = await context.Albums.ToListAsync();
+
+        foreach (var album in albums)
+        {
+            var albumGenre = new AlbumGenre
+            {
+                AlbumId = album.Id,
+                GenreId = Random.Shared.Next(1, 15)
+            };
+
+            context.AlbumGenres.Add(albumGenre);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAlbumPhotos(DataContext context)
+    {
+        var albums = await context.Albums.ToListAsync();
+        var photoId = 70;
+
+        foreach (var album in albums)
+        {
+            var albumPhoto = new AlbumPhoto
+            {
+                AlbumId = album.Id,
+                PhotoId = photoId++,
+                IsMain = true
+            };
+
+            context.AlbumPhotos.Add(albumPhoto);
         }
 
         await context.SaveChangesAsync();
