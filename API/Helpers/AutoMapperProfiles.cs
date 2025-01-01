@@ -185,42 +185,10 @@ public class AutoMapperProfiles : Profile
                     s => s.Photos.Select(x => x.Photo.Url).ToList()
                 )
             );
-        CreateMap<AlbumSong, SongDto>()
+        CreateMap<AlbumSong, SongOrderDto>()
             .ForMember(
-                s => s.Id,
-                o => o.MapFrom(x => x.Song.Id)
-            )
-            .ForMember(
-                s => s.SongName,
-                o => o.MapFrom(x => x.Song.SongName)
-            )
-            .ForMember(
-                s => s.PublisherName,
-                o => o.MapFrom(x => x.Song.Publisher.UserName)
-            )
-            .ForMember(
-                s => s.PublisherImageUrl,
-                o => o.MapFrom(x => x.Song.Publisher.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
-            )
-            .ForMember(
-                s => s.Genres,
-                o => o.MapFrom(x => x.Song.Genres.Select(x => x.Genre.GenreName).ToList())
-            )
-            .ForMember(
-                s => s.TotalView,
-                o => o.MapFrom(x => x.Song.TotalListeningHours)
-            )
-            .ForMember(
-                s => s.MusicUrl,
-                o => o.MapFrom(x => x.Song.MusicUrl)
-            )
-            .ForMember(
-                s => s.LyricUrl,
-                o => o.MapFrom(x => x.Song.LyricUrl)
-            )
-            .ForMember(
-                s => s.SongPhotoUrl,
-                o => o.MapFrom(x => x.Song.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
+                s => s.Song,
+                o => o.MapFrom(x => x.Song)
             );
         CreateMap<Genre, GenreDto>();
         CreateMap<AddUpdateGenreDto, Genre>();
