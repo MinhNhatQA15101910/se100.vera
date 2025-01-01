@@ -1,6 +1,7 @@
 using API.Data;
 using API.DTOs.Albums;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 
 namespace API.Repositories;
@@ -33,6 +34,28 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             .ThenInclude(s => s.Publisher).ThenInclude(p => p.Photos).ThenInclude(pp => pp.Photo)
             // Execute query
             .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
+    public async Task<PagedList<AlbumDto>> GetAlbumsAsync(AlbumParams albumParams)
+    {
+        var query = context.Albums.AsQueryable();
+
+        if (albumParams.AlbumName != null)
+        {
+            query = query.Where(s => s.AlbumName.Contains(albumParams.AlbumName));
+        }
+
+        query = albumParams.OrderBy switch
+        {
+            "albumName" => albumParams.SortBy == "asc" ? query.OrderBy(s => s.AlbumName) : query.OrderByDescending(s => s.AlbumName),
+            _ => query.OrderBy(s => s.AlbumName)
+        };
+
+        return await PagedList<AlbumDto>.CreateAsync(
+            query.ProjectTo<AlbumDto>(mapper.ConfigurationProvider),
+            albumParams.PageNumber,
+            albumParams.PageSize
+        );
     }
 
     public async Task<bool> SaveChangesAsync()
