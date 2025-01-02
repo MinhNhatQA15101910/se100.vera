@@ -131,7 +131,7 @@ export default function UploadForm() {
   const photoDropzone = CreateDropzone('photoFiles');
 
   const onSubmit = (data: FormValues) => {
-    console.log('data form Form and gay me: ', data);
+    console.log('data upload form data: ', data);
     addSongMutation.mutate(
       {
         songName: data.songName,
