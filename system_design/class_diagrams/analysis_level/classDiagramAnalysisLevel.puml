@@ -66,6 +66,8 @@ class Song {
     +updateSong()
     +getSongs()
     +deleteSong()
+    +addGenreToSong()
+    +removeGenreFromSong()
     +calculateProfit()
 }
 
@@ -99,6 +101,9 @@ class Album {
     +deleteAlbum()
     +addSongToAlbum()
     +removeSongFromAlbum()
+    +addGenreToAlbum()
+    +removeGenreFromAlbum()
+    +calculateProfit()
 }
 
 class SubscriptionPlan {
@@ -119,6 +124,8 @@ class Payment {
     -amount 
     -date 
     -method 
+    -createdAt
+    -updatedAt
     +createPayment()
     +getPayments()
 }
