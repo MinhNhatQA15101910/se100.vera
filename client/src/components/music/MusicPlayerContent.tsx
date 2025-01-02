@@ -10,6 +10,7 @@ import {
   Repeat,
   Pause,
   Mic2,
+  ListMusic,
 } from 'lucide-react';
 
 import { AppButton } from '../ui/AppButton';
@@ -21,7 +22,7 @@ import {
 } from '@/components/ui/tooltip';
 import DynamicImage from '../custom/DynamicImage';
 import usePlayerStore from '@/stores/player-store';
-import useSound from 'use-sound'; 
+import useSound from 'use-sound';
 
 interface PlaybackControlProps {
   isPlaying: boolean;
@@ -101,7 +102,8 @@ const MusicPlayerContent = () => {
   const [mounted, setMounted] = React.useState(false);
   const {
     isPlaying,
-    isLyricMode,
+    isLyricVisibility: isLyricVisibility,
+    isPlaylistVisibility: isPlaylistVisibility,
     onPause,
     onPlay,
     volume,
@@ -111,20 +113,24 @@ const MusicPlayerContent = () => {
     activeSong,
     setCurrentDuration,
     toggleLyricMode,
+    togglePlaylistMode,
   } = usePlayerStore();
 
   const [progress, setProgress] = React.useState(0);
 
-  const [play, { pause, sound }] = useSound(activeSong?.musicUrl || "/sounds/robber-vtas.mp3", {
-    volume: volume,
-    onplay: () => onPlay(),
-    onend: () => {
-      onPause();
-      setProgress(0);
-    },
-    onpause: () => onPause(),
-    format: ['mp3'],
-  });
+  const [play, { pause, sound }] = useSound(
+    activeSong?.musicUrl || '/sounds/robber-vtas.mp3',
+    {
+      volume: volume,
+      onplay: () => onPlay(),
+      onend: () => {
+        onPause();
+        setProgress(0);
+      },
+      onpause: () => onPause(),
+      format: ['mp3'],
+    }
+  );
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -231,12 +237,19 @@ const MusicPlayerContent = () => {
         </div>
 
         {/* Volume & Additional Controls */}
+
         <div className="flex w-1/4 min-w-[180px] justify-end gap-4">
+          <ControlButton
+            icon={ListMusic}
+            tooltip="Playlist"
+            onClick={togglePlaylistMode}
+            iconColor={isPlaylistVisibility ? 'general-pink' : 'white'}
+          />
           <ControlButton
             icon={Mic2}
             tooltip="Lyrics"
             onClick={toggleLyricMode}
-            iconColor={isLyricMode ? 'general-pink' : 'white'}
+            iconColor={isLyricVisibility ? 'general-pink' : 'white'}
           />
           <VolumeControl
             volume={volume * 100}

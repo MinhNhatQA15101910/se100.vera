@@ -8,7 +8,7 @@ import Lyric from '@/components/music/lyrics';
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useUser();
-  const { isLyricMode } = usePlayerStore();
+  const { isLyricVisibility: isLyricMode } = usePlayerStore();
 
   if (!isAuthenticated) {
     return null;
