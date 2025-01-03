@@ -1,5 +1,7 @@
+"use client"
+
 import React, { useState } from 'react';
-import { IoClose, IoSearchSharp } from 'react-icons/io5';
+import {  IoSearchSharp } from 'react-icons/io5';
 
 interface Song {
   id: number;
@@ -47,11 +49,8 @@ const sampleSongs: Song[] = [
   },
 ];
 
-interface CreatePlaylistCardProps {
-  onClose: () => void;
-}
 
-const CreatePlaylistCard: React.FC<CreatePlaylistCardProps> = ({ onClose }) => {
+const CreatePlaylistCard = () => {
   const [playlistTitle, setPlaylistTitle] = useState<string>('');
   const [selectedSongs, setSelectedSongs] = useState<number[]>([]);
 
@@ -66,7 +65,6 @@ const CreatePlaylistCard: React.FC<CreatePlaylistCardProps> = ({ onClose }) => {
   const handleConfirm = () => {
     console.log('Playlist Title:', playlistTitle);
     console.log('Selected Songs:', selectedSongs);
-    onClose(); // Đóng modal sau khi xác nhận
   };
 
   return (

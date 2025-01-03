@@ -3,18 +3,15 @@
 import React from 'react';
 import Image from 'next/image';
 import PlayButton from './PlayButton';
-
-import { Song } from '@/types/global';
 import usePlayerStore from '@/stores/player-store';
+import { Song } from '@/types/global';
 
 const SongCard = ({ song }: { song: Song }) => {
-  const { setActiveTrack } = usePlayerStore();
-  const handlePlayMusic = () => { 
-    console.log("song cua tao: ", song)
-    setActiveTrack({
-      ...song,
-      // musicUrl: "/sounds/robber-vtas.mp3"
-    })
+  const { setActiveTrack, setPlaylist } = usePlayerStore();
+
+  const handlePlayMusic = () => {
+    setActiveTrack(song);
+    setPlaylist([song]);
   };
 
   return (
@@ -22,8 +19,8 @@ const SongCard = ({ song }: { song: Song }) => {
       <div className="p-4">
         <div className="aspect-square relative mb-3 rounded-md overflow-hidden">
           <Image
-            src={'https://picsum.photos/400/400?random=13'}
-            alt={`${'Van Toc Anh Sang'} by ${'Hustlang Khiem'}`}
+            src={song.songPhotoUrl || 'https://picsum.photos/400/400?random=13'}
+            alt={'X'}
             fill
             className="object-cover"
           />
@@ -31,11 +28,14 @@ const SongCard = ({ song }: { song: Song }) => {
         <div className="flex flex-row justify-between items-center">
           <div className="space-y-1 min-w-0 mr-2">
             <h3 className="font-semibold text-sm text-white truncate">
-              {'Van Toc Anh Sang'}
+              {song.songName || 'Unknown Song'}
             </h3>
-            <p className="text-xs text-gray-400 truncate">{'Hustlang Khiem'}</p>
+            <p className="text-xs text-gray-400 truncate">By {song.artists[0].artistName || 'Unknown Artist'}</p>
           </div>
-          <PlayButton onClick={handlePlayMusic} />
+          <PlayButton
+            onClick={handlePlayMusic}
+            aria-label={`Play ${song.songName || 'song'}`}
+          />
         </div>
       </div>
     </div>

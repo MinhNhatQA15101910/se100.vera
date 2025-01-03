@@ -27,13 +27,11 @@ async function client<T>(
     : `/${endpoint}`;
 
   try {
-    // Check if the body is FormData, and don't override Content-Type in that case
     const headers = new Headers({
       'Content-Type': 'application/json',
       ...(config.headers || {}),
     });
 
-    // If the body is FormData, remove the Content-Type header
     if (config.body instanceof FormData) {
       headers.delete('Content-Type');
     }
@@ -44,8 +42,8 @@ async function client<T>(
     });
 
     if (!response.ok) {
-      const errorData = (await response.json()) as IErrorResponse;
-      toast.error(errorData.description || 'An error occurred');
+      const errorData = (await response.json()) as IErrorResponse[];
+      toast.error(errorData[0].description)
       throw {
         data: errorData,
         status: response.status,

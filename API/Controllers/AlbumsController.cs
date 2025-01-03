@@ -1,6 +1,7 @@
 using API.DTOs.Albums;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 
 namespace API.Controllers;
@@ -25,6 +26,16 @@ public class AlbumsController(
         }
 
         return mapper.Map<AlbumDto>(album);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbums([FromQuery] AlbumParams albumParams)
+    {
+        var albums = await albumRepository.GetAlbumsAsync(albumParams);
+
+        Response.AddPaginationHeader(albums);
+
+        return Ok(albums);
     }
 
     [HttpPost]
@@ -112,11 +123,16 @@ public class AlbumsController(
             return Unauthorized("The song does not belong to you.");
         }
 
+        // Add album song to database
         albumSongRepository.AddAlbumSong(new AlbumSong
         {
             AlbumId = album.Id,
             SongId = song.Id
         });
+
+        // Update album's total songs and update date
+        album.TotalSongs++;
+        album.UpdatedAt = DateTime.UtcNow;
 
         if (!await albumRepository.SaveChangesAsync())
         {
@@ -164,6 +180,10 @@ public class AlbumsController(
 
         // Remove song from album
         albumSongRepository.RemoveAlbumSong(albumSong);
+
+        // Update album's total songs and update date
+        album.TotalSongs--;
+        album.UpdatedAt = DateTime.UtcNow;
 
         if (!await albumRepository.SaveChangesAsync())
         {

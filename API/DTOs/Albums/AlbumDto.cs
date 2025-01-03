@@ -1,4 +1,5 @@
-using API.DTOs.Songs;
+using API.DTOs.Artists;
+using API.DTOs.Users;
 
 namespace API.DTOs.Albums;
 
@@ -12,5 +13,7 @@ public class AlbumDto
     public int TotalSongs { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<string>? Photos { get; set; }
-    public List<SongDto>? Songs { get; set; }
+    public List<SongOrderDto>? Songs { get; set; }
+    public UserDto? Publisher { get; set; }
+    public List<ArtistDto>? Artists { get; set; }
 }

@@ -35,8 +35,51 @@ export function convertToFormData(formData: Record<string, any>): FormData {
 }
 
 export function consoleLogFormData(address: string, formData: FormData) {
-  console.log(`FormData Loads at ${address}`)
+  console.log(`FormData Loads at ${address}`);
   Array.from(formData.entries()).forEach(([key, value]) => {
     console.log(`${key}: ${value}`);
   });
+}
+
+export function generateRandomImageSource(): string {
+  const randomNum = Math.floor(Math.random() * 1000);
+  return `https://picsum.photos/400/400?random=${randomNum}`;
+}
+
+export function generateRandomArtist(): string {
+  const artistNames = [
+    'Hanzo',
+    'Hustlang Baby',
+    'Desant',
+    'Ginjin',
+    'Young Mo',
+    'Mrs M',
+    'Uka',
+    'Lil Thug E',
+    'Magi',
+    'Shadow',
+    'Luigini Justasuy',
+    'Bayaraa',
+    'Ice Top',
+    'Rokit Bay',
+    'Gee',
+    'Vanquish',
+    'Endree',
+  ];
+
+  const numArtists = Math.floor(Math.random() * 6) + 1;
+  const selectedArtists: string[] = [];
+
+  for (let i = 0; i < numArtists; i++) {
+    const randomIndex = Math.floor(Math.random() * artistNames.length);
+    selectedArtists.push(artistNames[randomIndex]);
+    artistNames.splice(randomIndex, 1);
+  }
+  return `By ${
+    selectedArtists.length > 2
+      ? selectedArtists.slice(0, -1).join(', ') +
+        ' and ' +
+        selectedArtists.slice(-1)
+      : selectedArtists.join(' and ')
+  }`;
 }

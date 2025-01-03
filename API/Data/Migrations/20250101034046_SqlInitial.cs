@@ -466,31 +466,6 @@ public partial class SqlInitial : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "PlaylistPhotos",
-            columns: table => new
-            {
-                PlaylistId = table.Column<int>(type: "integer", nullable: false),
-                PhotoId = table.Column<int>(type: "integer", nullable: false),
-                IsMain = table.Column<bool>(type: "boolean", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_PlaylistPhotos", x => new { x.PlaylistId, x.PhotoId });
-                table.ForeignKey(
-                    name: "FK_PlaylistPhotos_Photos_PhotoId",
-                    column: x => x.PhotoId,
-                    principalTable: "Photos",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-                table.ForeignKey(
-                    name: "FK_PlaylistPhotos_Playlists_PlaylistId",
-                    column: x => x.PlaylistId,
-                    principalTable: "Playlists",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
             name: "AlbumSongs",
             columns: table => new
             {
@@ -544,8 +519,7 @@ public partial class SqlInitial : Migration
             columns: table => new
             {
                 PlaylistId = table.Column<int>(type: "integer", nullable: false),
-                SongId = table.Column<int>(type: "integer", nullable: false),
-                Order = table.Column<int>(type: "integer", nullable: false)
+                SongId = table.Column<int>(type: "integer", nullable: false)
             },
             constraints: table =>
             {
@@ -725,11 +699,6 @@ public partial class SqlInitial : Migration
             column: "ListenerId");
 
         migrationBuilder.CreateIndex(
-            name: "IX_PlaylistPhotos_PhotoId",
-            table: "PlaylistPhotos",
-            column: "PhotoId");
-
-        migrationBuilder.CreateIndex(
             name: "IX_Playlists_PublisherId",
             table: "Playlists",
             column: "PublisherId");
@@ -806,9 +775,6 @@ public partial class SqlInitial : Migration
 
         migrationBuilder.DropTable(
             name: "PaymentDetails");
-
-        migrationBuilder.DropTable(
-            name: "PlaylistPhotos");
 
         migrationBuilder.DropTable(
             name: "PlaylistSongs");

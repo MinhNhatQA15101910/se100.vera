@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20241205085511_SqlInitial")]
+[Migration("20250101034046_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -422,33 +422,12 @@ partial class SqlInitial
                 b.ToTable("Playlists");
             });
 
-        modelBuilder.Entity("API.Entities.PlaylistPhoto", b =>
-            {
-                b.Property<int>("PlaylistId")
-                    .HasColumnType("integer");
-
-                b.Property<int>("PhotoId")
-                    .HasColumnType("integer");
-
-                b.Property<bool>("IsMain")
-                    .HasColumnType("boolean");
-
-                b.HasKey("PlaylistId", "PhotoId");
-
-                b.HasIndex("PhotoId");
-
-                b.ToTable("PlaylistPhotos");
-            });
-
         modelBuilder.Entity("API.Entities.PlaylistSong", b =>
             {
                 b.Property<int>("PlaylistId")
                     .HasColumnType("integer");
 
                 b.Property<int>("SongId")
-                    .HasColumnType("integer");
-
-                b.Property<int>("Order")
                     .HasColumnType("integer");
 
                 b.HasKey("PlaylistId", "SongId");
@@ -880,25 +859,6 @@ partial class SqlInitial
                 b.Navigation("Publisher");
             });
 
-        modelBuilder.Entity("API.Entities.PlaylistPhoto", b =>
-            {
-                b.HasOne("API.Entities.Photo", "Photo")
-                    .WithMany("Playlists")
-                    .HasForeignKey("PhotoId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.HasOne("API.Entities.Playlist", "Playlist")
-                    .WithMany("Photos")
-                    .HasForeignKey("PlaylistId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Photo");
-
-                b.Navigation("Playlist");
-            });
-
         modelBuilder.Entity("API.Entities.PlaylistSong", b =>
             {
                 b.HasOne("API.Entities.Playlist", "Playlist")
@@ -1113,8 +1073,6 @@ partial class SqlInitial
             {
                 b.Navigation("Albums");
 
-                b.Navigation("Playlists");
-
                 b.Navigation("Songs");
 
                 b.Navigation("Users");
@@ -1122,8 +1080,6 @@ partial class SqlInitial
 
         modelBuilder.Entity("API.Entities.Playlist", b =>
             {
-                b.Navigation("Photos");
-
                 b.Navigation("Songs");
             });
 

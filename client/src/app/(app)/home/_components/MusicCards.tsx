@@ -11,13 +11,13 @@ import { useLoading } from '@/contexts/LoadingContext';
 const MusicCards = () => {
   const { setLoadingState } = useLoading();
   const { data, isLoading } = useQuery({
-    queryKey: ['songs', 'home'],
-    queryFn: () => getAllSongs(2, 4),
+    queryKey: ['songs'],
+    queryFn: async () => await getAllSongs(),
   });
 
-  // useEffect(() => {
-  //   setLoadingState(isLoading);
-  // }, [isLoading, setLoadingState]);
+  useEffect(() => {
+    setLoadingState(isLoading);
+  }, [isLoading, setLoadingState]);
 
   return (
     <div className="w-[90%] flex flex-col bg-transparent text-general-white">
@@ -29,7 +29,7 @@ const MusicCards = () => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {data?.songs
-              .slice(0, 5)
+              .slice(0, 6)
               .map((song, index) => <SongCard key={index} song={song} />)}
           </div>
         </section>
@@ -41,7 +41,8 @@ const MusicCards = () => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {data?.songs
-              .slice(0, 5)
+              ?.sort(() => Math.random() - 0.5)
+              .slice(0, 6)
               .map((song, index) => <SongCard key={index} song={song} />)}
           </div>
         </section>

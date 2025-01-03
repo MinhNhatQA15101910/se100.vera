@@ -3,11 +3,7 @@
 import { Song } from '@/types/global';
 import client from '@/services/client';
 
-import {
-  getAuthTokenFromServerCookies,
-  getUserFromServerCookies,
-} from './utils';
-import { consoleLogFormData } from '@/lib/utils';
+import { getAuthTokenFromCookies } from './utils';
 
 export interface SongsResponse {
   songs: Song[];
@@ -44,14 +40,17 @@ export interface AddSongResponse {
 }
 
 export async function getAllSongs(
-  pageNumber: number,
-  pageSize: number
+  pageNumber?: number,
+  pageSize?: number
 ): Promise<SongsResponse> {
-  const token = await getAuthTokenFromServerCookies();
+  const token = await getAuthTokenFromCookies();
 
   try {
     const response = await client<Song[]>(
-      `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+      !pageNumber || !pageSize
+        ? `/api/songs`
+        : `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+
       {
         method: 'GET',
         headers: {
@@ -96,11 +95,9 @@ export async function getSongById(songId: number): Promise<Song> {
 
 // Only Artist can Add Songs
 export async function addSong(formData: FormData): Promise<AddSongResponse> {
-  const token = await getAuthTokenFromServerCookies();
+  const token = await getAuthTokenFromCookies();
 
   try {
-    consoleLogFormData('i am fon: ', formData);
-
     const response = await client<Song>('/api/songs', {
       method: 'POST',
       headers: {
@@ -119,14 +116,30 @@ export async function addSong(formData: FormData): Promise<AddSongResponse> {
   }
 }
 
+//Only Artist can update a song
+export async function updateSong(
+  songId: number,
+  formData: FormData
+): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/songs/${songId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  } catch (error) {
+    console.error('update a song error: ', error);
+    throw error;
+  }
+}
 
 // Only Artist can delete a song
-export async function deleteSong({
-  songId,
-}: {
-  songId: number;
-}): Promise<void> {
-  const token = await getAuthTokenFromServerCookies();
+export async function deleteSong(songId: number): Promise<void> {
+  const token = await getAuthTokenFromCookies();
 
   try {
     await client(`/api/songs/${songId}`, {

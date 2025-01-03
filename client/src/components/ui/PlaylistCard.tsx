@@ -7,7 +7,7 @@ type PlaylistCardProps = {
   image: string;
   title: string;
   songCount: number;
-  totalDuration: string; // Format: e.g., "1h 20m"
+  totalDuration: string;
 };
 
 const PlaylistCard: React.FC<PlaylistCardProps> = ({

@@ -70,10 +70,12 @@ export default function ChoosePlaylistCard() {
 
       <Modal
         isOpen={isModalOpen}
-        onChange={setModalOpen}
+        onChange={() => {
+          setModalOpen(false);
+        }}
         title="CREATE A PLAYLIST"
       >
-        <CreatePlaylistCard onClose={() => setModalOpen(false)} />
+        <CreatePlaylistCard />
       </Modal>
     </div>
   );

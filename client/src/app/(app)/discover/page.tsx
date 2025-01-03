@@ -1,7 +1,5 @@
-import ChoosePlaylistCard from '@/components/ui/ChoosePlaylistCard';
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import TrendingSongs from './_components/TrendingSongs';
 
 const MainContent = () => {
   return (

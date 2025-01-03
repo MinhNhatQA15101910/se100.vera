@@ -8,9 +8,10 @@ import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 
 interface LikeButtonProps {
   songId: number;
+  size?: number; // Optional size prop for flexibility
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
+const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
   const router = useRouter();
   const { userDetails } = useUser();
 
@@ -31,12 +32,12 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
     <button onClick={handleLike}>
       {isLiked ? (
         <MdFavorite
-          size={20}
+          size={size} // Use the size prop here
           className="text-general-pink hover:text-general-pink-hover transition-colors duration-200"
         />
       ) : (
         <MdFavoriteBorder
-          size={20}
+          size={size} // Use the size prop here
           className="text-general-pink hover:text-general-pink-hover transition-colors duration-200"
         />
       )}

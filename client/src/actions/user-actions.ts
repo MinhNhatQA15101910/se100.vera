@@ -1,7 +1,7 @@
 'server only';
 
 import client from '@/services/client';
-import { getAuthTokenFromServerCookies } from './utils';
+import { getAuthTokenFromCookies } from './utils';
 import { User } from '@/types/global';
 
 export interface ArtistsReponse {
@@ -9,7 +9,7 @@ export interface ArtistsReponse {
 }
 
 export async function getAllAritst(): Promise<ArtistsReponse> {
-  const token = await getAuthTokenFromServerCookies();
+  const token = await getAuthTokenFromCookies();
 
   try {
     const response = await client<User[]>('/api/users/artists', {
