@@ -144,6 +144,19 @@ public class AutoMapperProfiles : Profile
                     s => s.Artist.UserRoles.Select(x => x.Role.Name)
                 )
             );
+        CreateMap<ArtistSong, ArtistDto>()
+            .ForMember(
+                d => d.Id,
+                o => o.MapFrom(
+                    s => s.Artist.Id
+                )
+            )
+            .ForMember(
+                d => d.ArtistName,
+                o => o.MapFrom(
+                    s => s.Artist.ArtistName
+                )
+            );
         CreateMap<NewSongDto, Song>()
         .ForMember(
             s => s.Artists,
