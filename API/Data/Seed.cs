@@ -126,7 +126,7 @@ public class Seed
 
         await SeedSongGenres(context);
         await SeedSongPhotos(context);
-        //await SeedSongArtist(context);
+        await SeedArtistSongs(context);
     }
 
     private static async Task SeedSongPhotos(DataContext context)
@@ -170,23 +170,31 @@ public class Seed
 
             context.SongGenres.Add(songGenre);
         }
+
         await context.SaveChangesAsync();
     }
 
-    public static async Task SeedSongArtist(DataContext context)
+    public static async Task SeedArtistSongs(DataContext context)
     {
         var songs = await context.Songs.ToListAsync();
 
         foreach (var song in songs)
         {
-            var songArtist = new ArtistSong
+            var artistSongs = new List<ArtistSong>
             {
-                SongId = song.Id,
-                ArtistId = Random.Shared.Next(1, 15)
+                new() {
+                    SongId = song.Id,
+                    ArtistId = song.PublisherId
+                },
+                new() {
+                    SongId = song.Id,
+                    ArtistId = ((song.PublisherId - 2) % 6) + 3
+                }
             };
 
-            context.ArtistSongs.Add(songArtist);
+            context.ArtistSongs.AddRange(artistSongs);
         }
+
         await context.SaveChangesAsync();
     }
 
@@ -211,6 +219,99 @@ public class Seed
         }
 
         await context.SaveChangesAsync();
+
+        await SeedAlbumSongs(context);
+        await SeedAlbumGenres(context);
+        await SeedAlbumPhotos(context);
+        await SeedArtistAlbums(context);
+    }
+
+    private static async Task SeedAlbumSongs(DataContext context)
+    {
+        var albums = await context.Albums.ToListAsync();
+
+        foreach (var album in albums)
+        {
+            var albumSongs = new List<AlbumSong>
+            {
+                new() {
+                    AlbumId = album.Id,
+                    SongId = album.Id * 2 - 1,
+                    Order = 1
+                },
+                new() {
+                    AlbumId = album.Id,
+                    SongId = album.Id * 2,
+                    Order = 2
+                }
+            };
+
+            context.AlbumSongs.AddRange(albumSongs);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedArtistAlbums(DataContext context)
+    {
+        var albums = await context.Albums.ToListAsync();
+
+        foreach (var album in albums)
+        {
+            var artistAlbums = new List<ArtistAlbum>
+            {
+                new() {
+                    AlbumId = album.Id,
+                    ArtistId = album.PublisherId
+                },
+                new() {
+                    AlbumId = album.Id,
+                    ArtistId = ((album.PublisherId - 2) % 6) + 3
+                }
+            };
+
+            context.ArtistAlbums.AddRange(artistAlbums);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAlbumGenres(DataContext context)
+    {
+        var albums = await context.Albums.ToListAsync();
+
+        foreach (var album in albums)
+        {
+            var albumGenre = new AlbumGenre
+            {
+                AlbumId = album.Id,
+                GenreId = Random.Shared.Next(1, 15)
+            };
+
+            context.AlbumGenres.Add(albumGenre);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAlbumPhotos(DataContext context)
+    {
+        var albums = await context.Albums.ToListAsync();
+        var photoId = 70;
+
+        foreach (var album in albums)
+        {
+            var albumPhoto = new AlbumPhoto
+            {
+                AlbumId = album.Id,
+                PhotoId = photoId++,
+                IsMain = true
+            };
+
+            context.AlbumPhotos.Add(albumPhoto);
+        }
+
+        await context.SaveChangesAsync();
     }
 
     public static async Task SeedPlaylists(DataContext context)
@@ -231,6 +332,35 @@ public class Seed
         foreach (var playlist in playlists)
         {
             context.Playlists.Add(playlist);
+        }
+
+        await context.SaveChangesAsync();
+
+        await SeedPlaylistSongs(context);
+    }
+
+    private static async Task SeedPlaylistSongs(DataContext context)
+    {
+        var playlists = await context.Playlists.ToListAsync();
+        var songId = 1;
+
+        foreach (var playlist in playlists)
+        {
+            var playlistSongs = new List<PlaylistSong>
+            {
+                new() {
+                    PlaylistId = playlist.Id,
+                    SongId = ((songId - 1) % 12) + 1
+                },
+                new() {
+                    PlaylistId = playlist.Id,
+                    SongId = (songId % 12) + 1,
+                }
+            };
+
+            context.PlaylistSongs.AddRange(playlistSongs);
+
+            songId += 2;
         }
 
         await context.SaveChangesAsync();
