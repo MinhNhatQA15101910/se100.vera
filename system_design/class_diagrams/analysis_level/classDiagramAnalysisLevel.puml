@@ -14,6 +14,8 @@ class User {
     +verifyLogin()
     +verifyToken()
     +changePassword()
+    +addRoleToUser()
+    +removeRoleFromUser()
 }
 
 class Listener {
@@ -40,6 +42,9 @@ class Photo {
     -id 
     -url 
     -publicId
+    +createPhoto()
+    +deletePhoto()
+    +getPhotos()
 }
 
 class Genre {
@@ -47,19 +52,21 @@ class Genre {
     -genreName 
     -createdAt 
     -updatedAt 
-    createGenre()
-    updateGenre()
-    deleteGenre()
-    getGenres()
+    +createGenre()
+    +updateGenre()
+    +deleteGenre()
+    +getGenres()
 }
 
 class Song {
     -id
     -songName 
     -description
-    -musicUrl
-    -lyricUrl
     -totalListeningHours
+    -musicUrl
+    -musicPublicId
+    -lyricUrl
+    -lyricPublicId
     -createdAt 
     -updatedAt 
     +createSong()
