@@ -4,6 +4,7 @@ import { AppButton } from '@/components/ui/AppButton';
 import Image from 'next/image';
 import { Plus } from 'lucide-react';
 import AlbumCard from '@/components/ui/AlbumCard';
+import { useRouter } from 'next/navigation';
 
 const artists = [
   { name: 'Eminem', image: 'https://picsum.photos/400/400?random=1' },
@@ -14,7 +15,6 @@ const artists = [
   { name: 'Billie Eilish', image: 'https://picsum.photos/400/400?random=6' },
   { name: 'Billie Baby', image: 'https://picsum.photos/400/400?random=7' },
   { name: 'Dog Eilish', image: 'https://picsum.photos/400/400?random=8' },
-  { name: 'King Gay', image: 'https://picsum.photos/400/400?random=9' },
 ];
 
 const albums = [
@@ -79,24 +79,29 @@ const playlist = [
     title: 'Workout Mix',
     image: 'https://picsum.photos/400/400?random=13',
   },
-  // {
-  //   title: 'Chill Vibes',
-  //   image: 'https://picsum.photos/400/400?random=14',
-  // },
-  // {
-  //   title: 'Party Time',
-  //   image: 'https://picsum.photos/400/400?random=15',
-  // },
-  // {
-  //   title: 'Study Focus',
-  //   image: 'https://picsum.photos/400/400?random=16',
-  // },
+  {
+    title: 'Chill Vibes',
+    image: 'https://picsum.photos/400/400?random=14',
+  },
+  {
+    title: 'Party Time',
+    image: 'https://picsum.photos/400/400?random=15',
+  },
+  {
+    title: 'Study Focus',
+    image: 'https://picsum.photos/400/400?random=16',
+  },
 ];
 
-const ViewAllFeature = () => {
+const ViewAllFeature = ({link}: {link: string}) => {
+  const router = useRouter();
+
   return (
     <AppButton
       className={`flex flex-col items-center justify-center space-y-2 group w-[10%] `}
+      onClick={() => {
+        router.push(link);
+      }}
     >
       <div className="p-2 rounded-full bg-[#1E1E1E] group-hover:bg-[#434343] transition-colors duration-200 mt-6">
         <Plus className="text-general-white group-hover:text-general-pink-hover transition-colors duration-200" />
@@ -124,32 +129,6 @@ const ArtistCard = ({ name, image }: { name: string; image: string }) => {
     </div>
   );
 };
-
-// const AlbumCard = ({
-//   title,
-//   image,
-//   artist,
-// }: {
-//   title: string;
-//   image: string;
-//   artist: string;
-// }) => {
-//   return (
-//     <div className="flex flex-col bg-[#1F1F1F] p-2 pb-4 rounded-lg">
-//       <div className="relative w-full aspect-square">
-//         <Image
-//           src={image}
-//           alt={title}
-//           fill
-//           className="object-cover rounded-md"
-//           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-//         />
-//       </div>
-//       <span className="mt-2">{title}</span>
-//       <span className="text-sm text-gray-400">{artist}</span>
-//     </div>
-//   );
-// };
 
 const PlaylistCard = ({ title, image }: { title: string; image: string }) => {
   return (
@@ -181,7 +160,11 @@ export default function MetaData() {
               <ArtistCard key={idx} name={artist.name} image={artist.image} />
             ))}
           </div>
-          {artists.length >= 6 ? <ViewAllFeature /> : <div className='flex w-[10%]'/>}
+          {artists.length >= 6 ? (
+            <ViewAllFeature link='/artists'/>
+          ) : (
+            <div className="flex w-[10%]" />
+          )}
         </div>
       </section>
       <section className="flex flex-col w-full">
@@ -199,7 +182,11 @@ export default function MetaData() {
               />
             ))}
           </div>
-          {albums.length >= 5 ? <ViewAllFeature /> : <div className='flex w-[10%]'/>}
+          {albums.length >= 5 ? (
+            <ViewAllFeature link={"/albums"}/>
+          ) : (
+            <div className="flex w-[10%]" />
+          )}
         </div>
       </section>
       <section className="flex flex-col w-full">
@@ -207,7 +194,9 @@ export default function MetaData() {
           Mood <span className="text-pink-500">Playlists</span>
         </h2>
         <div className="flex flex-row items-center">
-          <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full`}>
+          <div
+            className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full`}
+          >
             {playlist.slice(0, 5).map((playlist, idx) => (
               <PlaylistCard
                 key={idx}
@@ -216,7 +205,11 @@ export default function MetaData() {
               />
             ))}
           </div>
-          {playlist.length >= 5 ? <ViewAllFeature /> : <div className='flex w-[10%]'/>}
+          {playlist.length >= 5 ? (
+            <ViewAllFeature link='/playlists'/>
+          ) : (
+            <div className="flex w-[10%]" />
+          )}
         </div>
       </section>
     </div>

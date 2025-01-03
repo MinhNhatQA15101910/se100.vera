@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import usePlayerStore from '@/stores/player-store';
+import { useLoading } from '@/contexts/LoadingContext';
 
 interface LyricLine {
   time: number;
@@ -9,25 +10,33 @@ interface LyricLine {
 }
 
 const Lyric: React.FC = () => {
-  const { currentDuration } = usePlayerStore();
-
+  const { activeSong, currentDuration } = usePlayerStore();
+  const { setLoadingState } = useLoading();
   const [lyrics, setLyrics] = useState<LyricLine[]>([]);
   const [currentLineIndex, setCurrentLineIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const lrcUrl =
-    'https://res.cloudinary.com/dauyd6npv/raw/upload/v1735203578/zemtuxsbt0b8d9tnr5dy.lrc';
+  const lrcUrl = activeSong?.lyricUrl;
 
   useEffect(() => {
     const fetchLyrics = async () => {
       try {
-        const response = await fetch(lrcUrl);
+        setLoadingState(true);
+        const response = await fetch(lrcUrl || '');
+
         const lrcText = await response.text();
+
+        if (!lrcText) {
+          setLyrics([]);
+          return;
+        }
 
         const parsedLyrics = parseLrc(lrcText);
         setLyrics(parsedLyrics);
       } catch (error) {
         console.error('Error fetching or parsing LRC file:', error);
+      } finally {
+        setLoadingState(false);
       }
     };
 
@@ -77,7 +86,7 @@ const Lyric: React.FC = () => {
       {lyrics.map((line, index) => {
         let color = 'lightgray';
         let fontWeight = 'normal';
-        let fontSize = '2.5rem';
+        const fontSize = '2.5rem';
 
         if (index === currentLineIndex) {
           color = '#EE10B0';

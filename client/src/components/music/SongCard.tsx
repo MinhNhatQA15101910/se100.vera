@@ -1,22 +1,18 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import PlayButton from './PlayButton';
-
 import usePlayerStore from '@/stores/player-store';
+import { Song } from '@/types/global';
 
-const SongCard = ({ song }: { song: any }) => {
-  const { setActiveTrack } = usePlayerStore();
+const SongCard = ({ song }: { song: Song }) => {
+  const { setActiveTrack, setPlaylist } = usePlayerStore();
+
   const handlePlayMusic = () => {
-    setActiveTrack({
-      ...song,
-    });
+    setActiveTrack(song);
+    setPlaylist([song]);
   };
-
-  useEffect(() => {
-    console.log('song cua tao: ', song);
-  }, [song]);
 
   return (
     <div className="group border border-zinc-100/10 hover:bg-zinc-100/10 rounded-md hover:cursor-pointer transition-colors duration-400 relative">
@@ -24,7 +20,7 @@ const SongCard = ({ song }: { song: any }) => {
         <div className="aspect-square relative mb-3 rounded-md overflow-hidden">
           <Image
             src={song.songPhotoUrl || 'https://picsum.photos/400/400?random=13'}
-            alt={`${song.songName} by ${'Hustlang Khiem'}`}
+            alt={'X'}
             fill
             className="object-cover"
           />
@@ -32,11 +28,14 @@ const SongCard = ({ song }: { song: any }) => {
         <div className="flex flex-row justify-between items-center">
           <div className="space-y-1 min-w-0 mr-2">
             <h3 className="font-semibold text-sm text-white truncate">
-              {song.songName}
+              {song.songName || 'Unknown Song'}
             </h3>
-            <p className="text-xs text-gray-400 truncate">{'Hustlang Khiem'}</p>
+            <p className="text-xs text-gray-400 truncate">By {song.artists[0].artistName || 'Unknown Artist'}</p>
           </div>
-          <PlayButton onClick={handlePlayMusic} />
+          <PlayButton
+            onClick={handlePlayMusic}
+            aria-label={`Play ${song.songName || 'song'}`}
+          />
         </div>
       </div>
     </div>

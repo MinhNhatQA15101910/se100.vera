@@ -8,8 +8,13 @@ import { LoadingProvider } from '@/contexts/LoadingContext';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (

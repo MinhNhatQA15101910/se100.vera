@@ -40,7 +40,7 @@ const usePlayerStore = create<PlayerState>((set, get) => ({
     if (song) {
       set({ activeSong: song });
     }
-  },
+  },  
 
   onPlay: () => set({ isPlaying: true }),
 

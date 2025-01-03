@@ -7,7 +7,7 @@ import { useUser } from '@/contexts/UserContext';
 import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 
 interface LikeButtonProps {
-  songId: String;
+  songId: number;
   size?: number; // Optional size prop for flexibility
 }
 

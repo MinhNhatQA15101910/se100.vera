@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -17,8 +17,21 @@ import {
 } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
+import { IconType } from 'react-icons/lib';
+import AddPlaylistModal from './AddPlaylistModal';
 
-const sidebarSections = [
+export type SidebarItem = {
+  name: string;
+  icon: IconType;
+  href: string;
+};
+
+export type SidebarSection = {
+  title: string;
+  items: SidebarItem[];
+};
+
+const sidebarSections: SidebarSection[] = [
   {
     title: 'Menu',
     items: [
@@ -38,7 +51,7 @@ const sidebarSections = [
   {
     title: 'Playlist and Favorite',
     items: [
-      { name: 'Your Favorites', icon: FaHeart, href: '/favorites' },
+      { name: 'Your Favorites', icon: FaHeart, href: '/your-favorites' },
       { name: 'Your Playlist', icon: FaMusic, href: '/your-playlist' },
       { name: 'Add Playlist', icon: FaPlus, href: '/add-playlist' },
     ],
@@ -56,6 +69,7 @@ const sidebarSections = [
 const Sidebar = ({ paddingBottom = '0' }) => {
   const { logout, isAuthenticated } = useUser();
   const { setLoadingState } = useLoading();
+  const [isAddPlaylistModalOpen, setIsAddPlaylistModalOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -68,7 +82,7 @@ const Sidebar = ({ paddingBottom = '0' }) => {
 
   return (
     <div
-      className={`h-screen hidden sticky top-0 animated-border z-2 md:flex flex-col min-h-screen text-white max-w-fit p-6 border-r border-r-general-pink shadow-[8px_0px_24.2px_0px_rgba(238,16,176,0.15)] animate-[border-pulse_2s_ease-in-out_infinite] ${!isAuthenticated && 'hidden'}`}
+      className={`h-screen sticky top-0 animated-border z-2 flex-col min-h-screen text-white max-w-fit p-6 border-r border-r-general-pink shadow-[8px_0px_24.2px_0px_rgba(238,16,176,0.15)] animate-[border-pulse_2s_ease-in-out_infinite] ${isAuthenticated ? `flex` : `hidden`}`}
     >
       <div
         className="overflow-y-scroll"
@@ -77,7 +91,14 @@ const Sidebar = ({ paddingBottom = '0' }) => {
         }}
       >
         {/* Logo */}
-        <h1 className="title-text-gradient mb-8">VERA</h1>
+        <h1
+          onClick={() => {
+            router.push('/home');
+          }}
+          className="title-text-gradient mb-8 cursor-pointer"
+        >
+          VERA
+        </h1>
         {sidebarSections.map((section, index) => (
           <div
             key={section.title}
@@ -103,6 +124,20 @@ const Sidebar = ({ paddingBottom = '0' }) => {
                         {item.name}
                       </span>
                     </button>
+                  ) : item.href === '/add-playlist' ? (
+                    <div
+                      onClick={() => {setIsAddPlaylistModalOpen(true)}}
+                      className={`group flex items-center space-x-3 hover:bg-slate-400/20 p-2 rounded-md cursor-pointer`}
+                    >
+                      <item.icon
+                        className={`text-xs group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
+                      />
+                      <span
+                        className={`sub-header whitespace-nowrap group-hover:text-pink-500 ${pathname === item.href ? 'text-general-pink' : ''}`}
+                      >
+                        {item.name}
+                      </span>
+                    </div>
                   ) : (
                     <Link
                       href={item.href}
@@ -123,7 +158,12 @@ const Sidebar = ({ paddingBottom = '0' }) => {
             </ul>
           </div>
         ))}
-        <div className="h-20"></div>
+        <AddPlaylistModal
+          isOpen={isAddPlaylistModalOpen}
+          onClose={() => {
+            setIsAddPlaylistModalOpen(false);
+          }}
+        />
       </div>
     </div>
   );

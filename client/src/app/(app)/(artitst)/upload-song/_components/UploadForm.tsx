@@ -404,7 +404,7 @@ export default function UploadForm() {
             <div className="flex justify-center">
               <AppButton
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-600 px-8"
+                className="bg-blue-500 hover:bg-general-pink-hover transition-colors duration-200 px-8"
               >
                 Upload
               </AppButton>

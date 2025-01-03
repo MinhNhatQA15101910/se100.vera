@@ -4,14 +4,20 @@ export interface Song {
   id: number;
   songName: string;
   description: string | null;
-  totalView: number; // nho sua lai ko la bu
+  publisherName: string;
+  publisherImageUrl: string;
+  artists: {
+    id: number;
+    artistName: string;
+  }[];
+  genres: string[];
+  totalView: number;
   musicUrl: string;
-  createdAt: string;
-  updatedAt: string;
-  musicPublicId: string;
+  musicPublicId: string | null;
   lyricUrl: string | null;
+  lyricPublicId: string | null;
   songPhotoUrl: string;
-  image: string;
+  songPhotoPublicId: string | null;
 }
 
 export interface Genre {

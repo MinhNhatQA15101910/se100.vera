@@ -40,14 +40,16 @@ export interface AddSongResponse {
 }
 
 export async function getAllSongs(
-  pageNumber: number,
-  pageSize: number
+  pageNumber?: number,
+  pageSize?: number
 ): Promise<SongsResponse> {
   const token = await getAuthTokenFromCookies();
 
   try {
     const response = await client<Song[]>(
-      `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+      !pageNumber || !pageSize
+        ? `/api/songs`
+        : `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
 
       {
         method: 'GET',
