@@ -10,6 +10,7 @@ public class Song
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public required string MusicUrl { get; set; } = "";
     public string? MusicPublicId { get; set; }
+    public required string Duration { get; set; } = "";
     public string? LyricUrl { get; set; }
     public string? LyricPublicId { get; set; }
     public List<SongPhoto> Photos { get; set; } = [];
