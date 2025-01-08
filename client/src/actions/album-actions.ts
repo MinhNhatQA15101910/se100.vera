@@ -63,3 +63,19 @@ export async function getArtistAlbums(artistId: number): Promise<Album[]> {
     throw error;
   }
 }
+
+export async function deleteAlbum(AlbumId: number): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/songs/${AlbumId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('delete a song error: ', error);
+    throw error;
+  }
+}

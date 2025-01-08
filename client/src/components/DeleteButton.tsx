@@ -8,9 +8,10 @@ import { MdDelete } from 'react-icons/md';
 
 interface UpdateButtonProps {
   genreId: number;
+  genreName: String;
 }
 
-const UpdateButton: React.FC<UpdateButtonProps> = ({ genreId }) => {
+const UpdateButton: React.FC<UpdateButtonProps> = ({ genreId, genreName }) => {
   const router = useRouter();
   const { userDetails } = useUser();
 

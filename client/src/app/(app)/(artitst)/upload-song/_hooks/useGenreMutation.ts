@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
-import { addGenre, AddGenrePayload } from '@/actions/genre-actions';
+import { addGenre, AddGenrePayload, updateGenre, UpdateGenrePayload } from '@/actions/genre-actions';
 
 export function useAddGenreMutation() {
   const queryClient = useQueryClient();
@@ -13,10 +13,7 @@ export function useAddGenreMutation() {
   const mutation = useMutation({
     mutationFn: async (data: AddGenrePayload) => {
       setLoadingState(true);
-      const formData = new FormData();
-      formData.append('genreName', data.genreName);
-
-      const response = await addGenre(formData);
+      const response = await addGenre(data.genreName);
       return response;
     },
     onSuccess: () => {
@@ -26,5 +23,32 @@ export function useAddGenreMutation() {
       setLoadingState(false);
     },
   });
+  return mutation;
+}
+
+export function useUpdateGenreMutation() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+        
+      id,
+      data,
+    }: {
+      id: number;
+      data: AddGenrePayload;
+      
+    }
+) => {
+        const response = await updateGenre(data.genreName, id);
+        return response;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['genres'],
+      });
+    },
+  });
+
   return mutation;
 }

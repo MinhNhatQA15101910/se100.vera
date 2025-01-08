@@ -111,7 +111,7 @@ export default function ManageGenres() {
             </TableHead>
           </TableHeader>
           <TableBody>
-            {data?.genres?.slice(0, 7).map((genre, index) => (
+            {data?.genres?.slice(0, 10).map((genre, index) => (
               <TableRow
                 key={genre.id}
                 className="border-none cursor-pointer hover:bg-transparent group"
@@ -130,8 +130,14 @@ export default function ManageGenres() {
                 </TableCell>
                 <TableCell className="text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] ">
                   <div className="flex items-center space-x-2">
-                    <UpdateButton genreId={genre.id} />
-                    <DeleteButton genreId={genre.id} />
+                    <UpdateButton
+                      genreId={genre.id}
+                      genreName={genre.genreName}
+                    />
+                    <DeleteButton
+                      genreId={genre.id}
+                      genreName={genre.genreName}
+                    />
                   </div>
                 </TableCell>
               </TableRow>

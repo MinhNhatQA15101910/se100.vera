@@ -3,6 +3,7 @@
 import client from '@/services/client';
 import { Genre } from '@/types/global';
 import { getAuthTokenFromCookies } from './utils';
+import { json } from 'stream/consumers';
 
 export interface GenreResponse {
   genres: Genre[];
@@ -68,15 +69,16 @@ export async function getAllGenres(
   }
 }
 
-export async function addGenre(formData: FormData): Promise<AddGenreResponse> {
-  const token = await getAuthTokenFromCookies();
+export async function addGenre(genreName: string): Promise<AddGenreResponse> {
+  const token = await getAuthTokenFromCookies(); // Retrieve auth token
   try {
     const response = await client<Genre>('/api/genres', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json', // Ensure proper content type
       },
-      body: formData,
+      body: JSON.stringify({ genreName: genreName }), // Pass correct JSON body
     });
 
     return {
@@ -89,19 +91,20 @@ export async function addGenre(formData: FormData): Promise<AddGenreResponse> {
   }
 }
 
+
 export async function updateGenre(
+  genreName: string,
   genreId: number,
-  formData: FormData
 ): Promise<void> {
   const token = await getAuthTokenFromCookies();
 
   try {
-    await client(`/api/songs/${genreId}`, {
+    await client(`/api/genres/${genreId}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: formData,
+      body: JSON.stringify({ genreName: genreName }),
     });
   } catch (error) {
     console.error('update a genre error: ', error);

@@ -39,7 +39,7 @@ const sidebarSections: SidebarSection[] = [
       {
         name: 'Manage albums',
         icon: FaSearch,
-        href: '/admin/albums',
+        href: '/admin/manage-albums',
       },
       { name: 'Manage artists', icon: FaMusic, href: '/admin/artists' },
       { name: 'Manage songs', icon: FaUserAlt, href: '/admin/manage-songs' },

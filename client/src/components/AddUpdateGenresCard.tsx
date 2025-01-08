@@ -1,39 +1,63 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from './ui/Input';
-import { useAddGenreMutation } from '@/app/(app)/(artitst)/upload-song/_hooks/useGenreMutation';
+import {
+  useAddGenreMutation,
+  useUpdateGenreMutation,
+} from '@/app/(app)/(artitst)/upload-song/_hooks/useGenreMutation';
 import { toast } from 'react-toastify';
 
 interface AddUpdateGenresCardProps {
-  defaultValue?: string; // Optional default value for editing
+  defaultGenreName?: string;
+  defaultGenreId?: number;
 }
 
 const AddUpdateGenresCard: React.FC<AddUpdateGenresCardProps> = ({
-  defaultValue = '',
+  defaultGenreName: defaultGenreName = '',
+  defaultGenreId: defaultGenreId = -1,
 }) => {
-  const [genreName, setGenreName] = useState(defaultValue);
+  const [genreName, setGenreName] = useState(defaultGenreName);
   const addGenreMutation = useAddGenreMutation();
+  const updateGenreMutation = useUpdateGenreMutation();
 
   const onSubmit = () => {
     if (genreName.trim() === '') {
       toast.error('Genre name cannot be empty!');
       return;
     }
-
-    addGenreMutation.mutate(
-      {
-        genreName: genreName.trim(), // Ensure no trailing spaces
-      },
-      {
-        onSuccess: () => {
-          toast.success('Genre added successfully!');
-          setGenreName(''); // Reset input after success
+    if (defaultGenreId == -1) {
+      addGenreMutation.mutate(
+        {
+          genreName: genreName.trim(),
         },
-        onError: (error) => {
-          toast.error(error.message || 'Failed to add genre.');
+        {
+          onSuccess: () => {
+            toast.success('Genre added successfully!');
+            setGenreName(''); // Reset input after success
+          },
+          onError: (error) => {
+            toast.error(error.message || 'Failed to add genre.');
+          },
+        }
+      );
+    } else
+      updateGenreMutation.mutate(
+        {
+          id: defaultGenreId,
+          data: {
+            genreName: genreName.trim(),
+          },
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            toast.success('Genre updated successfully!');
+            setGenreName('');
+          },
+          onError: (error) => {
+            toast.error(error.message || 'Failed to update genre.');
+          },
+        }
+      );
   };
 
   return (
