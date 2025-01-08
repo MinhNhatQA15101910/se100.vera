@@ -178,4 +178,14 @@ public class UsersController(
 
         return Ok(artists);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<UserDto>> GetUser(int id)
+    {
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(id);
+
+        if (user == null) return NotFound();
+
+        return Ok(mapper.Map<UserDto>(user));
+    }
 }
