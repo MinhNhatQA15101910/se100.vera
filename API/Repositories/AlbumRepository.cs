@@ -42,6 +42,8 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
     {
         var query = context.Albums.AsQueryable();
 
+        query = query.Where(s => s.Songs.Count > 0);
+
         if (albumParams.AlbumName != null)
         {
             query = query.Where(s => s.AlbumName.Contains(albumParams.AlbumName));
