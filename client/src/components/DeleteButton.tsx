@@ -7,7 +7,7 @@ import { useUser } from '@/contexts/UserContext';
 import { MdDelete } from 'react-icons/md';
 
 interface UpdateButtonProps {
-  genreId: String;
+  genreId: number;
 }
 
 const UpdateButton: React.FC<UpdateButtonProps> = ({ genreId }) => {

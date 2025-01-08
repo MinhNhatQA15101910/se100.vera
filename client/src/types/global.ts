@@ -22,6 +22,8 @@ export interface Song {
 export interface Genre {
   id: number;
   genreName: string;
+  createdAt: string;
+
 }
 
 export interface Album {
@@ -75,10 +77,4 @@ export interface PaginatedResponses<T> {
   pageNumber: number;
   pageSize: number;
   totalPages: number;
-}
-
-export interface Genre{
-  genreId: number;
-  genreName: string;
-  createdAt: Date;
 }

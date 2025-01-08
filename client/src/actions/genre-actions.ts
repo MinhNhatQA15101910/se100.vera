@@ -4,6 +4,15 @@ import client from '@/services/client';
 import { Genre } from '@/types/global';
 import { getAuthTokenFromCookies } from './utils';
 
+export interface GenreResponse {
+  genres: Genre[];
+  pagination: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
+}
 
 export interface AddGenreResponse {
   id: number;
@@ -18,25 +27,49 @@ export interface UpdateGenrePayload {
   genreName: string;
 }
 
-export async function getAllGenres({
-  pageSize,
-}: {
-  pageSize: number;
-}): Promise<Genre[]> {
+export async function getAllGenres(
+  pageNumber?: number,
+  pageSize?: number
+): Promise<GenreResponse> {
+  const token = await getAuthTokenFromCookies();
+
   try {
-    const response = await client<Genre[]>(`/api/genres?pageSize=${pageSize}`, {
-      method: 'GET',
-    });
-    return response.data;
+    const response = await client<Genre[]>(
+      !pageNumber || !pageSize
+        ? `/api/genres`
+        : `/api/genres?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const paginationHeader = response.headers.get('Pagination');
+    if (!paginationHeader) {
+      throw new Error('Pagination data not found in headers');
+    }
+
+    const pagination = JSON.parse(paginationHeader);
+
+    if (!response.headers.get('Content-Type')?.includes('application/json')) {
+      throw new Error('Response does not contain valid JSON data');
+    }
+
+    return {
+      genres: response.data,
+      pagination,
+    };
   } catch (error) {
-    console.error('Fetch Genre Errors: ', error);
+    console.error('Error in getAllGenres:', error);
     throw error;
   }
 }
 
 export async function addGenre(formData: FormData): Promise<AddGenreResponse> {
   const token = await getAuthTokenFromCookies();
-
   try {
     const response = await client<Genre>('/api/genres', {
       method: 'POST',

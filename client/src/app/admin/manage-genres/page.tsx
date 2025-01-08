@@ -13,59 +13,43 @@ import {
 import { Button } from '@/components/ui/button';
 import UpdateButton from '@/components/UpdateButton';
 import DeleteButton from '@/components/DeleteButton';
+import { useQuery } from '@tanstack/react-query';
+import { useLoading } from '@/contexts/LoadingContext';
+import React from 'react';
+import { getAllGenres } from '@/actions/genre-actions';
+import PaginationButtons from '@/components/PaginatedButtons';
+import AddPlaylistModal from '@/components/AddPlaylistModal';
+import Modal from '@/components/Modal';
+import AddUpdateGenresCard from '@/components/AddUpdateGenresCard';
 
-const Page: React.FC = () => {
-  const initialGenres = [
-    {
-      id: '1',
-      genreName: 'Jazz',
-      createdAt: 'Dec 30, 2023',
-      views: 12345,
-    },
-    {
-      id: '2',
-      genreName: 'Pop',
-      createdAt: 'Jan 15, 2024',
-      views: 10234,
-    },
-    {
-      id: '3',
-      genreName: 'Rock',
-      createdAt: 'Feb 10, 2024',
-      views: 8901,
-    },
-    {
-      id: '4',
-      genreName: 'Hip-Hop',
-      createdAt: 'Mar 5, 2024',
-      views: 7567,
-    },
-    {
-      id: '5',
-      genreName: 'Electronic',
-      createdAt: 'Apr 20, 2024',
-      views: 6543,
-    },
-  ];
+export default function ManageGenres() {
+  const [isAddGenreModalOpen, setIsAddGenreModalOpen] = useState(false);
+  const { setLoadingState } = useLoading();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 10;
 
-  const [genres] = useState(initialGenres);
-  const [sortConfig] = useState<{
-    key: string;
-    direction: string;
-  } | null>(null);
+  const { data, isLoading } = useQuery({
+    queryKey: ['genres', currentPage, pageSize],
+    queryFn: async () => {
+      const response = await getAllGenres(currentPage, pageSize);
+      return response;
+    },
+  });
 
-  const getSortIcon = (column: string) => {
-    if (!sortConfig || sortConfig.key !== column) return null;
-
-    return sortConfig.direction === 'ascending' ? (
-      <FaSortAmountUpAlt className="text-white" />
-    ) : (
-      <FaSortAmountDown className="text-white" />
-    );
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
   };
 
+  React.useEffect(() => {
+    setLoadingState(isLoading);
+  }, [isLoading]);
+
+  function getRandomNumber(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   return (
-    <div className="flex min-h-screen w-full overflow-hidden">
+    <div className="flex-col min-h-screen w-full overflow-hidden">
       <div className="w-full flex flex-col bg-transparent text-general-white items-center custom1-table p-12 ">
         <div className="flex justify-between w-full">
           <div>
@@ -74,7 +58,12 @@ const Page: React.FC = () => {
             </h2>
           </div>
           <div>
-            <Button className="bg-general-blue hover:bg-general-blue-hover text-lg">
+            <Button
+              className="bg-general-blue hover:bg-general-blue-hover text-lg"
+              onClick={() => {
+                setIsAddGenreModalOpen(true);
+              }}
+            >
               Add a genre
             </Button>
           </div>
@@ -94,7 +83,6 @@ const Page: React.FC = () => {
                 className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
               >
                 <span>Genre</span>
-                {getSortIcon('genreName')}
               </Button>
             </TableHead>
             <TableHead style={{ width: '15%' }}>
@@ -123,7 +111,7 @@ const Page: React.FC = () => {
             </TableHead>
           </TableHeader>
           <TableBody>
-            {genres.map((genre, index) => (
+            {data?.genres?.slice(0, 7).map((genre, index) => (
               <TableRow
                 key={genre.id}
                 className="border-none cursor-pointer hover:bg-transparent group"
@@ -135,10 +123,10 @@ const Page: React.FC = () => {
                   </div>
                 </TableCell>
                 <TableCell className="text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                  {genre.createdAt}
+                  {genre.createdAt.slice(0, 10)}
                 </TableCell>
                 <TableCell className="text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                  {genre.views}
+                  {getRandomNumber(10, 1000)}
                 </TableCell>
                 <TableCell className="text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] ">
                   <div className="flex items-center space-x-2">
@@ -151,8 +139,21 @@ const Page: React.FC = () => {
           </TableBody>
         </Table>
       </div>
+      <Modal
+        onChange={() => {
+          setIsAddGenreModalOpen(false);
+        }}
+        isOpen={isAddGenreModalOpen}
+        title="ADD A GENRE"
+      >
+        <AddUpdateGenresCard />
+      </Modal>
+      <PaginationButtons
+        pageSize={pageSize}
+        currentPage={currentPage}
+        totalCount={data?.pagination.totalItems || 0}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
-};
-
-export default Page;
+}
