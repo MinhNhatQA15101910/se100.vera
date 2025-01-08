@@ -13,6 +13,7 @@ public class Album
     public List<AlbumSong> Songs { get; set; } = [];
     public List<ArtistAlbum> Artists { get; set; } = [];
     public List<AlbumGenre> Genres { get; set; } = [];
+    public List<AlbumFavorite> UserFavorites { get; set; } = [];
 
     // Navigation properties
     public int PublisherId { get; set; }
