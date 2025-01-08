@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { z } from 'zod';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/label';
+import { Label, LabelInputContainer } from '@/components/ui/Label';
 import { Input } from '@/components/ui/Input';
 import Separator from '@/components/Separator';
 import { Checkbox } from '@/components/ui/check-box';
@@ -73,17 +73,6 @@ const LoginForm = () => {
       setLoadingState(false);
     }
   };
-
-  useEffect(() => {
-    const rememberedEmail = localStorage.getItem('rememberedEmail');
-    if (rememberedEmail) {
-      setFormData((prev) => ({
-        ...prev,
-        email: rememberedEmail,
-      }));
-      setIsRememberMe(true);
-    }
-  }, []);
 
   return (
     <div className="flex flex-col w-[40vw] items-center justify-center">

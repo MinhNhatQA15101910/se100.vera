@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import LikeButton from '@/components/music/LikeButton';
-import { AppButton } from '@/components/ui/AppButton';
 import {
   Table,
   TableBody,
@@ -11,34 +10,32 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus } from 'lucide-react';
+import PaginationButtons from '@/components/PaginatedButtons';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@/contexts/LoadingContext';
 import { getAllSongs } from '@/actions/song-actions';
-import { useRouter } from 'next/navigation';
-import usePlayerStore from '@/stores/player-store';
-import { Song } from '@/types/global';
 
 export default function TrendingSongs() {
-  const router = useRouter();
-  const { setActiveTrack, setPlaylist } = usePlayerStore();
+  const { setLoadingState } = useLoading();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 10;
+
   const { data, isLoading } = useQuery({
-    queryKey: ['songs', 'home'],
+    queryKey: ['songs', currentPage, pageSize],
     queryFn: async () => {
-      const data = await getAllSongs();
-      return data;
+      const response = await getAllSongs(currentPage, pageSize);
+      return response;
     },
   });
-  const { setLoadingState } = useLoading();
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
   React.useEffect(() => {
     setLoadingState(isLoading);
   }, [isLoading]);
-
-  const handleOnChooseDiv = (song: Song) => {
-    setActiveTrack(song);
-    setPlaylist(data?.songs || []);
-  };
 
   return (
     <div className="w-[90%] flex flex-col bg-transparent text-general-white items-center custom1-table">
@@ -60,12 +57,11 @@ export default function TrendingSongs() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.songs?.slice(0, 5).map((song, idx) => {
+          {data?.songs?.slice(0, 7).map((song, idx) => {
             return (
               <TableRow
                 key={song.id}
                 className="border-none cursor-pointer hover:bg-transparent group"
-                onClick={() => handleOnChooseDiv(song)}
               >
                 <TableCell className="font-medium">{idx + 1}</TableCell>
                 <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
@@ -106,17 +102,13 @@ export default function TrendingSongs() {
           })}
         </TableBody>
       </Table>
-      <AppButton
-        className={`flex flex-row w-fit space-x-1 items-center hover:bg-slate-700/10 py-1 px-3 rounded-sm group duration-200 transition-colors ${!data?.songs || data.songs.length < 8 ? 'hidden' : ''}`}
-        onClick={() => {
-          router.push('/discover/trending-songs');
-        }}
-      >
-        <Plus className="text-general-white/50 h-5 w-5 group-hover:text-general-white duration-200 transition-colors" />
-        <span className="text-general-white/50 group-hover:text-general-white duration-200 transition-colors">
-          View All
-        </span>
-      </AppButton>
+
+      <PaginationButtons
+        pageSize={pageSize}
+        currentPage={currentPage}
+        totalCount={data?.pagination.totalItems || 0}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

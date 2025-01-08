@@ -36,7 +36,7 @@ const sidebarSections: SidebarSection[] = [
     title: 'Menu',
     items: [
       { name: 'Home', icon: FaHome, href: '/home' },
-      { name: 'Discover', icon: FaSearch, href: '/discover' },
+      { name: 'Discover', icon: FaSearch, href: '/discover/trending-songs' },
       { name: 'Albums', icon: FaMusic, href: '/albums' },
       { name: 'Artists', icon: FaUserAlt, href: '/artists' },
     ],

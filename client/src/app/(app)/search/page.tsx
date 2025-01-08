@@ -1,128 +1,42 @@
 'use client';
 
+import { getAllAlbums } from '@/actions/album-actions';
+import { getAllSongs } from '@/actions/song-actions';
 import SongCard from '@/components/music/SongCard';
 import AlbumCard from '@/components/ui/AlbumCard';
 import ArtistCard from '@/components/ui/ArtistCard';
-import { Song } from '@/types/global';
+import { useQueries } from '@tanstack/react-query';
+import { useLoading } from '@/contexts/LoadingContext';
+import { getAllArtists } from '@/actions/user-actions';
+import { useEffect } from 'react';
 
-const songResult: Song[] = [
-  {
-    id: 1,
-    songName: 'Adele 21',
-    description: 'The debut album by Adele',
-    totalListeningHours: 500,
-    musicUrl: 'https://via.placeholder.com/200',
-    musicPublicId: 'adele-21',
-    lyricUrl: null,
-  },
-  {
-    id: 2,
-    songName: 'Scorpion',
-    description: 'Drake’s iconic album',
-    totalListeningHours: 800,
-    musicUrl: 'https://via.placeholder.com/200',
-    musicPublicId: 'scorpion',
-    lyricUrl: null,
-  },
-  {
-    id: 1,
-    songName: 'Adele 21',
-    description: 'The debut album by Adele',
-    totalListeningHours: 500,
-    musicUrl: 'https://via.placeholder.com/200',
-    musicPublicId: 'adele-21',
-    lyricUrl: null,
-  },
-  {
-    id: 2,
-    songName: 'Scorpion',
-    description: 'Drake’s iconic album',
-    totalListeningHours: 800,
-    musicUrl: 'https://via.placeholder.com/200',
-    musicPublicId: 'scorpion',
-    lyricUrl: null,
-  },
-  {
-    id: 1,
-    songName: 'Adele 21',
-    description: 'The debut album by Adele',
-    totalListeningHours: 500,
-    musicUrl: 'https://via.placeholder.com/200',
-    musicPublicId: 'adele-21',
-    lyricUrl: null,
-  },
-  {
-    id: 2,
-    songName: 'Scorpion',
-    description: 'Drake’s iconic album',
-    totalListeningHours: 800,
-    musicUrl: 'https://via.placeholder.com/200',
-    musicPublicId: 'scorpion',
-    lyricUrl: null,
-  },
-  {
-    id: 1,
-    songName: 'Adele 21',
-    description: 'The debut album by Adele',
-    totalListeningHours: 500,
-    musicUrl: 'https://via.placeholder.com/200',
-    musicPublicId: 'adele-21',
-    lyricUrl: null,
-  },
-  {
-    id: 2,
-    songName: 'Scorpion',
-    description: 'Drake’s iconic album',
-    totalListeningHours: 800,
-    musicUrl: 'https://via.placeholder.com/200',
-    musicPublicId: 'scorpion',
-    lyricUrl: null,
-  },
-];
+export default function SearchPage() {
+  const [
+    { data: albumData, isLoading: albumIsLoading },
+    { data: songData, isLoading: songIsLoading }, 
+    { data: artistsData, isLoading: artistIsLoading },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ['all_albums'],
+        queryFn: async () => await getAllAlbums(),
+      },
+      {
+        queryKey: ['songs'],
+        queryFn: async () => await getAllSongs(),
+      },
+      {
+        queryKey: ['artists'],
+        queryFn: async () => await getAllArtists(),
+      },
+    ],
+  });
+  const { setLoadingState } = useLoading();
 
-const artistResults = [
-  { id: 1, image: 'https://via.placeholder.com/200', name: 'Adele' },
-  { id: 2, image: 'https://via.placeholder.com/200', name: 'Drake' },
-  { id: 3, image: 'https://via.placeholder.com/200', name: 'Harry Styles' },
-  { id: 4, image: 'https://via.placeholder.com/200', name: 'Lana Del Rey' },
-  { id: 5, image: 'https://via.placeholder.com/200', name: 'The Weeknd' },
-  { id: 6, image: 'https://via.placeholder.com/200', name: 'The Weeknd' },
-];
+  useEffect(() => {
+    setLoadingState(albumIsLoading || songIsLoading || artistIsLoading);
+  }, [albumIsLoading, songIsLoading, artistIsLoading, setLoadingState]);
 
-const albumsResults = [
-  {
-    id: 1,
-    image: 'https://via.placeholder.com/200',
-    title: 'Adele 21',
-    artist: 'Adele',
-  },
-  {
-    id: 2,
-    image: 'https://via.placeholder.com/200',
-    title: 'Scorpion',
-    artist: 'Drake',
-  },
-  {
-    id: 1,
-    image: 'https://via.placeholder.com/200',
-    title: 'Adele 21',
-    artist: 'Adele',
-  },
-  {
-    id: 2,
-    image: 'https://via.placeholder.com/200',
-    title: 'Scorpion',
-    artist: 'Drake',
-  },
-  {
-    id: 2,
-    image: 'https://via.placeholder.com/200',
-    title: 'Scorpion',
-    artist: 'Drake',
-  },
-];
-
-export default function AlbumsPage() {
   return (
     <div className="flex min-h-screen w-full overflow-hidden">
       <div className="flex flex-col w-full overflow-hidden">
@@ -136,7 +50,7 @@ export default function AlbumsPage() {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {songResult.map((song) => (
+                {songData?.songs.map((song) => (
                   <SongCard key={song.id} song={song} />
                 ))}
               </div>
@@ -149,12 +63,8 @@ export default function AlbumsPage() {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {artistResults.map((artist) => (
-                  <ArtistCard
-                    key={artist.id}
-                    imageUrl={artist.image}
-                    name={artist.name}
-                  />
+                {artistsData?.artists?.map((artist, idx) => (
+                  <ArtistCard key={idx} artist={artist} />
                 ))}
               </div>
             </div>
@@ -166,13 +76,8 @@ export default function AlbumsPage() {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {albumsResults.map((album) => (
-                  <AlbumCard
-                    key={album.id}
-                    image={album.image}
-                    title={album.title}
-                    artist={album.artist}
-                  />
+                {albumData?.map((album, idx) => (
+                  <AlbumCard key={idx} albumCard={album} />
                 ))}
               </div>
             </div>

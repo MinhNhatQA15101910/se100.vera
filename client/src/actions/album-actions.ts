@@ -15,3 +15,19 @@ export async function getAllAlbums(): Promise<Album[]> {
     throw error;
   }
 }
+
+export async function getAlbumById({
+  albumId,
+}: {
+  albumId: number;
+}): Promise<Album> {
+  try {
+    const response = await client<Album>(`/api/albums/${albumId}`, {
+      method: 'GET',
+    });
+    return response.data;
+  } catch (error) {
+    console.error('get album by id error: ', error);
+    throw error;
+  }
+}

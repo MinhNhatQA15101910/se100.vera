@@ -10,13 +10,17 @@ import {
   updateSong,
 } from '@/actions/song-actions';
 import { useUser } from '@/contexts/UserContext';
+import { useLoading } from '@/contexts/LoadingContext';
 
 export function useAddSongMutation() {
   const queryClient = useQueryClient();
   const { userDetails } = useUser();
+  const { setLoadingState } = useLoading();
 
   const mutation = useMutation({
     mutationFn: async (data: AddSongPayload) => {
+      setLoadingState(true);
+
       const formData = new FormData();
       formData.append('songName', data.songName);
       formData.append('description', data.description);
@@ -47,11 +51,13 @@ export function useAddSongMutation() {
       void queryClient.invalidateQueries({
         queryKey: ['songs'],
       });
+      setLoadingState(false);
     },
   });
 
   return mutation;
 }
+
 export function useUpdateSongMutation() {
   const queryClient = useQueryClient();
 

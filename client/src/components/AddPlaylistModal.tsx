@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
 import { Label } from './ui/Label';
 import { Textarea } from '@/components/ui/textarea';
+import { useAddPlaylistMutation } from '@/hooks/usePlaylistMutation';
 
 interface AddPlaylistModalProps {
   isOpen: boolean;
@@ -33,6 +34,8 @@ export function CreateNewPlaylistForm() {
     playlistName: '',
     description: '',
   });
+
+  const addPlaylistMutation = useAddPlaylistMutation();
 
   const validateForm = () => {
     let isValid = true;
@@ -76,7 +79,10 @@ export function CreateNewPlaylistForm() {
     }
 
     try {
-      console.log('Form submitted:', formData);
+      addPlaylistMutation.mutate({
+        description: formData.description,
+        playlistName: formData.playlistName,
+      });
     } catch (error) {
       console.error('Error submitting form:', error);
     }

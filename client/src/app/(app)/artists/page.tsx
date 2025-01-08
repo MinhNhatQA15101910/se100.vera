@@ -57,12 +57,8 @@ export default function ArtistsPage() {
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {topArtists.map((artist) => (
-                  <ArtistCard
-                    key={artist.id}
-                    imageUrl={artist.image}
-                    name={artist.name}
-                  />
+                {topArtists.map((artist, idx) => (
+                  <ArtistCard key={idx} artist={artist} />
                 ))}
               </div>
             </div>
@@ -79,12 +75,8 @@ export default function ArtistsPage() {
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {newReleaseArtists.map((artist) => (
-                  <ArtistCard
-                    key={artist.id}
-                    imageUrl={artist.image}
-                    name={artist.name}
-                  />
+                {newReleaseArtists.map((artist, idx) => (
+                  <ArtistCard key={idx} artist={artist} />
                 ))}
               </div>
             </div>

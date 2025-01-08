@@ -2,10 +2,11 @@
 
 import client from '@/services/client';
 import { Playlist } from '@/types/global';
+import { getAuthTokenFromCookies } from './utils';
 
-export interface PlaylistPayload {
+export interface AddPlaylistPayload {
   playlistName: string;
-  description: string
+  description: string;
 }
 
 export async function getAllPlaylists(): Promise<Playlist[]> {
@@ -21,18 +22,19 @@ export async function getAllPlaylists(): Promise<Playlist[]> {
   }
 }
 
-export async function createPlaylist({
-  payload,
-}: {
-  payload: PlaylistPayload;
-}): Promise<void> {
+export async function createPlaylist(formData: FormData): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
   try {
     await client('/api/playlists', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
     });
   } catch (error) {
-    console.error('get all playlists error: ', error);
+    console.error('create playlist error: ', error);
     throw error;
   }
 }

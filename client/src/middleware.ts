@@ -20,6 +20,10 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  if (currentPath === '/discover') {
+    return NextResponse.redirect('/discover/trending-songs');
+  }
+
   return NextResponse.next();
 }
 
@@ -27,11 +31,11 @@ export const config = {
   matcher: [
     '/',
     '/home',
-    '/discover',
+    '/discover/:path*', // Using :path* for better pattern matching of nested routes
     '/artists',
     '/albums',
-    '/album-detail',
-    '/artist-detail',
+    '/album-detail/:id*', // Added :id* to handle dynamic album IDs
+    '/artist-detail/:id*', // Added :id* to handle dynamic artist IDs
     '/recently-added',
     '/login',
     '/signup',

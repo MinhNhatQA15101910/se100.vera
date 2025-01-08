@@ -1,99 +1,22 @@
 'use client';
 
 import { AppButton } from '@/components/ui/AppButton';
-import Image from 'next/image';
-import { Plus } from 'lucide-react';
 import AlbumCard from '@/components/ui/AlbumCard';
+import ArtistCard from '@/components/ui/ArtistCard';
+import PlaylistCard from '@/components/ui/PlaylistCard';
+
+import { Plus } from 'lucide-react';
+
 import { useRouter } from 'next/navigation';
+import { useQueries } from '@tanstack/react-query';
+import { getAllPlaylists } from '@/actions/playlist-actions';
+import { getAllAlbums } from '@/actions/album-actions';
+import { getAllArtists } from '@/actions/user-actions';
+import { useLoading } from '@/contexts/LoadingContext';
+import { useEffect } from 'react';
+import { Album, Playlist, User } from '@/types/global';
 
-const artists = [
-  { name: 'Eminem', image: 'https://picsum.photos/400/400?random=1' },
-  { name: 'The Weekend', image: 'https://picsum.photos/400/400?random=2' },
-  { name: 'Adele', image: 'https://picsum.photos/400/400?random=3' },
-  { name: 'Lana Del Ray', image: 'https://picsum.photos/400/400?random=4' },
-  { name: 'Harry Styles', image: 'https://picsum.photos/400/400?random=5' },
-  { name: 'Billie Eilish', image: 'https://picsum.photos/400/400?random=6' },
-  { name: 'Billie Baby', image: 'https://picsum.photos/400/400?random=7' },
-  { name: 'Dog Eilish', image: 'https://picsum.photos/400/400?random=8' },
-];
-
-const albums = [
-  {
-    title: 'Adele 21',
-    artist: 'Adele',
-    image: 'https://picsum.photos/400/400?random=7',
-  },
-  {
-    title: 'Scorpion',
-    artist: 'Drake',
-    image: 'https://picsum.photos/400/400?random=8',
-  },
-  {
-    title: "Harry's House",
-    artist: 'Harry Styles',
-    image: 'https://picsum.photos/400/400?random=9',
-  },
-  {
-    title: 'Born To Die',
-    artist: 'Lana Del Rey',
-    image: 'https://picsum.photos/400/400?random=10',
-  },
-  {
-    title: 'Beauty Behind the...',
-    artist: 'The Weekend',
-    image: 'https://picsum.photos/400/400?random=11',
-  },
-  {
-    title: 'Beauty Behind the...',
-    artist: 'The Weekend',
-    image: 'https://picsum.photos/400/400?random=11',
-  },
-  {
-    title: 'Beauty Behind the...',
-    artist: 'The Weekend',
-    image: 'https://picsum.photos/400/400?random=11',
-  },
-  {
-    title: 'Beauty Behind the...',
-    artist: 'The Weekend',
-    image: 'https://picsum.photos/400/400?random=11',
-  },
-  {
-    title: 'Beauty Behind the...',
-    artist: 'The Weekend',
-    image: 'https://picsum.photos/400/400?random=11',
-  },
-  {
-    title: 'Beauty Behind the...',
-    artist: 'The Weekend',
-    image: 'https://picsum.photos/400/400?random=11',
-  },
-];
-
-const playlist = [
-  {
-    title: 'My Favorites',
-    image: 'https://picsum.photos/400/400?random=12',
-  },
-  {
-    title: 'Workout Mix',
-    image: 'https://picsum.photos/400/400?random=13',
-  },
-  {
-    title: 'Chill Vibes',
-    image: 'https://picsum.photos/400/400?random=14',
-  },
-  {
-    title: 'Party Time',
-    image: 'https://picsum.photos/400/400?random=15',
-  },
-  {
-    title: 'Study Focus',
-    image: 'https://picsum.photos/400/400?random=16',
-  },
-];
-
-const ViewAllFeature = ({link}: {link: string}) => {
+const ViewAllFeature = ({ link }: { link: string }) => {
   const router = useRouter();
 
   return (
@@ -113,41 +36,33 @@ const ViewAllFeature = ({link}: {link: string}) => {
   );
 };
 
-const ArtistCard = ({ name, image }: { name: string; image: string }) => {
-  return (
-    <div key={name} className="flex flex-col items-center">
-      <div className="relative w-full aspect-square">
-        <Image
-          src={image}
-          alt={name}
-          fill
-          className="object-cover rounded-full"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-      </div>
-      <span className="mt-2 text-sm text-gray-200">{name}</span>
-    </div>
-  );
-};
-
-const PlaylistCard = ({ title, image }: { title: string; image: string }) => {
-  return (
-    <div className="flex flex-col bg-[#1F1F1F] p-2">
-      <div className="relative w-full aspect-square">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-      </div>
-      <span className="mt-2">{title}</span>
-    </div>
-  );
-};
-
 export default function MetaData() {
+  const [
+    { data: albums, isLoading: albumIsLoading },
+    // { data: playlists, isLoading: songIsLoading },
+    { data: artists, isLoading: artistIsLoading },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ['all_albums'],
+        queryFn: async () => await getAllAlbums(),
+      },
+      // {
+      //   queryKey: ['playlists'],
+      //   queryFn: async () => await getAllPlaylists(),
+      // },
+      {
+        queryKey: ['artists'],
+        queryFn: async () => await getAllArtists(),
+      },
+    ],
+  });
+  const { setLoadingState } = useLoading();
+
+  useEffect(() => {
+    setLoadingState(albumIsLoading || artistIsLoading);
+  }, [albumIsLoading, artistIsLoading]);
+
   return (
     <div className="text-white space-y-8 w-[90%] flex flex-col">
       <section className="flex flex-col w-full">
@@ -156,12 +71,14 @@ export default function MetaData() {
         </h2>
         <div className="flex flex-row items-center">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 w-full">
-            {artists.slice(0, 6).map((artist, idx) => (
-              <ArtistCard key={idx} name={artist.name} image={artist.image} />
-            ))}
+            {artists?.artists
+              ?.slice(0, 6)
+              .map((artist: User, idx: number) => (
+                <ArtistCard key={idx} artist={artist} />
+              ))}
           </div>
-          {artists.length >= 6 ? (
-            <ViewAllFeature link='/artists'/>
+          {(artists?.artists?.length || 0) > 6 ? (
+            <ViewAllFeature link="/artists" />
           ) : (
             <div className="flex w-[10%]" />
           )}
@@ -173,17 +90,14 @@ export default function MetaData() {
         </h2>
         <div className="flex flex-row items-center">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
-            {albums.slice(0, 5).map((album, idx) => (
-              <AlbumCard
-                key={idx}
-                title={album.title}
-                image={album.image}
-                artist={album.artist}
-              />
-            ))}
+            {albums
+              ?.slice(0, 5)
+              .map((album: Album, idx: number) => (
+                <AlbumCard key={idx} albumCard={album} />
+              ))}
           </div>
-          {albums.length >= 5 ? (
-            <ViewAllFeature link={"/albums"}/>
+          {albums?.length || 0 > 5 ? (
+            <ViewAllFeature link={'/discover/top-albums'} />
           ) : (
             <div className="flex w-[10%]" />
           )}
@@ -194,22 +108,20 @@ export default function MetaData() {
           Mood <span className="text-pink-500">Playlists</span>
         </h2>
         <div className="flex flex-row items-center">
-          <div
+          {/* <div
             className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full`}
           >
-            {playlist.slice(0, 5).map((playlist, idx) => (
-              <PlaylistCard
-                key={idx}
-                title={playlist.title}
-                image={playlist.image}
-              />
-            ))}
+            {playlists
+              ?.slice(0, 5)
+              .map((playlist, idx: number) => (
+                <PlaylistCard key={idx} playlist={playlist} />
+              ))}
           </div>
-          {playlist.length >= 5 ? (
-            <ViewAllFeature link='/playlists'/>
-          ) : (
+          {playlists?.length || 0 >= 5 ? (
             <div className="flex w-[10%]" />
-          )}
+            ) : (
+              <ViewAllFeature link="/playlists" />
+          )} */}
         </div>
       </section>
     </div>

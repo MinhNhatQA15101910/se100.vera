@@ -8,7 +8,13 @@ import { Facebook, Instagram, Twitter, Phone } from 'lucide-react';
 export default function Footer() {
   const { isAuthenticated } = useUser();
   const pathname = usePathname();
-  const ignorePathnames = ['/manage-songs', '/upload-song', '/manage-albums', '/upload-album'];
+  const ignorePathnames = [
+    '/settings',
+    '/manage-songs',
+    '/upload-song',
+    '/manage-albums',
+    '/upload-album',
+  ];
 
   return (
     <footer
@@ -45,7 +51,7 @@ export default function Footer() {
               <Link href="#" className="hover:text-pink-500 transition-colors">
                 <Facebook size={30} />
               </Link>
-              <Link href="#" className="hover:text-pink-500 transition-colors"> 
+              <Link href="#" className="hover:text-pink-500 transition-colors">
                 <Instagram size={30} />
               </Link>
               <Link href="#" className="hover:text-pink-500 transition-colors">

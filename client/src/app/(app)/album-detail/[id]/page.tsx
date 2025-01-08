@@ -21,7 +21,7 @@ import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
 import FavouriteButton from '@/components/ui/favouriteButton';
 import LikeButton from '@/components/music/LikeButton';
 
-const AlbumDetailDemo: React.FC = () => {
+const Page: React.FC = () => {
   const albumImage = 'https://via.placeholder.com/268';
   const albumTitle = 'Album 1';
   const albumDescription =
@@ -245,7 +245,7 @@ const AlbumDetailDemo: React.FC = () => {
                             <p className="font-bold text-white">{song.title}</p>
                             <p className="text-muted-foreground text-sm text-white">
                               Artist Name
-                            </p>
+                            </p>  
                           </div>
                         </div>
                       </TableCell>
@@ -262,7 +262,7 @@ const AlbumDetailDemo: React.FC = () => {
                         <div className="flex items-center">
                           <span>{song.duration}</span>
                           <div className="ml-4">
-                            <LikeButton songId={''} />
+                            <LikeButton songId={3} />
                           </div>
                           <div className="ml-4">
                             <AddToPlaylistButton songId={''} />
@@ -281,4 +281,4 @@ const AlbumDetailDemo: React.FC = () => {
   );
 };
 
-export default AlbumDetailDemo;
+export default Page;
