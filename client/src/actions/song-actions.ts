@@ -125,7 +125,7 @@ export async function updateSong(
 
   try {
     await client(`/api/songs/${songId}`, {
-      method: 'DELETE',
+      method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
       },

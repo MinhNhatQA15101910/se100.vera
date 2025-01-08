@@ -74,3 +74,9 @@ export interface PaginatedResponses<T> {
   pageSize: number;
   totalPages: number;
 }
+
+export interface Genre{
+  genreId: number;
+  genreName: string;
+  createdAt: Date;
+}
