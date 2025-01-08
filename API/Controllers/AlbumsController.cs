@@ -131,6 +131,19 @@ public class AlbumsController(
         album.TotalSongs++;
         album.UpdatedAt = DateTime.UtcNow;
 
+        // Update album's total duration
+        if (string.IsNullOrEmpty(album.TotalDuration))
+        {
+            album.TotalDuration = song.Duration;
+        }
+        else
+        {
+            _ = TimeSpan.TryParse(album.TotalDuration, out TimeSpan albumTotalDuration);
+            _ = TimeSpan.TryParse(song.Duration, out TimeSpan songDuration);
+            albumTotalDuration += songDuration;
+            album.TotalDuration = albumTotalDuration.ToString(@"hh\:mm\:ss");
+        }
+
         if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to add song to album.");
@@ -181,6 +194,12 @@ public class AlbumsController(
         // Update album's total songs and update date
         album.TotalSongs--;
         album.UpdatedAt = DateTime.UtcNow;
+
+        // Update album's total duration
+        _ = TimeSpan.TryParse(album.TotalDuration, out TimeSpan albumTotalDuration);
+        _ = TimeSpan.TryParse(song.Duration, out TimeSpan songDuration);
+        albumTotalDuration -= songDuration;
+        album.TotalDuration = albumTotalDuration.TotalSeconds == 0 ? "" : albumTotalDuration.ToString(@"hh\:mm\:ss");
 
         if (!await unitOfWork.Complete())
         {
