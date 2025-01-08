@@ -83,14 +83,13 @@ export default function TrendingSongs() {
                     <div>
                       <div className="font-semibold">{song.songName}</div>
                       <div className="text-sm text-gray-400">
-                        {'Unknown Artist'}
+                        {song.artists[0].artistName}
                       </div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                  {/* {new Date(song.releaseDate).toLocaleDateString() || 'N/A'} */}
-                  N/A
+                  {song.createdAt.slice(0, 10)}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] max-w-[200px] truncate">
                   {song.songName}
@@ -98,7 +97,7 @@ export default function TrendingSongs() {
                 <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                   <div className="flex items-center justify-end space-x-4">
                     <LikeButton songId={song.id} />
-                    <span className="text-gray-400 mx-auto">{'N/A'}</span>
+                    <span className="text-gray-400 mx-auto">{song.duration.slice(-5)}</span>
                   </div>
                 </TableCell>
               </TableRow>

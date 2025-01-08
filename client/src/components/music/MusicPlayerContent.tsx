@@ -125,10 +125,9 @@ const VolumeControl = ({
 };
 
 const MusicPlayerContent = () => {
-  const [mounted, setMounted] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [progress, setProgress] = React.useState(0);
-  const [shouldAutoPlay, setShouldAutoPlay] = React.useState(false);
+  const [mounted, setMounted] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [progress, setProgress] = React.useState<number>(0);
 
   const {
     isPlaying,
@@ -155,46 +154,46 @@ const MusicPlayerContent = () => {
     },
     onend: () => {
       setProgress(0);
-      if (playlist.length > 1) {
+      const currentIndex = playlist.findIndex(
+        (song) => song.id === activeSong?.id
+      );
+      if (currentIndex >= 0 && currentIndex < playlist.length - 1) {
         onNext();
-        setShouldAutoPlay(true);
       }
     },
     onpause: () => onPause(),
     format: ['mp3'],
     onload: () => {
       setIsLoading(false);
-      if (shouldAutoPlay) {
-        play();
-        setShouldAutoPlay(false);
-      }
+      play();
     },
     onloaderror: () => {
       setIsLoading(false);
       console.error('Error loading audio');
+      alert('Failed to load the audio. Please try again.');
     },
   });
 
-  const handlePlayPause = React.useCallback(() => {
-    if (!activeSong?.musicUrl) return;
-
+  const handlePlayPause = React.useCallback((): void => {
     if (isPlaying) {
       pause();
     } else {
       play();
     }
-  }, [isPlaying, activeSong, pause, play]);
+  }, [isPlaying, pause, play]);
 
   const handleVolumeChange = React.useCallback(
-    (value: number) => {
+    (value: number): void => {
       setVolume(value / 100);
     },
     [setVolume]
   );
 
-  
   React.useEffect(() => {
-    if (!sound) return;
+    if (!sound) {
+      setCurrentDuration(0);
+      return;
+    }
 
     const interval = setInterval(() => {
       try {
@@ -209,7 +208,7 @@ const MusicPlayerContent = () => {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [sound, setCurrentDuration]);
+  }, [sound]);
 
   React.useEffect(() => {
     setMounted(true);
@@ -222,14 +221,14 @@ const MusicPlayerContent = () => {
   }, [volume, sound]);
 
   React.useEffect(() => {
-    if (activeSong?.musicUrl) {
-      setIsLoading(true);
-      play();
-    }
     if (sound) {
       sound.unload();
     }
-  }, [activeSong, play]);
+    if (activeSong) {
+      setIsLoading(true);
+      play();
+    }
+  }, [activeSong, play, sound]);
 
   React.useEffect(() => {
     if (!sound) return;
@@ -271,14 +270,14 @@ const MusicPlayerContent = () => {
         {/* Playback Controls */}
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-center gap-4">
-            {playlist.length > 2 && (
+            {playlist.length > 1 && (
               <ControlButton
                 icon={Shuffle}
                 tooltip="Shuffle"
                 disabled={isLoading}
               />
             )}
-            {playlist.length > 2 && (
+            {playlist.length > 1 && (
               <ControlButton
                 icon={SkipBack}
                 onClick={onPrevious}
@@ -291,7 +290,7 @@ const MusicPlayerContent = () => {
               onClick={handlePlayPause}
               isLoading={isLoading}
             />
-            {playlist.length > 2 && (
+            {playlist.length > 1 && (
               <ControlButton
                 icon={SkipForward}
                 onClick={onNext}
@@ -299,7 +298,7 @@ const MusicPlayerContent = () => {
                 disabled={isLoading}
               />
             )}
-            {playlist.length > 2 && (
+            {playlist.length > 1 && (
               <ControlButton
                 icon={Repeat}
                 tooltip="Repeat"

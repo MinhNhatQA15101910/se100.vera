@@ -39,7 +39,7 @@ const ViewAllFeature = ({ link }: { link: string }) => {
 export default function MetaData() {
   const [
     { data: albums, isLoading: albumIsLoading },
-    // { data: playlists, isLoading: songIsLoading },
+    { data: playlists, isLoading: playlistIsLoading },
     { data: artists, isLoading: artistIsLoading },
   ] = useQueries({
     queries: [
@@ -47,10 +47,10 @@ export default function MetaData() {
         queryKey: ['all_albums'],
         queryFn: async () => await getAllAlbums(),
       },
-      // {
-      //   queryKey: ['playlists'],
-      //   queryFn: async () => await getAllPlaylists(),
-      // },
+      {
+        queryKey: ['playlists'],
+        queryFn: async () => await getAllPlaylists(),
+      },
       {
         queryKey: ['artists'],
         queryFn: async () => await getAllArtists(),
@@ -60,7 +60,7 @@ export default function MetaData() {
   const { setLoadingState } = useLoading();
 
   useEffect(() => {
-    setLoadingState(albumIsLoading || artistIsLoading);
+    setLoadingState(albumIsLoading || artistIsLoading || playlistIsLoading);
   }, [albumIsLoading, artistIsLoading]);
 
   return (
@@ -108,12 +108,12 @@ export default function MetaData() {
           Mood <span className="text-pink-500">Playlists</span>
         </h2>
         <div className="flex flex-row items-center">
-          {/* <div
+          <div
             className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full`}
           >
             {playlists
               ?.slice(0, 5)
-              .map((playlist, idx: number) => (
+              .map((playlist: Playlist, idx: number) => (
                 <PlaylistCard key={idx} playlist={playlist} />
               ))}
           </div>
@@ -121,7 +121,7 @@ export default function MetaData() {
             <div className="flex w-[10%]" />
             ) : (
               <ViewAllFeature link="/playlists" />
-          )} */}
+          )}
         </div>
       </section>
     </div>

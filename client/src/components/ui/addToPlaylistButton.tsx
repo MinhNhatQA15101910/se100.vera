@@ -6,7 +6,7 @@ import Modal from '../Modal';
 import ChoosePlaylistCard from './ChoosePlaylistCard';
 
 type AddToPlaylistProps = {
-  songId: string;
+  songId: number;
 };
 
 const AddToPlaylistButton: React.FC<AddToPlaylistProps> = ({ songId }) => {

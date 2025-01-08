@@ -68,7 +68,7 @@ const SongList = () => {
                 {song.releaseDate}
               </TableCell>
               <TableCell className="hidden lg:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] max-w-[200px] truncate text-right">
-                {song.totalView}
+                {song.totalListeningHours}
               </TableCell>
               <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                 <div className="flex items-center justify-end space-x-2">

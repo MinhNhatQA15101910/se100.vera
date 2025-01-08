@@ -7,7 +7,7 @@ export interface Song {
   publisherName: string;
   publisherImageUrl: string;
   genres: string[];
-  totalView: number;
+  totalListeningHours: number;
   musicUrl: string;
   musicPublicId: string | null;
   lyricUrl: string | null;
@@ -15,6 +15,8 @@ export interface Song {
   songPhotoUrl: string;
   songPhotoPublicId: string | null;
   artists: User[];
+  createdAt: string;
+  duration: string;
 }
 
 export interface Genre {
@@ -45,10 +47,10 @@ export interface Album {
 export interface Playlist {
   id: number;
   playlistName: string;
-  createdBy: string;
   songCount: number;
   totalDuration: string;
   songs: Song[];
+  createdAt: string;
 }
 
 export interface User {

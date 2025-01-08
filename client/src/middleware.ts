@@ -34,6 +34,8 @@ export const config = {
     '/discover/:path*', // Using :path* for better pattern matching of nested routes
     '/artists',
     '/albums',
+    '/playlists',
+    '/playlist-detail/:id*',
     '/album-detail/:id*', // Added :id* to handle dynamic album IDs
     '/artist-detail/:id*', // Added :id* to handle dynamic artist IDs
     '/recently-added',
