@@ -36,6 +36,11 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     {
         var query = context.Songs.AsQueryable();
 
+        if (songParams.PublisherId != null)
+        {
+            query = query.Where(s => s.PublisherId.ToString() == songParams.PublisherId);
+        }
+
         if (songParams.SongName != null)
         {
             query = query.Where(s => s.SongName.Contains(songParams.SongName));
