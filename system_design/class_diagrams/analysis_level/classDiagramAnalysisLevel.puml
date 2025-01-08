@@ -1,0 +1,159 @@
+@startuml 
+class Role {
+    -id
+    -roleName
+}
+
+class User {
+    #id
+    #email
+    #passwordHash
+    #createdAt
+    #updatedAt
+    #token
+    +verifyLogin()
+    +verifyToken()
+    +changePassword()
+    +addRoleToUser()
+    +removeRoleFromUser()
+}
+
+class Listener {
+    -firstName 
+    -lastName 
+    -gender 
+    -dateOfBirth
+    +login()
+    +signUp()
+    +updateProfile()
+}
+
+class Artist {
+    -artistName 
+    -about 
+    +calculateProfit()
+}
+
+class Admin {
+    +updateParams()
+}
+
+class Photo {
+    -id 
+    -url 
+    -publicId
+    +createPhoto()
+    +deletePhoto()
+    +getPhotos()
+}
+
+class Genre {
+    -id 
+    -genreName 
+    -createdAt 
+    -updatedAt 
+    +createGenre()
+    +updateGenre()
+    +deleteGenre()
+    +getGenres()
+}
+
+class Song {
+    -id
+    -songName 
+    -description
+    -totalListeningHours
+    -musicUrl
+    -musicPublicId
+    -lyricUrl
+    -lyricPublicId
+    -createdAt 
+    -updatedAt 
+    +createSong()
+    +updateSong()
+    +getSongs()
+    +deleteSong()
+    +addGenreToSong()
+    +removeGenreFromSong()
+    +calculateProfit()
+}
+
+class Playlist {
+    -id 
+    -playlistName 
+    -description
+    -totalListeningHours
+    -totalSongs 
+    -createdAt 
+    -updatedAt 
+    +createPlaylist()
+    +updatePlaylist()
+    +getPlaylists()
+    +deletePlaylist()
+    +addSongToPlaylist()
+    +removeSongFromPlaylist()
+}
+
+class Album {
+    -id 
+    -albumName 
+    -description
+    -totalListeningHours
+    -totalSongs 
+    -createdAt 
+    -updatedAt 
+    +createAlbum()
+    +updateAlbum()
+    +getAlbums()
+    +deleteAlbum()
+    +addSongToAlbum()
+    +removeSongFromAlbum()
+    +addGenreToAlbum()
+    +removeGenreFromAlbum()
+    +calculateProfit()
+}
+
+class SubscriptionPlan {
+    -id 
+    -subscriptionName
+    -description 
+    -price
+    -createdAt 
+    -updatedAt 
+    +createSubscriptionPlan()
+    +updateSubscriptionPlan()
+    +deleteSubscriptionPlan()
+    +getSubscriptionPlans()
+}
+
+class Payment {
+    -id 
+    -amount 
+    -date 
+    -method 
+    -createdAt
+    -updatedAt
+    +createPayment()
+    +getPayments()
+}
+
+Listener --|> User
+Artist --|> Listener 
+Admin --|> User
+Role "1..n" --o "1" User
+Song "0..n" --* "1" Artist
+Song "0..n" --o "1" Playlist
+Song "1..n" --o "1" Album
+Genre "1..n" --o "1" Song
+Genre "1..n" --o "1" Album
+Playlist "0..n" --* "1" Listener
+Playlist "0..n" --* "1" Admin
+Album "0..n" --* "1" Artist
+Photo "0..n" --* "1" Listener
+Photo "0..n" --* "1" Admin
+Photo "0..n" --* "1" Song
+Photo "0..n" --* "1" Album
+Payment "0..n" --* "1" Listener
+SubscriptionPlan "1..n" --o "1" Payment
+
+@enduml

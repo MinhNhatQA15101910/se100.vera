@@ -1,11 +1,12 @@
 using API.DTOs.Albums;
 using API.Entities;
+using API.Helpers;
 
-namespace API.Interfaces;
+namespace API.Interfaces.IRepositories;
 
 public interface IAlbumRepository
 {
     Task<Album> CreateAlbumAsync(NewAlbumDto newAlbumDto);
     Task<Album?> GetAlbumByIdAsync(int id);
-    Task<bool> SaveChangesAsync();
+    Task<PagedList<AlbumDto>> GetAlbumsAsync(AlbumParams albumParams);
 }

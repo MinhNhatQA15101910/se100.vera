@@ -1,12 +1,12 @@
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IServices;
 
 namespace API.Services;
 
 public class FileService : IFileService
 {
     private readonly Cloudinary _cloudinary;
-    private readonly string _folderRoot = "Vera/";
+    private readonly string _folderRoot = "Vera-MLA/";
 
     public FileService(IOptions<CloudinarySettings> config)
     {

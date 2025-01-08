@@ -26,7 +26,6 @@ IdentityDbContext<
     public required DbSet<AlbumSong> AlbumSongs { get; set; }
     public required DbSet<AlbumGenre> AlbumGenres { get; set; }
     public required DbSet<Playlist> Playlists { get; set; }
-    public required DbSet<PlaylistPhoto> PlaylistPhotos { get; set; }
     public required DbSet<PlaylistSong> PlaylistSongs { get; set; }
     public required DbSet<ArtistGenre> ArtistGenres { get; set; }
     public required DbSet<ArtistSong> ArtistSongs { get; set; }
@@ -227,23 +226,6 @@ IdentityDbContext<
             .HasOne(x => x.Song)
             .WithMany(x => x.Playlists)
             .HasForeignKey(x => x.SongId)
-            .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-
-        #region Playlist-Photo
-        modelBuilder.Entity<PlaylistPhoto>()
-            .HasKey(x => new { x.PlaylistId, x.PhotoId });
-
-        modelBuilder.Entity<PlaylistPhoto>()
-            .HasOne(x => x.Playlist)
-            .WithMany(x => x.Photos)
-            .HasForeignKey(x => x.PlaylistId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<PlaylistPhoto>()
-            .HasOne(x => x.Photo)
-            .WithMany(x => x.Playlists)
-            .HasForeignKey(x => x.PhotoId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
         #endregion

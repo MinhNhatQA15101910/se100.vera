@@ -1,0 +1,36 @@
+@startuml 
+object User
+object Admin 
+object Artist 
+object Listener 
+object Song 
+object Playlist 
+object Genre 
+object Photo 
+object Album 
+object Payment 
+object SubscriptionPlan 
+object Role
+
+User -- Role
+User -- Admin 
+User -- Listener 
+Listener -- Artist 
+Artist -- Song
+Artist -- Album
+Listener -- Playlist
+Artist -- Playlist 
+Admin -- Playlist
+Song -- Photo
+Album -- Photo
+Listener -- Photo
+Artist -- Photo
+Admin -- Photo
+Listener -- Payment
+Listener -- SubscriptionPlan
+Admin -- Genre
+Genre -- Song
+Genre -- Album
+Song -- Playlist
+
+@enduml

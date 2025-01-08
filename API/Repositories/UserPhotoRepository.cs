@@ -1,6 +1,6 @@
 using API.Data;
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
@@ -23,10 +23,5 @@ public class UserPhotoRepository(DataContext context) : IUserPhotoRepository
     public void RemoveUserPhoto(UserPhoto userPhoto)
     {
         context.UserPhotos.Remove(userPhoto);
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 }

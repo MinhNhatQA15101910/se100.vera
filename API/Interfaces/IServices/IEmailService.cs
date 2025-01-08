@@ -1,6 +1,6 @@
 using API.Helpers;
 
-namespace API.Interfaces;
+namespace API.Interfaces.IServices;
 
 public interface IEmailService
 {

@@ -2,7 +2,7 @@ using API.DTOs.Songs;
 using API.Entities;
 using API.Helpers;
 
-namespace API.Interfaces;
+namespace API.Interfaces.IRepositories;
 
 public interface ISongRepository
 {
@@ -10,5 +10,4 @@ public interface ISongRepository
     Task<Song> AddSongAsync(NewSongDto newSongDto);
     void RemoveSong(Song song);
     Task<PagedList<SongDto>> GetSongsAsync(SongParams songParams);
-    Task<bool> SaveChangesAsync();
 }
