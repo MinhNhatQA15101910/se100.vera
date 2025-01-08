@@ -201,4 +201,16 @@ public class UsersController(
 
         return Ok(songs);
     }
+
+    [HttpGet("me/favorite-albums")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<SongDto>>> GetFavoriteAlbums([FromQuery] AlbumParams albumParams)
+    {
+        var userId = User.GetUserId();
+        var albums = await unitOfWork.AlbumRepository.GetFavoriteAlbumsAsync(userId, albumParams);
+
+        Response.AddPaginationHeader(albums);
+
+        return Ok(albums);
+    }
 }
