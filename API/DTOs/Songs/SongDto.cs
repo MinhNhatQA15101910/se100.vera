@@ -18,4 +18,5 @@ public class SongDto
     public string? LyricPublicId { get; set; }
     public string? SongPhotoUrl { get; set; }
     public string? SongPhotoPublicId { get; set; }
+    public string? CreatedAt { get; set; }
 }
