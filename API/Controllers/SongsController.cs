@@ -102,6 +102,9 @@ public class SongsController(
             unitOfWork.SongGenreRepository.AddSongGenre(songGenre);
         }
 
+        // Get song duration
+        song.Duration = GetSongDuration(newSongDto.MusicFile);
+
         var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id, newSongDto.MusicFile);
 
         if (uploadAudioResult.Error != null)
@@ -417,5 +420,19 @@ public class SongsController(
         }
 
         return NoContent();
+    }
+
+    private static string GetSongDuration(IFormFile audioFile)
+    {
+        if (audioFile == null)
+        {
+            return "";
+        }
+
+        using var stream = audioFile.OpenReadStream();
+        using var reader = new Mp3FileReader(stream);
+
+        var duration = reader.TotalTime;
+        return duration.ToString(@"hh\:mm\:ss");
     }
 }

@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20250101034046_SqlInitial")]
+[Migration("20250108035239_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -449,6 +449,10 @@ partial class SqlInitial
                     .HasColumnType("timestamp with time zone");
 
                 b.Property<string>("Description")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<string>("Duration")
                     .IsRequired()
                     .HasColumnType("text");
 
