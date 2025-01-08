@@ -421,6 +421,12 @@ public class SongsController(
     {
         int userId = User.GetUserId();
 
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(songId);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
         var existingFavoriteSong = await unitOfWork.SongRepository.GetSongFavoriteAsync(songId, userId);
         if (existingFavoriteSong == null)
         {

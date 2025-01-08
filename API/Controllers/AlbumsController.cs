@@ -208,4 +208,37 @@ public class AlbumsController(
 
         return NoContent();
     }
+
+    [HttpPost("toggle-favorite/{albumId:int}")]
+    [Authorize]
+    public async Task<ActionResult> ToggleFavorite(int albumId)
+    {
+        int userId = User.GetUserId();
+
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(albumId);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
+
+        var existingFavoriteAlbum = await unitOfWork.AlbumRepository.GetAlbumFavoriteAsync(albumId, userId);
+        if (existingFavoriteAlbum == null)
+        {
+            var favoriteAlbum = new AlbumFavorite
+            {
+                AlbumId = albumId,
+                UserId = userId
+            };
+
+            unitOfWork.AlbumRepository.AddFavoriteUser(favoriteAlbum);
+        }
+        else
+        {
+            unitOfWork.AlbumRepository.RemoveFavoriteUser(existingFavoriteAlbum);
+        }
+
+        if (await unitOfWork.Complete()) return Ok();
+
+        return BadRequest("Failed to add song to favorite.");
+    }
 }

@@ -8,6 +8,11 @@ namespace API.Repositories;
 
 public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumRepository
 {
+    public void AddFavoriteUser(AlbumFavorite favoriteAlbum)
+    {
+        context.FavoriteAlbums.Add(favoriteAlbum);
+    }
+
     public async Task<Album> CreateAlbumAsync(NewAlbumDto newAlbumDto)
     {
         var album = mapper.Map<Album>(newAlbumDto);
@@ -38,6 +43,12 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             .FirstOrDefaultAsync(a => a.Id == id);
     }
 
+    public Task<AlbumFavorite?> GetAlbumFavoriteAsync(int albumId, int userId)
+    {
+        return context.FavoriteAlbums
+            .FirstOrDefaultAsync(f => f.AlbumId == albumId && f.UserId == userId);
+    }
+
     public async Task<PagedList<AlbumDto>> GetAlbumsAsync(AlbumParams albumParams)
     {
         var query = context.Albums.AsQueryable();
@@ -65,5 +76,10 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             albumParams.PageNumber,
             albumParams.PageSize
         );
+    }
+
+    public void RemoveFavoriteUser(AlbumFavorite favoriteAlbum)
+    {
+        context.FavoriteAlbums.Remove(favoriteAlbum);
     }
 }
