@@ -1,9 +1,8 @@
 using API.Entities;
 
-namespace API.Interfaces;
+namespace API.Interfaces.IRepositories;
 
 public interface IAlbumPhotoRepository
 {
     void AddAlbumPhoto(AlbumPhoto albumPhoto);
-    Task<bool> SaveChangesAsync();
 }

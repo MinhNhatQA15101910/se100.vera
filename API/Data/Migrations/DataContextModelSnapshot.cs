@@ -450,6 +450,10 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("text");
 
+                b.Property<string>("Duration")
+                    .IsRequired()
+                    .HasColumnType("text");
+
                 b.Property<string>("LyricPublicId")
                     .HasColumnType("text");
 

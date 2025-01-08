@@ -1,11 +1,12 @@
 using API.Entities;
 using API.DTOs.Playlists;
-
-namespace API.Interfaces;
+using API.Helpers;
+namespace API.Interfaces.IRepositories;
 
 public interface IPlaylistRepository
 {
    Task<Playlist> CreatePlaylistAsync(NewPlaylistDto newPlaylistDto);
    Task<Playlist?> GetPlaylistByIdAsync(int id);
-   Task<bool> SaveChangesAsync();
+   Task<PagedList<PlaylistDto>> GetPlaylistsAsync(PlaylistParams playlistParams);
+
 }

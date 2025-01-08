@@ -2,7 +2,7 @@ using API.Data;
 using API.DTOs.Users;
 using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 

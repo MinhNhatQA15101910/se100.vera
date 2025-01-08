@@ -1,7 +1,7 @@
 
 using API.Data;
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
@@ -22,10 +22,5 @@ public class SongGenreRepository(DataContext context) : ISongGenreRepository
    public void RemoveSongGenre(SongGenre songGenre)
    {
       context.SongGenres.Remove(songGenre);
-   }
-
-   public async Task<bool> SaveChangesAsync()
-   {
-      return await context.SaveChangesAsync() > 0;
    }
 }

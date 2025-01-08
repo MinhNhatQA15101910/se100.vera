@@ -2,7 +2,7 @@ using API.Data;
 using API.DTOs.Albums;
 using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
@@ -58,10 +58,5 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             albumParams.PageNumber,
             albumParams.PageSize
         );
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 }
