@@ -60,9 +60,6 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             "songName" => songParams.SortBy == "asc"
                 ? query.OrderBy(s => s.SongName)
                 : query.OrderByDescending(s => s.SongName),
-            "artist" => songParams.SortBy == "asc"
-                ? query.OrderBy(s => s.Artists.FirstOrDefault().Artist.ArtistName)
-                : query.OrderByDescending(s => s.Artists.FirstOrDefault().Artist.ArtistName),
             "publisher" => songParams.SortBy == "asc"
                 ? query.OrderBy(s => s.Publisher.Id)
                 : query.OrderByDescending(s => s.Publisher.Id),
