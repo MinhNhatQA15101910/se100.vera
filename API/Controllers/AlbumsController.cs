@@ -425,4 +425,15 @@ public class AlbumsController(
 
         return BadRequest("Failed to add song to favorite.");
     }
+
+    [HttpGet("is-favorite/{albumId:int}")]
+    [Authorize]
+    public async Task<ActionResult<bool>> IsUserFavorite(int albumId)
+    {
+        int userId = User.GetUserId();
+
+        var favoriteAlbum = await unitOfWork.AlbumRepository.GetAlbumFavoriteAsync(albumId, userId);
+
+        return favoriteAlbum != null;
+    }
 }

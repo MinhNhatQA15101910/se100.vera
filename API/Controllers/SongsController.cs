@@ -448,6 +448,17 @@ public class SongsController(
         return BadRequest("Failed to add song to favorite.");
     }
 
+    [HttpGet("is-favorite/{songId:int}")]
+    [Authorize]
+    public async Task<ActionResult<bool>> IsUserFavorite(int songId)
+    {
+        int userId = User.GetUserId();
+
+        var favoriteSong = await unitOfWork.SongRepository.GetSongFavoriteAsync(songId, userId);
+
+        return favoriteSong != null;
+    }
+
     private static string GetSongDuration(IFormFile audioFile)
     {
         if (audioFile == null)
