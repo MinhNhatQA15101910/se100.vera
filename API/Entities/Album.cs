@@ -7,6 +7,7 @@ public class Album
     public required string Description { get; set; }
     public int TotalListeningHours { get; set; } = 0;
     public int TotalSongs { get; set; } = 0;
+    public required string TotalDuration { get; set; } = "";
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public List<AlbumPhoto> Photos { get; set; } = [];
