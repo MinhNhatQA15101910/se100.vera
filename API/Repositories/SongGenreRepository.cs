@@ -12,10 +12,16 @@ public class SongGenreRepository(DataContext context) : ISongGenreRepository
       context.SongGenres.Add(songGenre);
    }
 
-   public async Task<List<SongGenre>?> GetSongGenresAsync(int songId)
+   public async Task<List<SongGenre>?> GetSongGenresBySongIdAsync(int songId)
    {
       return await context.SongGenres
             .Where(sg => sg.SongId == songId)
+            .ToListAsync();
+   }
+   public async Task<List<SongGenre>?> GetSongGenresByGenreIdAsync(int genreId)
+   {
+      return await context.SongGenres
+            .Where(sg => sg.GenreId == genreId)
             .ToListAsync();
    }
 
