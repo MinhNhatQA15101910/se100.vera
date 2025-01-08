@@ -52,4 +52,9 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
            playlistParams.PageSize
       );
    }
+
+   public void RemovePlaylist(Playlist playlist)
+   {
+      context.Playlists.Remove(playlist);
+   }
 }
