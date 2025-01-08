@@ -35,6 +35,11 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
          query = query.Where(p => p.PlaylistName.Contains(playlistParams.PlaylistName));
       }
 
+      if (playlistParams.PublisherId != null)
+      {
+         query = query.Where(p => p.PublisherId.ToString() == playlistParams.PublisherId);
+      }
+
       query = playlistParams.OrderBy switch
       {
          "playlistName" => playlistParams.SortBy == "asc" ? query.OrderBy(p => p.PlaylistName) : query.OrderByDescending(p => p.PlaylistName),
