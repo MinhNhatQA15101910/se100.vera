@@ -233,6 +233,48 @@ public class AlbumsController(
         return NoContent();
     }
 
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin, Artist")]
+    public async Task<ActionResult> DeleteAlbum(int id)
+    {
+        var userId = User.GetUserId();
+
+        // Check album exist
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
+
+        // Validate user role
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (!user!.UserRoles.Any(ur => ur.Role.Name == "Admin") && album.PublisherId != userId)
+        {
+            return Unauthorized("Unauthorized to delete album.");
+        }
+
+        // Delete album photos
+        var photos = album.Photos;
+        foreach (var photo in photos)
+        {
+            if (photo.Photo.PublicId != null)
+            {
+                var result = await fileService.DeleteFileAsync(photo.Photo.PublicId!, ResourceType.Image);
+                if (result.Error != null) return BadRequest("Delete album file from cloudinary failed: " + result.Error.Message);
+            }
+            unitOfWork.PhotoRepository.RemovePhoto(photo.Photo);
+        }
+
+        unitOfWork.AlbumRepository.DeleteAlbum(album);
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to delete album.");
+        }
+
+        return NoContent();
+    }
+
     [HttpPut("add-song/{id:int}")]
     [Authorize(Roles = "Artist")]
     public async Task<ActionResult> AddSongToAlbum(int id, AddRemoveSongDto addSongDto)

@@ -23,6 +23,11 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
         return album;
     }
 
+    public void DeleteAlbum(Album album)
+    {
+        context.Albums.Remove(album);
+    }
+
     public async Task<Album?> GetAlbumByIdAsync(int id)
     {
         return await context.Albums
