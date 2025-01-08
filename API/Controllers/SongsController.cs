@@ -415,6 +415,33 @@ public class SongsController(
         return NoContent();
     }
 
+    [HttpPost("toggle-favorite/{songId:int}")]
+    [Authorize]
+    public async Task<ActionResult> ToggleFavorite(int songId)
+    {
+        int userId = User.GetUserId();
+
+        var existingFavoriteSong = await unitOfWork.SongRepository.GetSongFavoriteAsync(songId, userId);
+        if (existingFavoriteSong == null)
+        {
+            var favoriteSong = new SongFavorite
+            {
+                SongId = songId,
+                UserId = userId
+            };
+
+            unitOfWork.SongRepository.AddFavoriteUser(favoriteSong);
+        }
+        else
+        {
+            unitOfWork.SongRepository.RemoveFavoriteUser(existingFavoriteSong);
+        }
+
+        if (await unitOfWork.Complete()) return Ok();
+
+        return BadRequest("Failed to add song to favorite.");
+    }
+
     private static string GetSongDuration(IFormFile audioFile)
     {
         if (audioFile == null)

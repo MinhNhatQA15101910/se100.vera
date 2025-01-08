@@ -36,6 +36,11 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     {
         var query = context.Songs.AsQueryable();
 
+        if (songParams.PublisherId != null)
+        {
+            query = query.Where(s => s.PublisherId.ToString() == songParams.PublisherId);
+        }
+
         if (songParams.SongName != null)
         {
             query = query.Where(s => s.SongName.Contains(songParams.SongName));
@@ -69,5 +74,21 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             songParams.PageNumber,
             songParams.PageSize
         );
+    }
+
+    public void AddFavoriteUser(SongFavorite songFavorite)
+    {
+        context.FavoriteSongs.Add(songFavorite);
+    }
+
+    public void RemoveFavoriteUser(SongFavorite songFavorite)
+    {
+        context.FavoriteSongs.Remove(songFavorite);
+    }
+
+    public async Task<SongFavorite?> GetSongFavoriteAsync(int songId, int userId)
+    {
+        return await context.FavoriteSongs
+            .SingleOrDefaultAsync(sf => sf.SongId == songId && sf.UserId == userId);
     }
 }
