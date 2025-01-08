@@ -239,7 +239,7 @@ public class AutoMapperProfiles : Profile
                 o => o.MapFrom(x => x.Song.Genres.Select(x => x.Genre.GenreName).ToList())
             )
             .ForMember(
-                s => s.TotalView,
+                s => s.TotalListeningHours,
                 o => o.MapFrom(x => x.Song.TotalListeningHours)
             )
             .ForMember(
