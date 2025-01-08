@@ -14,6 +14,7 @@ public class UpdateSongDto
 
    public IFormFile? LyricFile { get; set; }
 
-   [Required]
-   public required List<int> GenreIds { get; set; }
+   public List<int>? GenreIds { get; set; }
+
+   public List<int>? ArtistIds { get; set; }
 }

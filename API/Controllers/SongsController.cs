@@ -105,7 +105,7 @@ public class SongsController(
         // Get song duration
         song.Duration = GetSongDuration(newSongDto.MusicFile);
 
-        var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id, newSongDto.MusicFile);
+        var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id + "/audio/", newSongDto.MusicFile);
 
         if (uploadAudioResult.Error != null)
             return BadRequest("Upload song file to cloudinary failed: " + uploadAudioResult.Error.Message);
@@ -115,7 +115,7 @@ public class SongsController(
 
         if (newSongDto.LyricFile != null)
         {
-            var uploadResult = await fileService.UploadLyricAsync("/songs/" + song.Id, newSongDto.LyricFile);
+            var uploadResult = await fileService.UploadLyricAsync("/songs/" + song.Id + "lyric", newSongDto.LyricFile);
 
             if (uploadResult.Error != null) return BadRequest("Upload lyric file to cloudinary failed: " + uploadResult.Error.Message);
 
@@ -128,7 +128,7 @@ public class SongsController(
         {
             foreach (var photo in newSongDto.PhotoFiles)
             {
-                var uploadResult = await fileService.UploadImageAsync("/songs/" + song.Id, photo);
+                var uploadResult = await fileService.UploadImageAsync("/songs/" + song.Id + "/images", photo);
 
                 if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
 
@@ -176,60 +176,70 @@ public class SongsController(
         {
             return NotFound("Song not found.");
         }
-
-        if (updateSongDto.MusicFile == null)
+        if (userId != song.PublisherId)
         {
-            return BadRequest("Song file is required.");
-        }
-
-        if (updateSongDto.GenreIds == null)
-        {
-            return BadRequest("At least one genre is required.");
-        }
-        else
-        {
-            foreach (var genreId in updateSongDto.GenreIds)
-            {
-                var genre = await unitOfWork.GenreRepository.GetGenreByIdAsync(genreId);
-                if (genre == null)
-                {
-                    return BadRequest("Invalid genre id.");
-                }
-            }
+            return Unauthorized("You are not authorized to update this song.");
         }
 
         mapper.Map(updateSongDto, song);
 
-        var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresAsync(song.Id);
-        if (songGenres != null)
+        if (updateSongDto.GenreIds != null)
         {
-            foreach (var songGenre in songGenres)
+            var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresAsync(song.Id);
+            if (songGenres != null)
             {
-                unitOfWork.SongGenreRepository.RemoveSongGenre(songGenre);
+                foreach (var songGenre in songGenres)
+                {
+                    unitOfWork.SongGenreRepository.RemoveSongGenre(songGenre);
+                }
+            }
+            foreach (var genreId in updateSongDto.GenreIds)
+            {
+                var songGenre = new SongGenre
+                {
+                    SongId = song.Id,
+                    GenreId = genreId
+                };
+                unitOfWork.SongGenreRepository.AddSongGenre(songGenre);
             }
         }
-        foreach (var genreId in updateSongDto.GenreIds)
+
+        if (updateSongDto.ArtistIds != null)
         {
-            var songGenre = new SongGenre
+            var artistSongs = await unitOfWork.ArtistSongRepository.GetArtistSongsAsync(song.Id);
+            if (artistSongs != null)
             {
-                SongId = song.Id,
-                GenreId = genreId
-            };
-            unitOfWork.SongGenreRepository.AddSongGenre(songGenre);
+                foreach (var artistSong in artistSongs)
+                {
+                    unitOfWork.ArtistSongRepository.RemoveArtistSong(artistSong);
+                }
+            }
+            foreach (var artistId in updateSongDto.ArtistIds)
+            {
+                var artistSong = new ArtistSong
+                {
+                    ArtistId = artistId,
+                    SongId = song.Id
+                };
+                unitOfWork.ArtistSongRepository.AddArtistSong(artistSong);
+            }
         }
 
-        if (song.MusicPublicId != null)
+        if (updateSongDto.MusicFile != null)
         {
-            var deleteResult = await fileService.DeleteFileAsync(song.MusicPublicId, ResourceType.Video);
-            if (deleteResult.Error != null) return BadRequest("Delete song file from cloudinary failed: " + deleteResult.Error.Message);
+            if (song.MusicPublicId != null)
+            {
+                var deleteResult = await fileService.DeleteFileAsync(song.MusicPublicId, ResourceType.Video);
+                if (deleteResult.Error != null) return BadRequest("Delete song file from cloudinary failed: " + deleteResult.Error.Message);
+            }
+
+            var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id, updateSongDto.MusicFile);
+
+            if (uploadAudioResult.Error != null) return BadRequest("Upload song file to cloudinary failed: " + uploadAudioResult.Error.Message);
+
+            song.MusicUrl = uploadAudioResult.Url.ToString();
+            song.MusicPublicId = uploadAudioResult.PublicId;
         }
-
-        var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id, updateSongDto.MusicFile);
-
-        if (uploadAudioResult.Error != null) return BadRequest("Upload song file to cloudinary failed: " + uploadAudioResult.Error.Message);
-
-        song.MusicUrl = uploadAudioResult.Url.ToString();
-        song.MusicPublicId = uploadAudioResult.PublicId;
 
         if (updateSongDto.LyricFile != null)
         {
@@ -245,11 +255,6 @@ public class SongsController(
 
             song.LyricUrl = uploadResult.Url.ToString();
             song.LyricPublicId = uploadResult.PublicId;
-        }
-        else
-        {
-            song.LyricUrl = null;
-            song.LyricPublicId = null;
         }
 
         if (updateSongDto.PhotoFiles != null)
@@ -296,27 +301,7 @@ public class SongsController(
                 isMain = false;
             }
         }
-        else
-        {
-            var songPhotos = await unitOfWork.SongPhotoRepository.GetSongPhotoAsync(song.Id);
-            if (songPhotos != null)
-            {
-                foreach (var songPhoto in songPhotos)
-                {
-                    var photo = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(songPhoto.PhotoId);
-                    if (photo != null)
-                    {
-                        if (photo.PublicId != null)
-                        {
-                            var deleteResult = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
-                            if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
-                        }
-                        unitOfWork.PhotoRepository.RemovePhoto(photo);
-                    }
-                    unitOfWork.SongPhotoRepository.RemoveSongPhoto(songPhoto);
-                }
-            }
-        }
+
 
         if (!await unitOfWork.Complete())
         {

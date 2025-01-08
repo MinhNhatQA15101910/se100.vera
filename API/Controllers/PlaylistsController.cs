@@ -1,6 +1,7 @@
 using API.DTOs.Playlists;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces.IRepositories;
 
 namespace API.Controllers;
@@ -20,6 +21,16 @@ public class PlaylistsController(
       }
 
       return mapper.Map<PlaylistDto>(playlist);
+   }
+
+   [HttpGet]
+   public async Task<ActionResult<IEnumerable<PlaylistDto>>> GetPlaylists([FromQuery] PlaylistParams playlistParams)
+   {
+      var playlists = await unitOfWork.PlaylistRepository.GetPlaylistsAsync(playlistParams);
+
+      Response.AddPaginationHeader(playlists);
+
+      return Ok(playlists);
    }
 
    [HttpPost]
