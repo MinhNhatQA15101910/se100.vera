@@ -81,6 +81,11 @@ public class PlaylistsController(
 
       mapper.Map(updatePlaylistDto, playlist);
 
+      if (!await unitOfWork.Complete())
+      {
+         return BadRequest("Failed to update playlist.");
+      }
+
       return mapper.Map<PlaylistDto>(playlist);
    }
 
