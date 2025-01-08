@@ -21,9 +21,9 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
       return genre;
    }
 
-   public Task<bool> DeleteGenreAsync(int id)
+   public void RemoveGenre(Genre genre)
    {
-      throw new NotImplementedException();
+      context.Genres.Remove(genre);
    }
 
    public async Task<IEnumerable<GenreDto>> GetAllGenresAsync()
