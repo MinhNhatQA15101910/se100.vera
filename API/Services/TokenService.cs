@@ -1,5 +1,5 @@
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.IServices;
 
 namespace API.Services;
 

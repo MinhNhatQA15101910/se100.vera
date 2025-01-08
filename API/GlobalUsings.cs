@@ -13,6 +13,7 @@ global using Microsoft.EntityFrameworkCore.Migrations;
 global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
 global using MimeKit;
+global using NAudio.Wave;
 global using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;

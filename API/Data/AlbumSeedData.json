@@ -3,36 +3,42 @@
     "AlbumName": "Songs of a Lost World",
     "Description": "This is a collection of songs that were written and recorded in the early 2000s. The songs are a mix of rock, pop, and alternative.",
     "TotalSongs": 2,
+    "TotalDuration": "00:07:30",
     "PublisherId": 3
   },
   {
     "AlbumName": "American Dream",
     "Description": "An evocative album that captures the essence of the American spirit through a blend of rock, folk, and country music. Each track tells a story of hope, struggle, and triumph.",
     "TotalSongs": 2,
+    "TotalDuration": "00:08:17",
     "PublisherId": 4
   },
   {
     "AlbumName": "Cara Bulgaria Unia",
     "Description": "A unique fusion of traditional Bulgarian music and modern pop, this album offers a refreshing and eclectic listening experience.",
     "TotalSongs": 2,
+    "TotalDuration": "00:08:42",
     "PublisherId": 5
   },
   {
     "AlbumName": "Cheryl Burundi Sealoud",
     "Description": "A vibrant mix of electronic and world music, this album takes listeners on a sonic journey through diverse soundscapes.",
     "TotalSongs": 2,
+    "TotalDuration": "00:08:23",
     "PublisherId": 6
   },
   {
     "AlbumName": "Bender Honduras Otherside",
     "Description": "A powerful rock album with deep, introspective lyrics and dynamic instrumentals that explore themes of identity and belonging.",
     "TotalSongs": 2,
+    "TotalDuration": "00:06:34",
     "PublisherId": 7
   },
   {
     "AlbumName": "Simpson Ghana Biolive",
     "Description": "An energetic and uplifting album that blends Afrobeat rhythms with contemporary pop melodies, celebrating the vibrant culture of Ghana.",
     "TotalSongs": 2,
+    "TotalDuration": "00:08:07",
     "PublisherId": 8
   }
 ]

@@ -2,7 +2,7 @@ using API.DTOs.Users;
 using API.Entities;
 using API.Helpers;
 
-namespace API.Interfaces;
+namespace API.Interfaces.IRepositories;
 
 public interface IUserRepository
 {

@@ -3,14 +3,13 @@ using API.DTOs.Users;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
+using API.Interfaces.IServices;
 
 namespace API.Controllers;
 
 public class UsersController(
-    IPhotoRepository photoRepository,
-    IUserPhotoRepository userPhotoRepository,
-    IUserRepository userRepository,
+    IUnitOfWork unitOfWork,
     IMapper mapper,
     IFileService fileService
 ) : BaseApiController
@@ -20,7 +19,7 @@ public class UsersController(
     {
         var userId = User.GetUserId();
 
-        var user = await userRepository.GetUserByIdAsync(userId);
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
         if (user == null) return false;
 
         return true;
@@ -29,7 +28,7 @@ public class UsersController(
     [HttpGet("me")]
     public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
 
         if (user == null) return BadRequest("Could not find user");
 
@@ -40,19 +39,19 @@ public class UsersController(
     [Authorize]
     public async Task<ActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
     {
-        var existingUser = await userRepository.GetUserByEmailAsync(User.GetEmail()!);
+        var existingUser = await unitOfWork.UserRepository.GetUserByEmailAsync(User.GetEmail()!);
         if (existingUser == null)
         {
             return Unauthorized("User with this email does not exist.");
         }
 
-        var checkPasswordResult = await userRepository.CheckPasswordAsync(
+        var checkPasswordResult = await unitOfWork.UserRepository.CheckPasswordAsync(
             existingUser,
             changePasswordDto.CurrentPassword
         );
         if (!checkPasswordResult) return Unauthorized("Invalid current password");
 
-        var changePasswordResult = userRepository.ChangePasswordAsync(
+        var changePasswordResult = unitOfWork.UserRepository.ChangePasswordAsync(
             existingUser,
             changePasswordDto
         );
@@ -68,7 +67,7 @@ public class UsersController(
     [HttpPost("add-photo")]
     public async Task<ActionResult<FileDto>> AddPhoto(IFormFile file)
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("Cannot update user");
 
         var result = await fileService.UploadImageAsync("/users/" + user.Id, file);
@@ -79,7 +78,7 @@ public class UsersController(
             Url = result.SecureUrl.AbsoluteUri,
             PublicId = result.PublicId
         };
-        await photoRepository.AddPhotoAsync(photo);
+        await unitOfWork.PhotoRepository.AddPhotoAsync(photo);
 
         var userPhoto = new UserPhoto
         {
@@ -90,9 +89,9 @@ public class UsersController(
         {
             userPhoto.IsMain = true;
         }
-        userPhotoRepository.AddUserPhoto(userPhoto);
+        unitOfWork.UserPhotoRepository.AddUserPhoto(userPhoto);
 
-        if (!await userPhotoRepository.SaveChangesAsync()) return BadRequest("Problem adding photo");
+        if (!await unitOfWork.Complete()) return BadRequest("Problem adding photo");
 
         return CreatedAtAction(
             nameof(GetCurrentUser),
@@ -104,13 +103,13 @@ public class UsersController(
     [HttpPut("set-main-photo/{photoId:int}")]
     public async Task<ActionResult> SetMainPhoto(int photoId)
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("Could not find user");
 
-        var photo = await photoRepository.GetPhotoByIdAsync(photoId);
+        var photo = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(photoId);
         if (photo == null) return BadRequest("Could not find photo");
 
-        var userPhoto = await userPhotoRepository.GetUserPhotoAsync(user.Id, photoId);
+        var userPhoto = await unitOfWork.UserPhotoRepository.GetUserPhotoAsync(user.Id, photoId);
         if (userPhoto == null) return BadRequest("This photo does not belong to the user");
         if (userPhoto.IsMain) return BadRequest("This is already the main photo");
 
@@ -119,7 +118,7 @@ public class UsersController(
 
         userPhoto.IsMain = true;
 
-        if (await userPhotoRepository.SaveChangesAsync()) return NoContent();
+        if (await unitOfWork.Complete()) return NoContent();
 
         return BadRequest("Problem setting main photo");
     }
@@ -127,13 +126,13 @@ public class UsersController(
     [HttpDelete("delete-photo/{photoId:int}")]
     public async Task<ActionResult> DeletePhoto(int photoId)
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("User not found");
 
-        var photo = await photoRepository.GetPhotoByIdAsync(photoId);
+        var photo = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(photoId);
         if (photo == null) return BadRequest("This photo cannot be deleted");
 
-        var userPhoto = await userPhotoRepository.GetUserPhotoAsync(user.Id, photoId);
+        var userPhoto = await unitOfWork.UserPhotoRepository.GetUserPhotoAsync(user.Id, photoId);
         if (userPhoto == null) return BadRequest("This photo does not belong to the user");
 
         if (userPhoto.IsMain) return BadRequest("This photo cannot be deleted");
@@ -144,10 +143,10 @@ public class UsersController(
             if (result.Error != null) return BadRequest(result.Error.Message);
         }
 
-        photoRepository.RemovePhoto(photo);
-        userPhotoRepository.RemoveUserPhoto(userPhoto);
+        unitOfWork.PhotoRepository.RemovePhoto(photo);
+        unitOfWork.UserPhotoRepository.RemoveUserPhoto(userPhoto);
 
-        if (!await photoRepository.SaveChangesAsync()) return BadRequest("Problem deleting photo");
+        if (!await unitOfWork.Complete()) return BadRequest("Problem deleting photo");
 
         return Ok();
     }
@@ -157,7 +156,7 @@ public class UsersController(
     public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers([FromQuery] UserParams userParams)
     {
         userParams.CurrentEmail = User.GetEmail();
-        var users = await userRepository.GetUsersAsync(userParams);
+        var users = await unitOfWork.UserRepository.GetUsersAsync(userParams);
 
         Response.AddPaginationHeader(users);
 
@@ -173,7 +172,7 @@ public class UsersController(
             userParams.CurrentEmail = User.GetEmail();
         }
 
-        var artists = await userRepository.GetArtistsAsync(userParams);
+        var artists = await unitOfWork.UserRepository.GetArtistsAsync(userParams);
 
         Response.AddPaginationHeader(artists);
 

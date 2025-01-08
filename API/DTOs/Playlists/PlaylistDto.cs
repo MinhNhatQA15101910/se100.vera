@@ -1,5 +1,5 @@
 using API.DTOs.Songs;
-using API.Entities;
+using API.DTOs.Users;
 
 namespace API.DTOs.Playlists;
 
@@ -11,5 +11,6 @@ public class PlaylistDto
    public int TotalListeningHours { get; set; }
    public int TotalSongs { get; set; }
    public DateTime CreatedAt { get; set; }
+   public UserDto? Publisher { get; set; }
    public List<SongDto>? Songs { get; set; }
 }

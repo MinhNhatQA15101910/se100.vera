@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { GoPlay } from 'react-icons/go';
-import { FaSortAmountDown, FaSortAmountUpAlt } from 'react-icons/fa';
 import { IoArrowBack } from 'react-icons/io5';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import Image from 'next/image';
@@ -15,107 +14,28 @@ import {
   TableRow,
 } from '@/components/ui/tableV2';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
-import FavouriteButton from '@/components/ui/favouriteButton';
 import LikeButton from '@/components/music/LikeButton';
 
+import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { getAlbumById } from '@/actions/album-actions';
+import { useLoading } from '@/contexts/LoadingContext';
+
 const Page: React.FC = () => {
-  const albumImage = 'https://via.placeholder.com/268';
-  const albumTitle = 'Album 1';
-  const albumDescription =
-    'tate mcree, nightmares, the neighberhood, doja cat and tate mcree, nightmares, the neighberhood, doja cat and tate mcree, nightmares, the neighberhood, doja cat and ';
-  const initialSongs = [
-    {
-      id: 1,
-      title: 'Sorforc',
-      releaseDate: 'Nov 4, 2023',
-      genre: 'Pop',
-      views: '1.2M',
-      duration: '2:36',
-    },
-    {
-      id: 1,
-      title: 'Sorforc',
-      releaseDate: 'Nov 4, 2023',
-      genre: 'Pop',
-      views: '1.2M',
-      duration: '2:36',
-    },
-    {
-      id: 1,
-      title: 'Sorforc',
-      releaseDate: 'Nov 4, 2023',
-      genre: 'Pop',
-      views: '1.2M',
-      duration: '2:36',
-    },
-    {
-      id: 1,
-      title: 'Sorforc',
-      releaseDate: 'Nov 4, 2023',
-      genre: 'Pop',
-      views: '1.2M',
-      duration: '2:36',
-    },
-    {
-      id: 1,
-      title: 'Sorforc',
-      releaseDate: 'Nov 4, 2023',
-      genre: 'Pop',
-      views: '1.2M',
-      duration: '2:36',
-    },
-  ];
+  const params = useParams();
+  const { id } = params;
+  const { setLoadingState } = useLoading();
 
-  const [songs, setSongs] = useState(initialSongs);
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: string;
-  } | null>(null);
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const { data: albumDetailData, isLoading } = useQuery({
+    queryKey: ['albumdetail'],
+    queryFn: async () => await getAlbumById({ albumId: Number(id) }),
+  });
 
-  const getSortIcon = (column: string) => {
-    if (!sortConfig || sortConfig.key !== column) return null;
-
-    return sortConfig.direction === 'ascending' ? (
-      <FaSortAmountUpAlt className="text-white" />
-    ) : (
-      <FaSortAmountDown className="text-white" />
-    );
-  };
-
-  const sortSongs = (key: keyof (typeof initialSongs)[0]) => {
-    let direction = 'ascending';
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === 'ascending'
-    ) {
-      direction = 'descending';
-    }
-
-    const sortedSongs = [...songs].sort((a, b) => {
-      const valueA =
-        key === 'views' ? parseFloat(a[key].replace('M', '')) : a[key];
-      const valueB =
-        key === 'views' ? parseFloat(b[key].replace('M', '')) : b[key];
-
-      if (valueA < valueB) return direction === 'ascending' ? -1 : 1;
-      if (valueA > valueB) return direction === 'ascending' ? 1 : -1;
-      return 0;
-    });
-
-    setSortConfig({ key, direction });
-    setSongs(sortedSongs);
-  };
-
-  const toggleFavorite = (id: number) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
-    );
-  };
+  useEffect(() => {
+    setLoadingState(isLoading);
+  }, [isLoading]);
 
   return (
     <div className="flex min-h-screen w-full overflow-hidden">
@@ -135,19 +55,26 @@ const Page: React.FC = () => {
               <div className="p-4">
                 <div className="grid grid-cols-12 items-start gap-12 mb-8">
                   <Image
-                    src={albumImage}
-                    alt={albumTitle}
+                    src={
+                      albumDetailData?.photoUrl ||
+                      'https://picsum.photos/400/400?random=4'
+                    }
+                    alt={albumDetailData?.albumName || 'X'}
                     width={268}
                     height={268}
                     className="col-span-3 rounded-md object-cover shadow-2xl"
                   />
                   <div className="flex flex-col col-span-6 h-56 text-white">
-                    <h1 className="text-3xl font-bold mb-8">{albumTitle}</h1>
+                    <h1 className="text-3xl font-bold mb-8">
+                      {albumDetailData?.albumName}
+                    </h1>
                     <p className="text-muted-foreground mt-2 line-clamp-3 text-white">
-                      {albumDescription}
+                      {albumDetailData?.description}
                     </p>
                     <div className="flex items-center space-x-2 mt-auto">
-                      <p className="text-lg font-bold">20 songs</p>
+                      <p className="text-lg font-bold">
+                        {albumDetailData?.totalSongs} songs
+                      </p>
                       <span className="leading-none text-[#EE10B0]">●</span>
                       <p className="text-lg font-bold">1h 36m</p>
                     </div>
@@ -175,58 +102,56 @@ const Page: React.FC = () => {
                   <TableHead style={{ width: '35%' }}>
                     <Button
                       variant="ghost"
-                      onClick={() => sortSongs('title')}
                       className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
                       <span>Title</span>
-                      {getSortIcon('title')}
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      onClick={() => sortSongs('releaseDate')}
                       className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
                       <span>Release</span>
-                      {getSortIcon('releaseDate')}
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      onClick={() => sortSongs('genre')}
                       className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
                       <span>Genre</span>
-                      {getSortIcon('genre')}
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      onClick={() => sortSongs('views')}
                       className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Views</span>
-                      {getSortIcon('views')}
+                      <span>Total Listening Hours</span>
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      onClick={() => sortSongs('duration')}
                       className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
                       <span>Time</span>
-                      {getSortIcon('duration')}
+                    </Button>
+                  </TableHead>
+                  <TableHead >
+                    <Button
+                      variant="ghost"
+                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                    >
+                      <span>Actions</span>
                     </Button>
                   </TableHead>
                 </TableHeader>
                 <TableBody>
-                  {songs.map((song, index) => (
+                  {albumDetailData?.songs.map((song, index) => (
                     <TableRow
-                      key={song.id}
+                      key={index}
                       className="border-none cursor-pointer hover:bg-transparent group"
                     >
                       <TableCell className="font-bold text-lg">
@@ -236,37 +161,39 @@ const Page: React.FC = () => {
                         <div className="flex items-center space-x-4">
                           <Image
                             src="https://via.placeholder.com/50"
-                            alt={`${song.title} Thumbnail`}
+                            alt={`${song.song.songName} Thumbnail`}
                             width={55}
                             height={55}
                             className="rounded-md"
                           />
                           <div>
-                            <p className="font-bold text-white">{song.title}</p>
+                            <p className="font-bold text-white text-nowrap truncate">
+                              {song.song.songName}
+                            </p>
                             <p className="text-muted-foreground text-sm text-white">
-                              Artist Name
-                            </p>  
+                              {song.song.publisherName || ""}
+                            </p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                        {song.releaseDate}
+                        {albumDetailData.createdAt.slice(0, 10)}
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                        {song.genre}
+                        {song.song.genres}
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                        {song.views}
+                        {song.song.totalListeningHours}
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                         <div className="flex items-center">
-                          <span>{song.duration}</span>
-                          <div className="ml-4">
-                            <LikeButton songId={3} />
-                          </div>
-                          <div className="ml-4">
-                            <AddToPlaylistButton songId={''} />
-                          </div>
+                          <span>{song.song.duration.slice(-5)}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] md:flex-row group-hover:bg-[#595959]">
+                        <div className="flex flex-row h-full items-center justify-around">
+                          <LikeButton songId={3} />
+                          <AddToPlaylistButton songId={song.song.id} />
                         </div>
                       </TableCell>
                     </TableRow>

@@ -1,6 +1,6 @@
 using API.Entities;
 
-namespace API.Interfaces;
+namespace API.Interfaces.IRepositories;
 
 public interface IAlbumSongRepository
 {
@@ -8,5 +8,4 @@ public interface IAlbumSongRepository
     Task<AlbumSong?> GetAlbumSongAsync(int albumId, int songId);
     Task<List<AlbumSong>> GetAlbumSongsAsync(int songId);
     void RemoveAlbumSong(AlbumSong albumSong);
-    Task<bool> SaveChangesAsync();
 }

@@ -153,3 +153,45 @@ export async function deleteSong(songId: number): Promise<void> {
     throw error;
   }
 }
+
+export async function getArtistSongsByArtistId(
+  pageNumber: number = 1,
+  pageSize: number = 7,
+  artistId: number
+) {
+  const token = getAuthTokenFromCookies();
+
+  try {
+    const response = await client<Song[]>(
+      !pageNumber || !pageSize
+        ? `/api/songs`
+        : `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}&userId=${artistId}`,
+
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const paginationHeader = response.headers.get('Pagination');
+    if (!paginationHeader) {
+      throw new Error('Pagination data not found in headers');
+    }
+
+    const pagination = JSON.parse(paginationHeader);
+
+    if (!response.headers.get('Content-Type')?.includes('application/json')) {
+      throw new Error('Response does not contain valid JSON data');
+    }
+
+    return {
+      songs: response.data,
+      pagination,
+    };
+  } catch (error) {
+    console.error('Error in getAllSongs for Artist:', error);
+    throw error;
+  }
+}

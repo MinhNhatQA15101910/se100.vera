@@ -1,6 +1,6 @@
 using API.Entities;
 
-namespace API.Interfaces;
+namespace API.Interfaces.IRepositories;
 
 public interface IPlaylistSongRepository
 {
@@ -8,5 +8,4 @@ public interface IPlaylistSongRepository
    Task<PlaylistSong?> GetPlaylistSongAsync(int playlistId, int songId);
    Task<List<PlaylistSong>> GetPlaylistSongsAsync(int playlistId);
    void RemovePlaylistSong(PlaylistSong playlistSong);
-   Task<bool> SaveChangesAsync();
 }

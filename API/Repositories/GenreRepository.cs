@@ -2,7 +2,7 @@ using API.Data;
 using API.DTOs.Genres;
 using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
@@ -55,10 +55,5 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
          paginationParams.PageNumber,
          paginationParams.PageSize
       );
-   }
-
-   public async Task<bool> SaveChangesAsync()
-   {
-      return await context.SaveChangesAsync() > 0;
    }
 }

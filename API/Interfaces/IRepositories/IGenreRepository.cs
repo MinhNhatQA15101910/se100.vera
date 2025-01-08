@@ -2,7 +2,7 @@ using API.DTOs.Genres;
 using API.Entities;
 using API.Helpers;
 
-namespace API.Interfaces;
+namespace API.Interfaces.IRepositories;
 
 public interface IGenreRepository
 {
@@ -11,7 +11,6 @@ public interface IGenreRepository
    Task<PagedList<GenreDto>> GetGenresAsync(PaginationParams paginationParams);
    Task<Genre> AddGenreAsync(Genre genre);
    Task<bool> DeleteGenreAsync(int id);
-   Task<bool> SaveChangesAsync();
    void AddGenre(Genre genre);
    Task<IEnumerable<GenreDto>> GetAllGenresAsync();
 }

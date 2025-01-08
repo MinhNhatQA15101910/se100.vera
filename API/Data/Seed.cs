@@ -119,6 +119,7 @@ public class Seed
 
         foreach (var song in songs)
         {
+            song.TotalListeningHours = Random.Shared.Next(10000, 1000000);
             context.Songs.Add(song);
         }
 

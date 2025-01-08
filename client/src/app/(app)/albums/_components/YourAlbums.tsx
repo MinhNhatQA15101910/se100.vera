@@ -18,10 +18,6 @@ const YourAlbum = () => {
     setLoadingState(isLoading);
   }, [isLoading]);
 
-  useEffect(() => {
-    console.log('data albums cua bo may', data);
-  }, [data, isLoading]);
-
   return (
     <div className="h-fit flex w-[90%] flex-col">
       <h2 className="text-2xl font-bold mb-4">

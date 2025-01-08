@@ -2,16 +2,13 @@ using API.DTOs.Albums;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
+using API.Interfaces.IServices;
 
 namespace API.Controllers;
 
 public class AlbumsController(
-    IAlbumRepository albumRepository,
-    IAlbumPhotoRepository albumPhotoRepository,
-    IAlbumSongRepository albumSongRepository,
-    ISongRepository songRepository,
-    IPhotoRepository photoRepository,
+    IUnitOfWork unitOfWork,
     IFileService fileService,
     IMapper mapper
 ) : BaseApiController
@@ -19,7 +16,7 @@ public class AlbumsController(
     [HttpGet("{id:int}")]
     public async Task<ActionResult<AlbumDto>> GetAlbumById(int id)
     {
-        var album = await albumRepository.GetAlbumByIdAsync(id);
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
         if (album == null)
         {
             return NotFound();
@@ -31,7 +28,7 @@ public class AlbumsController(
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbums([FromQuery] AlbumParams albumParams)
     {
-        var albums = await albumRepository.GetAlbumsAsync(albumParams);
+        var albums = await unitOfWork.AlbumRepository.GetAlbumsAsync(albumParams);
 
         Response.AddPaginationHeader(albums);
 
@@ -51,7 +48,7 @@ public class AlbumsController(
         newAlbumDto.PublisherId = userId;
 
         // Add album to database
-        var album = await albumRepository.CreateAlbumAsync(newAlbumDto);
+        var album = await unitOfWork.AlbumRepository.CreateAlbumAsync(newAlbumDto);
 
         // Upload images and add to database
         bool isMain = true;
@@ -68,7 +65,7 @@ public class AlbumsController(
                     Url = uploadResult.SecureUrl.ToString(),
                     PublicId = uploadResult.PublicId,
                 };
-                await photoRepository.AddPhotoAsync(newPhoto);
+                await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
 
                 var albumPhoto = new AlbumPhoto
                 {
@@ -76,13 +73,13 @@ public class AlbumsController(
                     AlbumId = album.Id,
                     IsMain = isMain
                 };
-                albumPhotoRepository.AddAlbumPhoto(albumPhoto);
+                unitOfWork.AlbumPhotoRepository.AddAlbumPhoto(albumPhoto);
 
                 isMain = false;
             }
         }
 
-        if (!await albumRepository.SaveChangesAsync())
+        if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to create album.");
         }
@@ -98,7 +95,7 @@ public class AlbumsController(
     [Authorize(Roles = "Artist")]
     public async Task<ActionResult> AddSongToAlbum(int id, AddRemoveSongDto addSongDto)
     {
-        var album = await albumRepository.GetAlbumByIdAsync(id);
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
         if (album == null)
         {
             return NotFound("Album not found.");
@@ -111,7 +108,7 @@ public class AlbumsController(
             return Unauthorized("The album does not belong to you.");
         }
 
-        var song = await songRepository.GetSongByIdAsync(addSongDto.SongId);
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(addSongDto.SongId);
         if (song == null)
         {
             return NotFound("Song not found.");
@@ -124,7 +121,7 @@ public class AlbumsController(
         }
 
         // Add album song to database
-        albumSongRepository.AddAlbumSong(new AlbumSong
+        unitOfWork.AlbumSongRepository.AddAlbumSong(new AlbumSong
         {
             AlbumId = album.Id,
             SongId = song.Id
@@ -134,7 +131,20 @@ public class AlbumsController(
         album.TotalSongs++;
         album.UpdatedAt = DateTime.UtcNow;
 
-        if (!await albumRepository.SaveChangesAsync())
+        // Update album's total duration
+        if (string.IsNullOrEmpty(album.TotalDuration))
+        {
+            album.TotalDuration = song.Duration;
+        }
+        else
+        {
+            _ = TimeSpan.TryParse(album.TotalDuration, out TimeSpan albumTotalDuration);
+            _ = TimeSpan.TryParse(song.Duration, out TimeSpan songDuration);
+            albumTotalDuration += songDuration;
+            album.TotalDuration = albumTotalDuration.ToString(@"hh\:mm\:ss");
+        }
+
+        if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to add song to album.");
         }
@@ -146,7 +156,7 @@ public class AlbumsController(
     [Authorize(Roles = "Artist")]
     public async Task<ActionResult> RemoveSongFromAlbum(int id, AddRemoveSongDto removeSongDto)
     {
-        var album = await albumRepository.GetAlbumByIdAsync(id);
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
         if (album == null)
         {
             return NotFound("Album not found.");
@@ -159,7 +169,7 @@ public class AlbumsController(
             return Unauthorized("The album does not belong to you.");
         }
 
-        var song = await songRepository.GetSongByIdAsync(removeSongDto.SongId);
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(removeSongDto.SongId);
         if (song == null)
         {
             return NotFound("Song not found.");
@@ -172,20 +182,26 @@ public class AlbumsController(
         }
 
         // Validate if the song is in the album
-        var albumSong = await albumSongRepository.GetAlbumSongAsync(album.Id, song.Id);
+        var albumSong = await unitOfWork.AlbumSongRepository.GetAlbumSongAsync(album.Id, song.Id);
         if (albumSong == null)
         {
             return NotFound("Song not found in album.");
         }
 
         // Remove song from album
-        albumSongRepository.RemoveAlbumSong(albumSong);
+        unitOfWork.AlbumSongRepository.RemoveAlbumSong(albumSong);
 
         // Update album's total songs and update date
         album.TotalSongs--;
         album.UpdatedAt = DateTime.UtcNow;
 
-        if (!await albumRepository.SaveChangesAsync())
+        // Update album's total duration
+        _ = TimeSpan.TryParse(album.TotalDuration, out TimeSpan albumTotalDuration);
+        _ = TimeSpan.TryParse(song.Duration, out TimeSpan songDuration);
+        albumTotalDuration -= songDuration;
+        album.TotalDuration = albumTotalDuration.TotalSeconds == 0 ? "" : albumTotalDuration.ToString(@"hh\:mm\:ss");
+
+        if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to remove song from album.");
         }

@@ -10,9 +10,14 @@ export interface AddPlaylistPayload {
 }
 
 export async function getAllPlaylists(): Promise<Playlist[]> {
+  const token = await getAuthTokenFromCookies();
+
   try {
     const response = await client<Playlist[]>('/api/playlists', {
       method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     return response.data;

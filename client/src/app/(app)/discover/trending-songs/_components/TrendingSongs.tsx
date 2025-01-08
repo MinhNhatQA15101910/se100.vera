@@ -15,9 +15,11 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@/contexts/LoadingContext';
 import { getAllSongs } from '@/actions/song-actions';
+import usePlayerStore from '@/stores/player-store';
 
 export default function TrendingSongs() {
   const { setLoadingState } = useLoading();
+  const { setPlaylist, setActiveTrack } = usePlayerStore();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 10;
 
@@ -34,6 +36,7 @@ export default function TrendingSongs() {
   };
 
   React.useEffect(() => {
+    setPlaylist(data?.songs || []);
     setLoadingState(isLoading);
   }, [isLoading]);
 
@@ -62,6 +65,7 @@ export default function TrendingSongs() {
               <TableRow
                 key={song.id}
                 className="border-none cursor-pointer hover:bg-transparent group"
+                onClick={() => setActiveTrack(song)}
               >
                 <TableCell className="font-medium">{idx + 1}</TableCell>
                 <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
@@ -79,14 +83,13 @@ export default function TrendingSongs() {
                     <div>
                       <div className="font-semibold">{song.songName}</div>
                       <div className="text-sm text-gray-400">
-                        {'Unknown Artist'}
+                        {song.artists[0].artistName}
                       </div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                  {/* {new Date(song.releaseDate).toLocaleDateString() || 'N/A'} */}
-                  N/A
+                  {song.createdAt.slice(0, 10) || 'N/A'}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] max-w-[200px] truncate">
                   {song.songName}
@@ -94,7 +97,9 @@ export default function TrendingSongs() {
                 <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                   <div className="flex items-center justify-end space-x-4">
                     <LikeButton songId={song.id} />
-                    <span className="text-gray-400 mx-auto">{'N/A'}</span>
+                    <span className="text-gray-400 mx-auto">
+                      {song.duration.slice(-5)}
+                    </span>
                   </div>
                 </TableCell>
               </TableRow>

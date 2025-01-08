@@ -164,6 +164,8 @@ public class AutoMapperProfiles : Profile
                 s => s.ArtistIds.Select(x => new ArtistSong { ArtistId = x }).ToList()
             )
         );
+        CreateMap<UpdateSongDto, Song>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         CreateMap<SongPhoto, FileDto>()
             .ForMember(
                 f => f.Id,
@@ -239,7 +241,7 @@ public class AutoMapperProfiles : Profile
                 o => o.MapFrom(x => x.Song.Genres.Select(x => x.Genre.GenreName).ToList())
             )
             .ForMember(
-                s => s.TotalView,
+                s => s.TotalListeningHours,
                 o => o.MapFrom(x => x.Song.TotalListeningHours)
             )
             .ForMember(

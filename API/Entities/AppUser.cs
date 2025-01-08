@@ -21,5 +21,7 @@ public class AppUser : IdentityUser<int>
     public List<ArtistGenre> Genres { get; set; } = [];
     public List<SubscriptionPlan> SubscriptionPlans { get; set; } = [];
     public List<Payment> Payments { get; set; } = [];
+    public List<SongFavorite> FavoriteSongs { get; set; } = [];
+    public List<AlbumFavorite> FavoriteAlbums { get; set; } = [];
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
 }

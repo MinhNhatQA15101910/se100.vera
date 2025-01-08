@@ -1,6 +1,6 @@
 using API.Data;
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
@@ -26,10 +26,5 @@ public class AlbumSongRepository(DataContext context) : IAlbumSongRepository
     public void RemoveAlbumSong(AlbumSong albumSong)
     {
         context.AlbumSongs.Remove(albumSong);
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 }
