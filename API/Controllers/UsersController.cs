@@ -1,4 +1,5 @@
 using API.DTOs.Files;
+using API.DTOs.Songs;
 using API.DTOs.Users;
 using API.Entities;
 using API.Extensions;
@@ -177,5 +178,39 @@ public class UsersController(
         Response.AddPaginationHeader(artists);
 
         return Ok(artists);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<UserDto>> GetUser(int id)
+    {
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(id);
+
+        if (user == null) return NotFound();
+
+        return Ok(mapper.Map<UserDto>(user));
+    }
+
+    [HttpGet("me/favorite-songs")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<SongDto>>> GetFavoriteSongs([FromQuery] SongParams songParams)
+    {
+        var userId = User.GetUserId();
+        var songs = await unitOfWork.SongRepository.GetFavoriteSongsAsync(userId, songParams);
+
+        Response.AddPaginationHeader(songs);
+
+        return Ok(songs);
+    }
+
+    [HttpGet("me/favorite-albums")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<SongDto>>> GetFavoriteAlbums([FromQuery] AlbumParams albumParams)
+    {
+        var userId = User.GetUserId();
+        var albums = await unitOfWork.AlbumRepository.GetFavoriteAlbumsAsync(userId, albumParams);
+
+        Response.AddPaginationHeader(albums);
+
+        return Ok(albums);
     }
 }
