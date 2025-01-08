@@ -79,6 +79,39 @@ public class AlbumsController(
             }
         }
 
+        // Add current user to artistIds
+        if (newAlbumDto.ArtistIds != null)
+        {
+            if (!newAlbumDto.ArtistIds.Contains(userId))
+            {
+                newAlbumDto.ArtistIds.Add(userId);
+            }
+        }
+        else
+        {
+            newAlbumDto.ArtistIds = [userId];
+        }
+
+        // Check if any artistId is not valid
+        foreach (var artistId in newAlbumDto.ArtistIds)
+        {
+            var artist = await unitOfWork.UserRepository.GetUserByIdAsync(artistId);
+            if (artist == null || !artist.UserRoles.Any(ur => ur.Role.Name == "Artist"))
+            {
+                return BadRequest("Artist not found.");
+            }
+        }
+
+        // Add album artists to database
+        foreach (var artistId in newAlbumDto.ArtistIds)
+        {
+            unitOfWork.UserRepository.AddArtistAlbum(new ArtistAlbum
+            {
+                AlbumId = album.Id,
+                ArtistId = artistId
+            });
+        }
+
         if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to create album.");
