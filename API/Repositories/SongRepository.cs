@@ -40,10 +40,27 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
         {
             query = query.Where(s => s.SongName.Contains(songParams.SongName));
         }
+        if (songParams.Artist != null)
+        {
+            query = query.Where(s => s.Artists.Any(sa => sa.Artist.ArtistName != null && sa.Artist.ArtistName.Contains(songParams.Artist)));
+        }
+
+        if (songParams.PublisherId != null)
+        {
+            query = query.Where(s => s.PublisherId.ToString() == songParams.PublisherId);
+        }
 
         query = songParams.OrderBy switch
         {
-            "songName" => songParams.SortBy == "asc" ? query.OrderBy(s => s.SongName) : query.OrderByDescending(s => s.SongName),
+            "songName" => songParams.SortBy == "asc"
+                ? query.OrderBy(s => s.SongName)
+                : query.OrderByDescending(s => s.SongName),
+            "artist" => songParams.SortBy == "asc"
+                ? query.OrderBy(s => s.Artists.FirstOrDefault().Artist.ArtistName)
+                : query.OrderByDescending(s => s.Artists.FirstOrDefault().Artist.ArtistName),
+            "publisher" => songParams.SortBy == "asc"
+                ? query.OrderBy(s => s.Publisher.Id)
+                : query.OrderByDescending(s => s.Publisher.Id),
             _ => query.OrderBy(s => s.SongName)
         };
 

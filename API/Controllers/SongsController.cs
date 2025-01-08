@@ -315,6 +315,14 @@ public class SongsController(
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams songParams)
     {
+        if (songParams.PageNumber < 1 || songParams.PageSize < 1)
+        {
+            return BadRequest("Invalid page number or page size.");
+        }
+        if (songParams.PublisherId != null && !int.TryParse(songParams.PublisherId, out _))
+        {
+            return BadRequest("Invalid publisher id.");
+        }
         var songs = await unitOfWork.SongRepository.GetSongsAsync(songParams);
 
         Response.AddPaginationHeader(songs);
