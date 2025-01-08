@@ -68,14 +68,14 @@ export async function deleteAlbum(AlbumId: number): Promise<void> {
   const token = await getAuthTokenFromCookies();
 
   try {
-    await client(`/api/songs/${AlbumId}`, {
+    await client(`/api/albums/${AlbumId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
   } catch (error) {
-    console.error('delete a song error: ', error);
+    console.error('delete an album error: ', error);
     throw error;
   }
 }

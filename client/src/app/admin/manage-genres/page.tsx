@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { FaSortAmountDown, FaSortAmountUpAlt } from 'react-icons/fa';
 import {
   Table,
   TableBody,

@@ -8,7 +8,7 @@ export interface ArtistsReponse {
   artists: User[];
 }
 
-export async function getAllArtists(): Promise<ArtistsReponse> {
+export async function getAllArtists(currentPage: number, pageSize: number): Promise<ArtistsReponse> {
   const token = await getAuthTokenFromCookies();
 
   try {

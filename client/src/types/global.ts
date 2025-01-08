@@ -66,7 +66,7 @@ export interface User {
   gender: string;
   dateOfBirth: string;
   about: string | '';
-  created: string;
+  createdAt: string;
   photos: Array<{ id: number; url: string; isMain: boolean }>;
   token: string;
 }

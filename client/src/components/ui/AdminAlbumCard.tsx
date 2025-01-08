@@ -3,15 +3,19 @@
 import React from 'react';
 import DynamicImage from '../custom/DynamicImage';
 import { Album } from '@/types/global';
+import { useDeleteAlbumMutation } from '@/app/(app)/(artitst)/upload-song/_hooks/useAlbumMutation';
 
 type AdminAlbumCardProps = {
   albumCard: Album;
 };
 
 const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ albumCard }) => {
+  const deleteSongMutation = useDeleteAlbumMutation();
+
   const handleDelete = () => {
     const confirmDelete = window.confirm('Do you want to delete this album?');
     if (confirmDelete) {
+      deleteSongMutation.mutate(albumCard.id);
     }
   };
 

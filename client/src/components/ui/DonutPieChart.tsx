@@ -13,29 +13,29 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-const chartData = [
-  { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-];
 
 const chartConfig = {
   visitors: {
     label: 'All role',
   },
-  chrome: {
+  listeners: {
     label: 'Listeners',
     color: '#85F4FA',
   },
-  safari: {
+  artists: {
     label: 'Artists',
     color: '#3A57E8',
   },
 } satisfies ChartConfig;
 
-export function DonutPieChart() {
+interface DonutPieChartProps {
+  chartData: { browser: string; visitors: number; fill: string }[];
+}
+
+export function DonutPieChart({ chartData }: DonutPieChartProps) {
   const totalVisitors = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
+  }, [chartData]);
 
   return (
     <Card className="flex flex-col bg-[#181818] border-general-pink border-[1px]">
@@ -68,19 +68,21 @@ export function DonutPieChart() {
                         y={viewBox.cy}
                         textAnchor="middle"
                         dominantBaseline="middle"
-                        className="text-white"
                       >
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold "
+                          fontSize="24px"
+                          fontWeight="bold"
+                          fill="white"
                         >
                           {totalVisitors.toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground "
+                          fontSize="14px"
+                          fill="gray"
                         >
                           Visitors
                         </tspan>
