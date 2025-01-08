@@ -53,9 +53,4 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             songParams.PageSize
         );
     }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

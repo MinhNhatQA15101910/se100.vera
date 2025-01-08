@@ -23,9 +23,4 @@ public class SongGenreRepository(DataContext context) : ISongGenreRepository
    {
       context.SongGenres.Remove(songGenre);
    }
-
-   public async Task<bool> SaveChangesAsync()
-   {
-      return await context.SaveChangesAsync() > 0;
-   }
 }

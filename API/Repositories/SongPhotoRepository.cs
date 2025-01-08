@@ -24,9 +24,4 @@ public class SongPhotoRepository(DataContext context) : ISongPhotoRepository
    {
       context.SongPhotos.Remove(songPhoto);
    }
-
-   public async Task<bool> SaveChangesAsync()
-   {
-      return await context.SaveChangesAsync() > 0;
-   }
 }

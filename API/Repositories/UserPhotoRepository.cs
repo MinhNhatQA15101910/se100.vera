@@ -24,9 +24,4 @@ public class UserPhotoRepository(DataContext context) : IUserPhotoRepository
     {
         context.UserPhotos.Remove(userPhoto);
     }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }
