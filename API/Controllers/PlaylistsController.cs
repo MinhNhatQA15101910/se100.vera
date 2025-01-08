@@ -26,6 +26,14 @@ public class PlaylistsController(
    [HttpGet]
    public async Task<ActionResult<IEnumerable<PlaylistDto>>> GetPlaylists([FromQuery] PlaylistParams playlistParams)
    {
+      if (playlistParams.PageNumber < 1 || playlistParams.PageSize < 1)
+      {
+         return BadRequest("Invalid page number or page size.");
+      }
+      if (playlistParams.PublisherId != null && !int.TryParse(playlistParams.PublisherId, out _))
+      {
+         return BadRequest("Invalid publisher id.");
+      }
       var playlists = await unitOfWork.PlaylistRepository.GetPlaylistsAsync(playlistParams);
 
       Response.AddPaginationHeader(playlists);

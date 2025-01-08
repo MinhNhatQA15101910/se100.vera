@@ -315,6 +315,14 @@ public class SongsController(
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams songParams)
     {
+        if (songParams.PageNumber < 1 || songParams.PageSize < 1)
+        {
+            return BadRequest("Invalid page number or page size.");
+        }
+        if (songParams.PublisherId != null && !int.TryParse(songParams.PublisherId, out _))
+        {
+            return BadRequest("Invalid publisher id.");
+        }
         var songs = await unitOfWork.SongRepository.GetSongsAsync(songParams);
 
         Response.AddPaginationHeader(songs);
@@ -405,6 +413,33 @@ public class SongsController(
         }
 
         return NoContent();
+    }
+
+    [HttpPost("toggle-favorite/{songId:int}")]
+    [Authorize]
+    public async Task<ActionResult> ToggleFavorite(int songId)
+    {
+        int userId = User.GetUserId();
+
+        var existingFavoriteSong = await unitOfWork.SongRepository.GetSongFavoriteAsync(songId, userId);
+        if (existingFavoriteSong == null)
+        {
+            var favoriteSong = new SongFavorite
+            {
+                SongId = songId,
+                UserId = userId
+            };
+
+            unitOfWork.SongRepository.AddFavoriteUser(favoriteSong);
+        }
+        else
+        {
+            unitOfWork.SongRepository.RemoveFavoriteUser(existingFavoriteSong);
+        }
+
+        if (await unitOfWork.Complete()) return Ok();
+
+        return BadRequest("Failed to add song to favorite.");
     }
 
     private static string GetSongDuration(IFormFile audioFile)
