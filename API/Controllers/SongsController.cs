@@ -177,26 +177,6 @@ public class SongsController(
             return NotFound("Song not found.");
         }
 
-        if (updateSongDto.MusicFile == null)
-        {
-            return BadRequest("Song file is required.");
-        }
-
-        if (updateSongDto.GenreIds == null)
-        {
-            return BadRequest("At least one genre is required.");
-        }
-        else
-        {
-            foreach (var genreId in updateSongDto.GenreIds)
-            {
-                var genre = await unitOfWork.GenreRepository.GetGenreByIdAsync(genreId);
-                if (genre == null)
-                {
-                    return BadRequest("Invalid genre id.");
-                }
-            }
-        }
 
         mapper.Map(updateSongDto, song);
 
