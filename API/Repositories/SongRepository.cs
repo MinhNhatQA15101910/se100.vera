@@ -58,4 +58,20 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             songParams.PageSize
         );
     }
+
+    public void AddFavoriteUser(SongFavorite songFavorite)
+    {
+        context.FavoriteSongs.Add(songFavorite);
+    }
+
+    public void RemoveFavoriteUser(SongFavorite songFavorite)
+    {
+        context.FavoriteSongs.Remove(songFavorite);
+    }
+
+    public async Task<SongFavorite?> GetSongFavoriteAsync(int songId, int userId)
+    {
+        return await context.FavoriteSongs
+            .SingleOrDefaultAsync(sf => sf.SongId == songId && sf.UserId == userId);
+    }
 }
