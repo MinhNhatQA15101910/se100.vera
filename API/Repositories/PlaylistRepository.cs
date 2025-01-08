@@ -1,7 +1,7 @@
 using API.Data;
 using API.DTOs.Playlists;
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
@@ -22,10 +22,5 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
       return context.Playlists
          .Include(p => p.Songs).ThenInclude(ps => ps.Song).ThenInclude(s => s.Photos).ThenInclude(sp => sp.Photo)
          .FirstOrDefaultAsync(p => p.Id == id);
-   }
-
-   public async Task<bool> SaveChangesAsync()
-   {
-      return await context.SaveChangesAsync() > 0;
    }
 }

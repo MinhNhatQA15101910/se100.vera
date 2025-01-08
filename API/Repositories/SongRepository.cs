@@ -2,7 +2,7 @@ using API.Data;
 using API.DTOs.Songs;
 using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 

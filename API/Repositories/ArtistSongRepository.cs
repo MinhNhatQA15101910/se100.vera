@@ -1,12 +1,11 @@
 using API.Data;
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
 public class ArtistSongRepository(DataContext context) : IArtistSongRepository
 {
-
    public void AddArtistSong(ArtistSong artistSong)
    {
       context.ArtistSongs.Add(artistSong);
@@ -22,10 +21,5 @@ public class ArtistSongRepository(DataContext context) : IArtistSongRepository
    public void RemoveArtistSong(ArtistSong artistSong)
    {
       context.ArtistSongs.Remove(artistSong);
-   }
-
-   public async Task<bool> SaveChangesAsync()
-   {
-      return await context.SaveChangesAsync() > 0;
    }
 }

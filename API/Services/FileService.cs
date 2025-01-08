@@ -1,5 +1,5 @@
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IServices;
 
 namespace API.Services;
 

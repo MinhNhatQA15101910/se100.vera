@@ -2,19 +2,19 @@ using API.DTOs.Genres;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Controllers;
 
 public class GenresController(
-    IGenreRepository genreRepository,
+    IUnitOfWork unitOfWork,
     IMapper mapper
 ) : BaseApiController
 {
     [HttpGet("{id:int}")]
     public async Task<ActionResult<GenreDto>> GetGenreById(int id)
     {
-        var genre = await genreRepository.GetGenreByIdAsync(id);
+        var genre = await unitOfWork.GenreRepository.GetGenreByIdAsync(id);
         if (genre == null)
         {
             return NotFound();
@@ -26,7 +26,7 @@ public class GenresController(
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GenreDto>>> GetGenres([FromQuery] PaginationParams paginationParams)
     {
-        var genres = await genreRepository.GetGenresAsync(paginationParams);
+        var genres = await unitOfWork.GenreRepository.GetGenresAsync(paginationParams);
 
         Response.AddPaginationHeader(genres);
 
@@ -36,7 +36,7 @@ public class GenresController(
     [HttpGet("all")]
     public async Task<ActionResult<IEnumerable<GenreDto>>> GetAllGenres()
     {
-        var genres = await genreRepository.GetAllGenresAsync();
+        var genres = await unitOfWork.GenreRepository.GetAllGenresAsync();
 
         return Ok(genres);
     }
@@ -46,7 +46,7 @@ public class GenresController(
     public async Task<ActionResult<GenreDto>> AddGenre(AddUpdateGenreDto newGenreDto)
     {
         // Check if genre already exists
-        var existingGenre = await genreRepository.GetGenreByNameAsync(newGenreDto.GenreName);
+        var existingGenre = await unitOfWork.GenreRepository.GetGenreByNameAsync(newGenreDto.GenreName);
         if (existingGenre != null)
         {
             return BadRequest("Genre already exists");
@@ -55,9 +55,9 @@ public class GenresController(
         // Add genre
         var genre = mapper.Map<Genre>(newGenreDto);
 
-        genreRepository.AddGenre(genre);
+        unitOfWork.GenreRepository.AddGenre(genre);
 
-        if (!await genreRepository.SaveChangesAsync())
+        if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to add genre");
         }
@@ -73,14 +73,14 @@ public class GenresController(
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult> UpdateGenre(int id, AddUpdateGenreDto updateGenreDto)
     {
-        var genre = await genreRepository.GetGenreByIdAsync(id);
+        var genre = await unitOfWork.GenreRepository.GetGenreByIdAsync(id);
         if (genre == null)
         {
             return NotFound();
         }
 
         // Check if genre already exists
-        var existingGenre = await genreRepository.GetGenreByNameAsync(updateGenreDto.GenreName);
+        var existingGenre = await unitOfWork.GenreRepository.GetGenreByNameAsync(updateGenreDto.GenreName);
         if (existingGenre != null && existingGenre.Id != id)
         {
             return BadRequest("Genre already exists");
@@ -89,7 +89,7 @@ public class GenresController(
         mapper.Map(updateGenreDto, genre);
         genre.UpdatedAt = DateTime.UtcNow;
 
-        if (!await genreRepository.SaveChangesAsync())
+        if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to update genre");
         }
