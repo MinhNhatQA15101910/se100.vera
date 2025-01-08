@@ -65,7 +65,7 @@ public class AlbumsController(
                     Url = uploadResult.SecureUrl.ToString(),
                     PublicId = uploadResult.PublicId,
                 };
-                await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
+                newPhoto = await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
 
                 var albumPhoto = new AlbumPhoto
                 {
@@ -122,6 +122,115 @@ public class AlbumsController(
             new { id = album.Id },
             mapper.Map<AlbumDto>(album)
         );
+    }
+
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin, Artist")]
+    public async Task<ActionResult> UpdateAlbum(int id, UpdateAlbumDto updateAlbumDto)
+    {
+        var userId = User.GetUserId();
+
+        // Check album exist
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
+
+        // Validate user role
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (!user!.UserRoles.Any(ur => ur.Role.Name == "Admin") && album.PublisherId != userId)
+        {
+            return Unauthorized("Unauthorized to update album.");
+        }
+
+        mapper.Map(updateAlbumDto, album);
+
+        if (updateAlbumDto.PhotoFiles != null)
+        {
+            // Delete old image
+            var oldPhotos = album.Photos;
+            foreach (var oldPhoto in oldPhotos)
+            {
+                if (oldPhoto.Photo.PublicId != null)
+                {
+                    var result = await fileService.DeleteFileAsync(oldPhoto.Photo.PublicId!, ResourceType.Image);
+                    if (result.Error != null) return BadRequest("Delete album file from cloudinary failed: " + result.Error.Message);
+                }
+                unitOfWork.PhotoRepository.RemovePhoto(oldPhoto.Photo);
+            }
+
+            // Upload new images and add to database
+            bool isMain = true;
+            foreach (var photo in updateAlbumDto.PhotoFiles)
+            {
+                var uploadResult = await fileService.UploadImageAsync("/albums/" + album.Id, photo);
+                if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
+
+                var newPhoto = new Photo
+                {
+                    Url = uploadResult.SecureUrl.ToString(),
+                    PublicId = uploadResult.PublicId,
+                };
+                newPhoto = await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
+
+                var albumPhoto = new AlbumPhoto
+                {
+                    PhotoId = newPhoto.Id,
+                    AlbumId = album.Id,
+                    IsMain = isMain
+                };
+                unitOfWork.AlbumPhotoRepository.AddAlbumPhoto(albumPhoto);
+
+                isMain = false;
+            }
+        }
+
+        // Update artists
+        if (updateAlbumDto.ArtistIds != null)
+        {
+            if (!updateAlbumDto.ArtistIds.Contains(userId))
+            {
+                updateAlbumDto.ArtistIds.Add(userId);
+            }
+
+            // Check if any artistId is not valid
+            foreach (var artistId in updateAlbumDto.ArtistIds)
+            {
+                var artist = await unitOfWork.UserRepository.GetUserByIdAsync(artistId);
+                if (artist == null || !artist.UserRoles.Any(ur => ur.Role.Name == "Artist"))
+                {
+                    return BadRequest("Artist not found.");
+                }
+            }
+
+            // Remove old artists
+            var oldArtists = album.Artists;
+            foreach (var oldArtist in oldArtists)
+            {
+                unitOfWork.UserRepository.RemoveArtistAlbum(oldArtist);
+            }
+
+            // Add new artists
+            foreach (var artistId in updateAlbumDto.ArtistIds)
+            {
+                unitOfWork.UserRepository.AddArtistAlbum(new ArtistAlbum
+                {
+                    AlbumId = album.Id,
+                    ArtistId = artistId
+                });
+            }
+        }
+
+        // Update album's updated date
+        album.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to update album.");
+        }
+
+        return NoContent();
     }
 
     [HttpPut("add-song/{id:int}")]

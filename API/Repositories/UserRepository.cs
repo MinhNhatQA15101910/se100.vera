@@ -193,4 +193,9 @@ public class UserRepository(
             userParams.PageSize
         );
     }
+
+    public void RemoveArtistAlbum(ArtistAlbum artistAlbum)
+    {
+        context.ArtistAlbums.Remove(artistAlbum);
+    }
 }

@@ -14,4 +14,5 @@ public interface IUserRepository
     Task<AppUser?> GetUserByEmailAsync(string email);
     Task<AppUser?> GetUserByIdAsync(int id);
     Task<PagedList<UserDto>> GetUsersAsync(UserParams userParams);
+    void RemoveArtistAlbum(ArtistAlbum artistAlbum);
 }
