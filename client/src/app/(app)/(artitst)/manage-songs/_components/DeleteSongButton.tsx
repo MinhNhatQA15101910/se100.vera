@@ -2,9 +2,26 @@
 
 import React from 'react';
 import { FaTrash } from 'react-icons/fa';
+import { useDeleteSongMutation } from '../../upload-song/_hooks/useSongMutation';
+import { toast } from 'react-toastify';
 
-const DeleteSongButton = ({ songId }: { songId: string | number }) => {
-  const handleDeleteSong = () => {};
+const DeleteSongButton = ({ songId }: { songId: number }) => {
+  const deleteSongMutation = useDeleteSongMutation();
+
+  const handleDeleteSong = () => {
+    const confirmValue = confirm('Do you really want to delete this song?');
+
+    if (!confirmValue) return;
+
+    deleteSongMutation.mutate(songId, {
+      onSuccess: () => {
+        toast.success('Song Deleted Succesfully!');
+      },
+      onError: () => {
+        toast.error('Server went wrong, delete is not working!');
+      },
+    });
+  };
 
   return (
     <button onClick={handleDeleteSong}>

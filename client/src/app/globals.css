@@ -119,6 +119,46 @@ body {
   animation: border-pulse 2s ease-in-out infinite;
 }
 
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(2);
+  }
+}
+
+.wave-container {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 15px; /* Adjust height */
+  width: fit-content;
+}
+
+.wave-bar {
+  width: 4px;
+  height: 100%;
+  background-color: #ff69b4; /* Pink color */
+  animation: bounce 1s infinite ease-in-out;
+  transform-origin: bottom;
+  background-color: #ee10b0;
+}
+
+.wave-bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.wave-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.wave-bar:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.wave-bar:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

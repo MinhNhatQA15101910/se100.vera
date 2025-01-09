@@ -1,25 +1,28 @@
 using API.DTOs.Users;
 using API.Entities;
+using API.Extensions;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
+using API.Interfaces.IServices;
 
 namespace API.Controllers;
 
-class UserMap
+public enum PincodeAction
 {
-    public string? Pincode { get; set; }
-    public RegisterDto? RegisterDto { get; set; }
+    None,
+    Signup,
+    VerifyEmail
 }
 
 public class AuthController(
+    PincodeStore pincodeStore,
     IEmailService emailService,
     ITokenService tokenService,
     UserManager<AppUser> userManager,
+    IUnitOfWork unitOfWork,
     IMapper mapper
 ) : BaseApiController
 {
-    private Dictionary<string, UserMap> pincodeMap = [];
-
     [HttpPost("validate-signup")]
     public async Task<ActionResult<UserDto>> ValidateSignup(RegisterDto registerDto)
     {
@@ -41,10 +44,18 @@ public class AuthController(
             return BadRequest(result.Errors);
         }
 
+        registerDto.Role = "Listener";
+
+        // Add to pincode map
+        var pincode = GeneratePincode();
+        pincodeStore.PincodeMap[registerDto.Email] = pincode;
+
+        // Add to validate user map
+        pincodeStore.ValidateUserMap[registerDto.Email] = registerDto;
+
         // Send pincode email
         var displayName = registerDto.FirstName;
         var email = registerDto.Email;
-        var pincode = GeneratePincode();
         var subject = "VERA ACCOUNT VERIFICATION CODE";
         var message = await System.IO.File.ReadAllTextAsync("./Assets/EmailContent.html");
         message = message.Replace("{{hideEmail}}", HideEmail(email));
@@ -59,36 +70,8 @@ public class AuthController(
             )
         );
 
-        pincodeMap[email] = new UserMap
-        {
-            Pincode = pincode,
-            RegisterDto = registerDto
-        };
-
-        return Ok(true);
-    }
-
-    [HttpPost("signup")]
-    public async Task<ActionResult<UserDto>> Signup(RegisterDto registerDto)
-    {
-        if (await UserExists(registerDto.Email))
-        {
-            return BadRequest("Email already exists.");
-        }
-
-        var user = mapper.Map<AppUser>(registerDto);
-
-        var result = await userManager.CreateAsync(user, registerDto.Password);
-        if (!result.Succeeded)
-        {
-            return BadRequest(result.Errors);
-        }
-        else
-        {
-            await userManager.AddToRoleAsync(user, registerDto.Role ?? "Listener");
-        }
-
-        return mapper.Map<UserDto>(user);
+        var token = tokenService.CreateVerifyPincodeTokenAsync(email, PincodeAction.Signup);
+        return Ok(new { Token = token });
     }
 
     [HttpPost("login")]
@@ -120,42 +103,123 @@ public class AuthController(
             return false;
         }
 
-        return new
-        {
-            Token = await tokenService.CreateTokenAsync(new AppUser
-            {
-                Email = validateEmailDto.Email,
-                FirstName = "",
-                LastName = "",
-                Gender = ""
-            })
-        };
-    }
+        // Add to pincode map
+        var pincode = GeneratePincode();
+        pincodeStore.PincodeMap[validateEmailDto.Email] = pincode;
 
-    [HttpPost("send-email")]
-    public async Task<ActionResult> SendEmail(SendPincodeEmailDto sendPincodeEmailDto)
-    {
-        var displayName = sendPincodeEmailDto.DisplayName;
-        var email = sendPincodeEmailDto.Email;
-        var pincode = sendPincodeEmailDto.Pincode;
+        // Send pincode email
+        var displayName = validateEmailDto.Email;
+        var email = validateEmailDto.Email;
         var subject = "VERA ACCOUNT VERIFICATION CODE";
-
         var message = await System.IO.File.ReadAllTextAsync("./Assets/EmailContent.html");
-
         message = message.Replace("{{hideEmail}}", HideEmail(email));
         message = message.Replace("{{pincode}}", pincode);
 
         await emailService.SendEmailAsync(
-            new EmailMessage(displayName, email, subject, message));
+            new EmailMessage(
+                displayName,
+                email,
+                subject,
+                message
+            )
+        );
 
-        return Ok();
+        var token = tokenService.CreateVerifyPincodeTokenAsync(validateEmailDto.Email, PincodeAction.VerifyEmail);
+        return Ok(new { Token = token });
     }
 
-    // [HttpPost("verify-pincode")]
-    // public ActionResult VerifyPincode(VerifyPincodeDto verifyPincodeDto)
-    // {
+    [HttpPost("verify-pincode")]
+    [Authorize]
+    public async Task<ActionResult<object>> VerifyPincode(VerifyPincodeDto verifyPincodeDto)
+    {
+        // Get email
+        var email = User.GetEmail();
+        if (email == null)
+        {
+            return Unauthorized("Invalid email");
+        }
 
-    // }
+        // Compare pincode
+        var pincode = pincodeStore.PincodeMap[email];
+        if (pincode != verifyPincodeDto.Pincode)
+        {
+            return BadRequest("Invalid pincode");
+        }
+
+        // Remove pincode
+        pincodeStore.PincodeMap.Remove(email);
+
+        // Get action
+        var action = User.GetAction();
+        if (action == PincodeAction.None)
+        {
+            return Unauthorized("Invalid action");
+        }
+
+        // Process action
+        if (action == PincodeAction.Signup)
+        {
+            var registerDto = pincodeStore.ValidateUserMap[email];
+            var user = mapper.Map<AppUser>(registerDto);
+
+            var result = await userManager.CreateAsync(user, registerDto.Password);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            pincodeStore.ValidateUserMap.Remove(email);
+
+            var roleResult = await userManager.AddToRoleAsync(user, registerDto.Role!);
+            if (!roleResult.Succeeded)
+            {
+                return BadRequest(roleResult.Errors);
+            }
+
+            var userDto = mapper.Map<UserDto>(user);
+            userDto.Token = await tokenService.CreateTokenAsync(user);
+
+            return Ok(userDto);
+        }
+        else if (action == PincodeAction.VerifyEmail)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+
+            var token = await tokenService.CreateTokenAsync(user);
+            return Ok(new { Token = token });
+        }
+
+        return BadRequest("Invalid action");
+    }
+
+    [HttpPatch("reset-password")]
+    [Authorize]
+    public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+    {
+        // Get userId
+        var userId = User.GetUserId();
+
+        // Get user
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            return Unauthorized("User not found");
+        }
+
+        // Reset password
+        user.PasswordHash = userManager.PasswordHasher.HashPassword(user, resetPasswordDto.NewPassword);
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Could not reset password");
+        }
+
+        return NoContent();
+    }
 
     private async Task<bool> UserExists(string email)
     {

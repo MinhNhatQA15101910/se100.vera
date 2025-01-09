@@ -30,7 +30,7 @@ export const LoadingProvider = ({
     if (!state) {
       setTimeout(() => {
         setForceShow(false);
-      }, 500);
+      }, 100);
     } else {
       setIsLoading(true);
       setForceShow(true);

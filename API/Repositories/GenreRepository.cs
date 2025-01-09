@@ -2,7 +2,7 @@ using API.Data;
 using API.DTOs.Genres;
 using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
@@ -21,9 +21,9 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
       return genre;
    }
 
-   public Task<bool> DeleteGenreAsync(int id)
+   public void RemoveGenre(Genre genre)
    {
-      throw new NotImplementedException();
+      context.Genres.Remove(genre);
    }
 
    public async Task<IEnumerable<GenreDto>> GetAllGenresAsync()
@@ -56,9 +56,8 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
          paginationParams.PageSize
       );
    }
-
-   public async Task<bool> SaveChangesAsync()
+   public int GetTotalGenres()
    {
-      return await context.SaveChangesAsync() > 0;
+      return context.Genres.Count();
    }
 }

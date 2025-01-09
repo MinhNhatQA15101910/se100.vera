@@ -6,7 +6,7 @@ import Modal from '../Modal';
 import ChoosePlaylistCard from './ChoosePlaylistCard';
 
 type AddToPlaylistProps = {
-  songId: string;
+  songId: number;
 };
 
 const AddToPlaylistButton: React.FC<AddToPlaylistProps> = ({ songId }) => {
@@ -27,7 +27,7 @@ const AddToPlaylistButton: React.FC<AddToPlaylistProps> = ({ songId }) => {
         onChange={setIsModalOpen}
         title="CHOOSE YOUR PLAYLIST"
       >
-        <ChoosePlaylistCard />
+        <ChoosePlaylistCard songId={songId} />
       </Modal>
     </>
   );

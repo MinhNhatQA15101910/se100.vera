@@ -5,10 +5,10 @@ import { getAuthTokenFromCookies } from './utils';
 import { User } from '@/types/global';
 
 export interface ArtistsReponse {
-  artist: User[];
+  artists: User[];
 }
 
-export async function getAllAritst(): Promise<ArtistsReponse> {
+export async function getAllArtists(currentPage: number, pageSize: number): Promise<ArtistsReponse> {
   const token = await getAuthTokenFromCookies();
 
   try {
@@ -20,7 +20,7 @@ export async function getAllAritst(): Promise<ArtistsReponse> {
     });
 
     return {
-      artist: response.data,
+      artists: response.data,
     };
   } catch (error) {
     console.error('Get all Artists: ', error);

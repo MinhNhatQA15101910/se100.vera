@@ -23,7 +23,7 @@ import { getAllGenres } from '@/actions/genre-actions';
 import GenreSelect from './GenreSelect';
 import ArtistSelect from './ArtistSelect';
 import DynamicImage from '@/components/custom/DynamicImage';
-import { getAllAritst } from '@/actions/user-actions';
+import { getAllArtists } from '@/actions/user-actions';
 import { useAddSongMutation } from '../_hooks/useSongMutation';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -80,7 +80,7 @@ export default function UploadForm() {
   const { data: artistsData } = useQuery({
     queryKey: ['user_artist', 'upload_song'],
     queryFn: async () => {
-      return (await getAllAritst()).artist.filter(
+      return (await getAllArtists()).artists.filter(
         (artist) => artist.artistName !== null && artist.artistName !== ''
       );
     },

@@ -6,38 +6,55 @@ export interface Song {
   description: string | null;
   publisherName: string;
   publisherImageUrl: string;
-  artists: {
-    id: number;
-    artistName: string;
-  }[];
   genres: string[];
-  totalView: number;
+  totalListeningHours: number;
   musicUrl: string;
   musicPublicId: string | null;
   lyricUrl: string | null;
   lyricPublicId: string | null;
   songPhotoUrl: string;
   songPhotoPublicId: string | null;
+  artists: User[];
+  createdAt: string;
+  duration: string;
 }
 
 export interface Genre {
   id: number;
   genreName: string;
+  createdAt: string;
+
 }
 
 export interface Album {
-  id: number,
+  id: number;
   albumName: string;
   description: string;
-  totalListeningHours: number,
+  totalListeningHours: number;
   totalSongs: number;
   createdAt: string;
-  updatedAt: string;
-  publisherId: number
+  photoUrl: string;
+  photos: string[];
+  songs: {
+    song: Song;
+    order: number;
+  }[];
+  publisher: User;
+  artists: {
+    id: number;
+    artistName: string;
+  }[];
 }
 
 export interface Playlist {
-  id: number
+  id: number;
+  playlistName: string;
+  description: string;
+  totalListeningHours: number;
+  totalSongs: number;
+  createdAt: string;
+  publisher: User;
+  songs: Song[];
 }
 
 export interface User {
@@ -46,14 +63,14 @@ export interface User {
   lastName: string;
   email: string;
   role: Role;
-  artistName: string | "";
-  photoUrl: string | null;
+  artistName: string | null;
+  photoUrl: string;
   gender: string;
   dateOfBirth: string;
-  about: string | null;
-  created: string;
+  about: string | '';
+  createdAt: string;
   photos: Array<{ id: number; url: string; isMain: boolean }>;
-  token: string;
+  token: string | null;
 }
 
 export interface PaginatedResponses<T> {

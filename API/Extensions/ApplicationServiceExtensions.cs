@@ -1,6 +1,7 @@
 using API.Data;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
+using API.Interfaces.IServices;
 using API.Repositories;
 using API.Services;
 
@@ -16,6 +17,7 @@ public static class ApplicationServiceExtensions
             opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
         });
         services.AddCors();
+        services.AddSingleton<PincodeStore>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<ITokenService, TokenService>();
@@ -32,6 +34,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ISongPhotoRepository, SongPhotoRepository>();
         services.AddScoped<IUserPhotoRepository, UserPhotoRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         services.Configure<EmailSenderSettings>(config.GetSection("EmailSenderSettings"));

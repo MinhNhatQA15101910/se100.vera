@@ -11,10 +11,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Music, Settings, User } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import { Button } from './ui/button';
+import { useUser } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
 
 const UserDropDown = () => {
+  const router = useRouter();
+  const { userDetails, logout } = useUser();
+
   return (
     <div className="flex py-1">
       <DropdownMenu>
@@ -23,10 +28,10 @@ const UserDropDown = () => {
             <div className="relative flex items-center gap-2">
               <Avatar className="w-6 h-6">
                 <AvatarImage src="https://picsum.photos/400/400?random=1" />
-                <AvatarFallback>SD</AvatarFallback>
+                <AvatarFallback>AV</AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium text-slate-900">
-                Snoop Dog
+                {userDetails?.firstName}
               </span>
             </div>
           </Button>
@@ -39,20 +44,21 @@ const UserDropDown = () => {
         >
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-general-pink-border" />
-          <DropdownMenuItem className='hover:bg-general-pink-hover'>
+          <DropdownMenuItem
+            className="hover:bg-general-pink-hover"
+            onClick={() => {
+              router.push('/profile');
+            }}
+          >
             <User className="mr-2 h-4 w-4" />
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Music className="mr-2 h-4 w-4" />
-            My Music
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-general-pink-border" />
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              logout();
+            }}
+          >
             <LogOut className="mr-2 h-4 w-4" />
             Log out
           </DropdownMenuItem>

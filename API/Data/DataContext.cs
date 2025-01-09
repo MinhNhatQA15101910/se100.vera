@@ -18,6 +18,8 @@ IdentityDbContext<
     public required DbSet<Photo> Photos { get; set; }
     public required DbSet<Genre> Genres { get; set; }
     public required DbSet<UserPhoto> UserPhotos { get; set; }
+    public required DbSet<SongFavorite> FavoriteSongs { get; set; }
+    public required DbSet<AlbumFavorite> FavoriteAlbums { get; set; }
     public required DbSet<Song> Songs { get; set; }
     public required DbSet<SongPhoto> SongPhotos { get; set; }
     public required DbSet<SongGenre> SongGenres { get; set; }
@@ -118,6 +120,40 @@ IdentityDbContext<
             .HasOne(x => x.Genre)
             .WithMany(x => x.Artists)
             .HasForeignKey(x => x.GenreId)
+            .OnDelete(DeleteBehavior.Cascade);
+        #endregion
+        
+        #region User-FavoriteSong
+        modelBuilder.Entity<SongFavorite>()
+            .HasKey(x => new { x.UserId, x.SongId });
+
+        modelBuilder.Entity<SongFavorite>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.FavoriteSongs)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SongFavorite>()
+            .HasOne(x => x.Song)
+            .WithMany(x => x.UserFavorites)
+            .HasForeignKey(x => x.SongId)
+            .OnDelete(DeleteBehavior.Cascade);
+        #endregion
+        
+        #region User-FavoriteAlbum
+        modelBuilder.Entity<AlbumFavorite>()
+            .HasKey(x => new { x.UserId, x.AlbumId });
+
+        modelBuilder.Entity<AlbumFavorite>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.FavoriteAlbums)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AlbumFavorite>()
+            .HasOne(x => x.Album)
+            .WithMany(x => x.UserFavorites)
+            .HasForeignKey(x => x.AlbumId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
         #endregion

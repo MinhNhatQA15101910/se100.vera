@@ -16,13 +16,12 @@ const Lyric: React.FC = () => {
   const [currentLineIndex, setCurrentLineIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const lrcUrl = activeSong?.lyricUrl;
 
   useEffect(() => {
     const fetchLyrics = async () => {
       try {
         setLoadingState(true);
-        const response = await fetch(lrcUrl || '');
+        const response = await fetch(activeSong?.lyricUrl || '');
 
         const lrcText = await response.text();
 
@@ -41,7 +40,7 @@ const Lyric: React.FC = () => {
     };
 
     fetchLyrics();
-  }, []);
+  }, [activeSong]);
 
   useEffect(() => {
     if (!lyrics.length || currentDuration === undefined) {

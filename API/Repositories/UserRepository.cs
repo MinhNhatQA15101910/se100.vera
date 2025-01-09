@@ -2,7 +2,7 @@ using API.Data;
 using API.DTOs.Users;
 using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.IRepositories;
 
 namespace API.Repositories;
 
@@ -12,6 +12,11 @@ public class UserRepository(
     IMapper mapper
 ) : IUserRepository
 {
+    public void AddArtistAlbum(ArtistAlbum artistAlbum)
+    {
+        context.ArtistAlbums.Add(artistAlbum);
+    }
+
     public async Task<IdentityResult> ChangePasswordAsync(
         AppUser user,
         ChangePasswordDto changePasswordDto
@@ -187,5 +192,20 @@ public class UserRepository(
             userParams.PageNumber,
             userParams.PageSize
         );
+    }
+
+    public void RemoveArtistAlbum(ArtistAlbum artistAlbum)
+    {
+        context.ArtistAlbums.Remove(artistAlbum);
+    }
+
+    public int GetTotalUsers()
+    {
+        return context.Users.Count(u => !u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
+    }
+
+    public int GetTotalArtists()
+    {
+        return context.Users.Count(u => u.UserRoles.Any(ur => ur.Role.Name == "Artist"));
     }
 }

@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import Image from 'next/image';
 import {
   Table,
   TableHead,
@@ -14,11 +13,28 @@ import {
 
 import LikeButton from '@/components/music/LikeButton';
 
-import { trendingSongs } from './dummyTrendingSongs';
 import EditSongButton from './EditSongButton';
 import DeleteSongButton from './DeleteSongButton';
+import AddToAlbumButton from '@/components/AddToAlbumButton';
+
+import { getArtistSongsByArtistId } from '@/actions/song-actions';
+import { useQuery } from '@tanstack/react-query';
+import { useUser } from '@/contexts/UserContext';
+import { useLoading } from '@/contexts/LoadingContext';
+import DynamicImage from '@/components/custom/DynamicImage';
 
 const SongList = () => {
+  const { userDetails } = useUser();
+  const { setLoadingState } = useLoading();
+  const { data, isLoading } = useQuery({
+    queryKey: ['songs'],
+    queryFn: async () => await getArtistSongsByArtistId(userDetails?.id || -1),
+  });
+
+  useEffect(() => {
+    setLoadingState(isLoading);
+  }, [isLoading]);
+
   return (
     <div className="flex items-center justify-center text-general-white w-[90%] manage-songs-table">
       <Table>
@@ -39,46 +55,50 @@ const SongList = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {trendingSongs.map((song) => (
+          {data?.songs.map((song, index) => (
             <TableRow
-              key={song.rank}
+              key={index}
               className="border-none cursor-pointer hover:bg-transparent group"
             >
-              <TableCell className="font-medium">#{song.rank}</TableCell>
+              <TableCell className="font-medium">#{index + 1}</TableCell>
               <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
                 <div className="flex items-center space-x-4">
-                  <Image
-                    src={song.image}
-                    alt={song.title}
-                    width={55}
-                    height={55}
-                    className=" object-cover"
+                  <DynamicImage
+                    alt="Artist Image"
+                    src={
+                      song.songPhotoUrl ||
+                      'https://picsum.photos/400/400?random=42'
+                    }
+                    className="w-14 h-14 flex items-center"
                   />
                   <div>
                     <div className="font-semibold text-nowrap">
-                      {song.title}
+                      {song.songName}
                     </div>
                     <div className="text-sm text-gray-400 text-nowrap">
-                      {song.artist}
+                      {song.publisherName}
                     </div>
                   </div>
                 </div>
               </TableCell>
               <TableCell className="hidden bg-[#2E2E2E] md:table-cell text-gray-400  group-hover:bg-[#595959] text-right">
-                {song.releaseDate}
+                {song.createdAt.slice(0, 10)}
               </TableCell>
               <TableCell className="hidden lg:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959] max-w-[200px] truncate text-right">
-                {song.totalView}
+                {song.totalListeningHours}
               </TableCell>
               <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                 <div className="flex items-center justify-end space-x-2">
                   <LikeButton songId={1} />
-                  <span className="text-gray-400 mx-auto">{song.duration}</span>
+                  <span className="text-gray-400 mx-auto">
+                    {song.duration.slice(-5)}
+                  </span>
                 </div>
               </TableCell>
               <TableCell className="text-center bg-[#2E2E2E] group-hover:bg-[#595959] space-x-2">
                 <EditSongButton songId={song.id} />
                 <DeleteSongButton songId={song.id} />
+                <AddToAlbumButton songId={song.id} />
               </TableCell>
             </TableRow>
           ))}

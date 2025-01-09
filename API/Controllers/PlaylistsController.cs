@@ -1,28 +1,44 @@
-using API.DTOs.Albums;
 using API.DTOs.Playlists;
 using API.Entities;
 using API.Extensions;
-using API.Interfaces;
+using API.Helpers;
+using API.Interfaces.IRepositories;
 
 namespace API.Controllers;
 
 public class PlaylistsController(
-   IPlaylistRepository PlaylistRepository,
-   IPlaylistSongRepository playlistSongRepository,
-   ISongRepository songRepository,
+   IUnitOfWork unitOfWork,
    IMapper mapper
 ) : BaseApiController
 {
    [HttpGet("{id:int}")]
    public async Task<ActionResult<PlaylistDto>> GetPlaylistById(int id)
    {
-      var playlist = await PlaylistRepository.GetPlaylistByIdAsync(id);
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
       if (playlist == null)
       {
          return NotFound();
       }
 
       return mapper.Map<PlaylistDto>(playlist);
+   }
+
+   [HttpGet]
+   public async Task<ActionResult<IEnumerable<PlaylistDto>>> GetPlaylists([FromQuery] PlaylistParams playlistParams)
+   {
+      if (playlistParams.PageNumber < 1 || playlistParams.PageSize < 1)
+      {
+         return BadRequest("Invalid page number or page size.");
+      }
+      if (playlistParams.PublisherId != null && !int.TryParse(playlistParams.PublisherId, out _))
+      {
+         return BadRequest("Invalid publisher id.");
+      }
+      var playlists = await unitOfWork.PlaylistRepository.GetPlaylistsAsync(playlistParams);
+
+      Response.AddPaginationHeader(playlists);
+
+      return Ok(playlists);
    }
 
    [HttpPost]
@@ -37,16 +53,21 @@ public class PlaylistsController(
       var userId = User.GetUserId();
       newPlaylistDto.PublisherId = userId;
 
-      var playlist = await PlaylistRepository.CreatePlaylistAsync(newPlaylistDto);
+      var playlist = await unitOfWork.PlaylistRepository.CreatePlaylistAsync(newPlaylistDto);
 
       return mapper.Map<PlaylistDto>(playlist);
    }
 
-   [HttpPut("add-song/{id:int}")]
+   [HttpPut("{id:int}")]
    [Authorize(Roles = "Listener, Artist")]
-   public async Task<ActionResult<PlaylistDto>> AddSongToPlaylist(int id, AddRemovePlaylistSongDto addRemovePlaylistSongDto)
+   public async Task<ActionResult<PlaylistDto>> UpdatePlaylist([FromForm] UpdatePlaylistDto updatePlaylistDto, int id)
    {
-      var playlist = await PlaylistRepository.GetPlaylistByIdAsync(id);
+      if (updatePlaylistDto == null)
+      {
+         return BadRequest("Invalid playlist data.");
+      }
+
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
       if (playlist == null)
       {
          return NotFound("Playlist not found.");
@@ -58,25 +79,51 @@ public class PlaylistsController(
          return Unauthorized("The playlist does not belong to you.");
       }
 
-      var song = await songRepository.GetSongByIdAsync(addRemovePlaylistSongDto.SongId);
+      mapper.Map(updatePlaylistDto, playlist);
+
+      if (!await unitOfWork.Complete())
+      {
+         return BadRequest("Failed to update playlist.");
+      }
+
+      return mapper.Map<PlaylistDto>(playlist);
+   }
+
+   [HttpPut("add-song/{id:int}")]
+   [Authorize(Roles = "Listener, Artist")]
+   public async Task<ActionResult<PlaylistDto>> AddSongToPlaylist(int id, AddRemovePlaylistSongDto addRemovePlaylistSongDto)
+   {
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
+      if (playlist == null)
+      {
+         return NotFound("Playlist not found.");
+      }
+
+      var userId = User.GetUserId();
+      if (playlist.PublisherId != userId)
+      {
+         return Unauthorized("The playlist does not belong to you.");
+      }
+
+      var song = await unitOfWork.SongRepository.GetSongByIdAsync(addRemovePlaylistSongDto.SongId);
       if (song == null)
       {
          return NotFound("Song not found.");
       }
 
-      var playlistSong = await playlistSongRepository.GetPlaylistSongAsync(id, song.Id);
+      var playlistSong = await unitOfWork.PlaylistSongRepository.GetPlaylistSongAsync(id, song.Id);
       if (playlistSong != null)
       {
          return BadRequest("Song already exists in the playlist.");
       }
 
-      playlistSongRepository.AddPlaylistSong(new PlaylistSong
+      unitOfWork.PlaylistSongRepository.AddPlaylistSong(new PlaylistSong
       {
          PlaylistId = playlist.Id,
          SongId = song.Id
       });
 
-      if (await playlistSongRepository.SaveChangesAsync())
+      if (await unitOfWork.Complete())
       {
          return mapper.Map<PlaylistDto>(playlist);
       }
@@ -88,7 +135,7 @@ public class PlaylistsController(
    [Authorize(Roles = "Listener, Artist")]
    public async Task<ActionResult<PlaylistDto>> RemoveSongFromPlaylist(int id, AddRemovePlaylistSongDto addRemovePlaylistSongDto)
    {
-      var playlist = await PlaylistRepository.GetPlaylistByIdAsync(id);
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
       if (playlist == null)
       {
          return NotFound("Playlist not found.");
@@ -100,21 +147,21 @@ public class PlaylistsController(
          return Unauthorized("The playlist does not belong to you.");
       }
 
-      var song = await songRepository.GetSongByIdAsync(addRemovePlaylistSongDto.SongId);
+      var song = await unitOfWork.SongRepository.GetSongByIdAsync(addRemovePlaylistSongDto.SongId);
       if (song == null)
       {
          return NotFound("Song not found.");
       }
 
-      var playlistSong = await playlistSongRepository.GetPlaylistSongAsync(id, song.Id);
+      var playlistSong = await unitOfWork.PlaylistSongRepository.GetPlaylistSongAsync(id, song.Id);
       if (playlistSong == null)
       {
          return BadRequest("Song does not exist in the playlist.");
       }
 
-      playlistSongRepository.RemovePlaylistSong(playlistSong);
+      unitOfWork.PlaylistSongRepository.RemovePlaylistSong(playlistSong);
 
-      if (await playlistSongRepository.SaveChangesAsync())
+      if (await unitOfWork.Complete())
       {
          return mapper.Map<PlaylistDto>(playlist);
       }
@@ -122,4 +169,29 @@ public class PlaylistsController(
       return BadRequest("Failed to remove song from playlist.");
    }
 
+   [HttpDelete("{id:int}")]
+   [Authorize(Roles = "Listener, Artist")]
+   public async Task<ActionResult> DeletePlaylist(int id)
+   {
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
+      if (playlist == null)
+      {
+         return NotFound("Playlist not found.");
+      }
+
+      var userId = User.GetUserId();
+      if (playlist.PublisherId != userId)
+      {
+         return Unauthorized("The playlist does not belong to you.");
+      }
+
+      unitOfWork.PlaylistRepository.RemovePlaylist(playlist);
+
+      if (await unitOfWork.Complete())
+      {
+         return NoContent();
+      }
+
+      return BadRequest("Failed to delete playlist.");
+   }
 }

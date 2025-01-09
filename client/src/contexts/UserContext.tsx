@@ -2,9 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLoading } from './LoadingContext';
 
 import client from '@/services/client';
-import { useLoading } from './LoadingContext';
 import { toast } from 'react-toastify';
 
 import {
@@ -144,6 +144,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const login = async (loginCreds: LoginCredentials | null): Promise<void> => {
+    setLoadingState(true)
     if (!loginCreds) {
       throw new Error('Login credentials are required');
     }
@@ -161,14 +162,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error('Invalid response from server');
       }
       if (loginCreds.rememberMe) {
-        localStorage.setItem(
-          'userDetails',
-          JSON.stringify({ ...response.data, token: '' })
-        );
         document.cookie = `auth_token=${response.data.token}; path=/; max-age=604800; SameSite=Strict; Secure`;
         document.cookie = `userDetails=${encodeURIComponent(JSON.stringify(response.data))}; path=/; max-age=604800; SameSite=Strict; Secure`;
       } else {
-        // For non-remember-me, set session cookies that expire when browser closes
         document.cookie = `auth_token=${response.data.token}; path=/; SameSite=Strict; Secure`;
         document.cookie = `userDetails=${encodeURIComponent(JSON.stringify(response.data))}; path=/; SameSite=Strict; Secure`;
       }
@@ -180,6 +176,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
+    } finally {
+      setLoadingState(false)
     }
   };
 
@@ -209,11 +207,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = (): void => {
     setLoadingState(true);
     try {
-      localStorage.removeItem('userDetails');
       document.cookie =
         'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
-        document.cookie =
-          'userDetails=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
+      document.cookie =
+        'userDetails=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure';
       setToken(null);
       setIsAuthenticated(false);
       setUserDetails(null);
@@ -226,6 +223,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    setLoadingState(true);
     const getCookie = (name: string): string | null => {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
@@ -234,12 +232,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const authToken = getCookie('auth_token');
-    const storedUserDetails = localStorage.getItem('userDetails');
+    const userDetailsCookie = getCookie('userDetails');
 
-    if (authToken && storedUserDetails) {
+    if (authToken && userDetailsCookie) {
       try {
-        const parsedUserDetails = JSON.parse(storedUserDetails) as UserDto;
-        setToken(authToken);
+        const parsedUserDetails = JSON.parse(decodeURIComponent(userDetailsCookie)) as UserDto;
+        setToken(authToken);  
         setIsAuthenticated(true);
         setUserDetails(parsedUserDetails);
       } catch (error) {
@@ -258,6 +256,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         router.push('/login');
       }
     }
+    setLoadingState(false);
   }, [router]);
 
   const value = {
