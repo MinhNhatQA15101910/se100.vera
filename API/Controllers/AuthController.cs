@@ -2,6 +2,7 @@ using API.DTOs.Users;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
+using API.Interfaces.IRepositories;
 using API.Interfaces.IServices;
 
 namespace API.Controllers;
@@ -18,6 +19,7 @@ public class AuthController(
     IEmailService emailService,
     ITokenService tokenService,
     UserManager<AppUser> userManager,
+    IUnitOfWork unitOfWork,
     IMapper mapper
 ) : BaseApiController
 {
@@ -194,7 +196,7 @@ public class AuthController(
         return BadRequest("Invalid action");
     }
 
-    [HttpPut("reset-password")]
+    [HttpPatch("reset-password")]
     [Authorize]
     public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
     {
@@ -209,15 +211,11 @@ public class AuthController(
         }
 
         // Reset password
-        var result = await userManager.ChangePasswordAsync(
-            user,
-            user.PasswordHash!,
-            resetPasswordDto.NewPassword
-        );
+        user.PasswordHash = userManager.PasswordHasher.HashPassword(user, resetPasswordDto.NewPassword);
 
-        if (!result.Succeeded)
+        if (!await unitOfWork.Complete())
         {
-            return BadRequest(result.Errors);
+            return BadRequest("Could not reset password");
         }
 
         return NoContent();
