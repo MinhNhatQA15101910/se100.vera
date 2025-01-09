@@ -8,6 +8,11 @@ namespace API.Repositories;
 
 public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumRepository
 {
+    public void AddFavoriteUser(AlbumFavorite favoriteAlbum)
+    {
+        context.FavoriteAlbums.Add(favoriteAlbum);
+    }
+
     public async Task<Album> CreateAlbumAsync(NewAlbumDto newAlbumDto)
     {
         var album = mapper.Map<Album>(newAlbumDto);
@@ -16,6 +21,11 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
         await context.SaveChangesAsync();
 
         return album;
+    }
+
+    public void DeleteAlbum(Album album)
+    {
+        context.Albums.Remove(album);
     }
 
     public async Task<Album?> GetAlbumByIdAsync(int id)
@@ -36,6 +46,12 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             .ThenInclude(s => s.Publisher).ThenInclude(p => p.Photos).ThenInclude(pp => pp.Photo)
             // Execute query
             .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
+    public Task<AlbumFavorite?> GetAlbumFavoriteAsync(int albumId, int userId)
+    {
+        return context.FavoriteAlbums
+            .FirstOrDefaultAsync(f => f.AlbumId == albumId && f.UserId == userId);
     }
 
     public async Task<PagedList<AlbumDto>> GetAlbumsAsync(AlbumParams albumParams)
@@ -65,5 +81,41 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             albumParams.PageNumber,
             albumParams.PageSize
         );
+    }
+
+    public async Task<PagedList<AlbumDto>> GetFavoriteAlbumsAsync(int userId, AlbumParams albumParams)
+    {
+        var query = context.Albums.AsQueryable();
+
+        query = query.Where(s => s.Songs.Count > 0);
+
+        query = query.Where(a => a.UserFavorites.Any(f => f.UserId == userId));
+
+        if (albumParams.PublisherId != null)
+        {
+            query = query.Where(s => s.PublisherId.ToString() == albumParams.PublisherId);
+        }
+
+        if (albumParams.AlbumName != null)
+        {
+            query = query.Where(s => s.AlbumName.Contains(albumParams.AlbumName));
+        }
+
+        query = albumParams.OrderBy switch
+        {
+            "albumName" => albumParams.SortBy == "asc" ? query.OrderBy(s => s.AlbumName) : query.OrderByDescending(s => s.AlbumName),
+            _ => query.OrderBy(s => s.AlbumName)
+        };
+
+        return await PagedList<AlbumDto>.CreateAsync(
+            query.ProjectTo<AlbumDto>(mapper.ConfigurationProvider),
+            albumParams.PageNumber,
+            albumParams.PageSize
+        );
+    }
+
+    public void RemoveFavoriteUser(AlbumFavorite favoriteAlbum)
+    {
+        context.FavoriteAlbums.Remove(favoriteAlbum);
     }
 }

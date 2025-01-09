@@ -12,6 +12,11 @@ public class UserRepository(
     IMapper mapper
 ) : IUserRepository
 {
+    public void AddArtistAlbum(ArtistAlbum artistAlbum)
+    {
+        context.ArtistAlbums.Add(artistAlbum);
+    }
+
     public async Task<IdentityResult> ChangePasswordAsync(
         AppUser user,
         ChangePasswordDto changePasswordDto
@@ -187,5 +192,10 @@ public class UserRepository(
             userParams.PageNumber,
             userParams.PageSize
         );
+    }
+
+    public void RemoveArtistAlbum(ArtistAlbum artistAlbum)
+    {
+        context.ArtistAlbums.Remove(artistAlbum);
     }
 }

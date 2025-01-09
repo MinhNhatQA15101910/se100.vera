@@ -394,6 +394,12 @@ public class SongsController(
     {
         int userId = User.GetUserId();
 
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(songId);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
         var existingFavoriteSong = await unitOfWork.SongRepository.GetSongFavoriteAsync(songId, userId);
         if (existingFavoriteSong == null)
         {
@@ -413,6 +419,17 @@ public class SongsController(
         if (await unitOfWork.Complete()) return Ok();
 
         return BadRequest("Failed to add song to favorite.");
+    }
+
+    [HttpGet("is-favorite/{songId:int}")]
+    [Authorize]
+    public async Task<ActionResult<bool>> IsUserFavorite(int songId)
+    {
+        int userId = User.GetUserId();
+
+        var favoriteSong = await unitOfWork.SongRepository.GetSongFavoriteAsync(songId, userId);
+
+        return favoriteSong != null;
     }
 
     private static string GetSongDuration(IFormFile audioFile)

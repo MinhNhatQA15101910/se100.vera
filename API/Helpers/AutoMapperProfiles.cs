@@ -258,5 +258,6 @@ public class AutoMapperProfiles : Profile
                 s => s.SongPhotoUrl,
                 o => o.MapFrom(x => x.Song.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url)
             );
+        CreateMap<UpdateAlbumDto, Album>();
     }
 }

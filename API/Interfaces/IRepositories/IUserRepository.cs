@@ -6,6 +6,7 @@ namespace API.Interfaces.IRepositories;
 
 public interface IUserRepository
 {
+    void AddArtistAlbum(ArtistAlbum artistAlbum);
     Task<IdentityResult> ChangePasswordAsync(AppUser user, ChangePasswordDto changePasswordDto);
     Task<bool> CheckPasswordAsync(AppUser user, string password);
     Task<IdentityResult> CreateUserAsync(RegisterDto registerDto);
@@ -13,4 +14,5 @@ public interface IUserRepository
     Task<AppUser?> GetUserByEmailAsync(string email);
     Task<AppUser?> GetUserByIdAsync(int id);
     Task<PagedList<UserDto>> GetUsersAsync(UserParams userParams);
+    void RemoveArtistAlbum(ArtistAlbum artistAlbum);
 }

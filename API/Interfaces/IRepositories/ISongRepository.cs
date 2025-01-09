@@ -8,6 +8,7 @@ public interface ISongRepository
 {
     void AddFavoriteUser(SongFavorite songFavorite);
     Task<Song> AddSongAsync(NewSongDto newSongDto);
+    Task<PagedList<SongDto>> GetFavoriteSongsAsync(int userId, SongParams songParams);
     Task<SongFavorite?> GetSongFavoriteAsync(int songId, int userId);
     Task<Song?> GetSongByIdAsync(int id);
     Task<PagedList<SongDto>> GetSongsAsync(SongParams songParams);
