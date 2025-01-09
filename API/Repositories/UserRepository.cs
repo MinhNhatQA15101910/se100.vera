@@ -199,13 +199,13 @@ public class UserRepository(
         context.ArtistAlbums.Remove(artistAlbum);
     }
 
-    public int GetTotalUsers()
+    public async Task<int> GetTotalUsersAsync()
     {
-        return context.Users.Count(u => !u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
+        return await context.Users.CountAsync(u => !u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
     }
 
-    public int GetTotalArtists()
+    public async Task<int> GetTotalArtistsAsync()
     {
-        return context.Users.Count(u => u.UserRoles.Any(ur => ur.Role.Name == "Artist"));
+        return await context.Users.CountAsync(u => u.UserRoles.Any(ur => ur.Role.Name == "Artist"));
     }
 }

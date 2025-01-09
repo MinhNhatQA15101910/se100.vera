@@ -11,11 +11,10 @@ public interface IUserRepository
     Task<bool> CheckPasswordAsync(AppUser user, string password);
     Task<IdentityResult> CreateUserAsync(RegisterDto registerDto);
     Task<PagedList<UserDto>> GetArtistsAsync(UserParams userParams);
-    int GetTotalArtists();
     Task<AppUser?> GetUserByEmailAsync(string email);
     Task<AppUser?> GetUserByIdAsync(int id);
     Task<PagedList<UserDto>> GetUsersAsync(UserParams userParams);
-    int GetTotalUsers();
     void RemoveArtistAlbum(ArtistAlbum artistAlbum);
-
+    Task<int> GetTotalUsersAsync();
+    Task<int> GetTotalArtistsAsync();
 }

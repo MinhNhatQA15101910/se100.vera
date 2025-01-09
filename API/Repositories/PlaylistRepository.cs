@@ -53,9 +53,9 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
       );
    }
 
-   public int GetTotalPlaylists()
+   public async Task<int> GetTotalPlaylistsAsync()
    {
-      return context.Playlists.Count();
+      return await context.Playlists.CountAsync();
    }
 
    public void RemovePlaylist(Playlist playlist)

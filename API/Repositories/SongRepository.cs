@@ -76,9 +76,9 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
         );
     }
 
-    public int GetTotalSongs()
+    public async Task<int> GetTotalSongsAsync()
     {
-        return context.Songs.Count();
+        return await context.Songs.CountAsync();
     }
 
     public void AddFavoriteUser(SongFavorite songFavorite)

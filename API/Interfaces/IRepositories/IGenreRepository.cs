@@ -6,12 +6,12 @@ namespace API.Interfaces.IRepositories;
 
 public interface IGenreRepository
 {
-   Task<Genre?> GetGenreByIdAsync(int id);
-   Task<Genre?> GetGenreByNameAsync(string name);
-   Task<PagedList<GenreDto>> GetGenresAsync(PaginationParams paginationParams);
-   int GetTotalGenres();
-   Task<Genre> AddGenreAsync(Genre genre);
-   void RemoveGenre(Genre genre);
-   void AddGenre(Genre genre);
-   Task<IEnumerable<GenreDto>> GetAllGenresAsync();
+    Task<Genre?> GetGenreByIdAsync(int id);
+    Task<Genre?> GetGenreByNameAsync(string name);
+    Task<PagedList<GenreDto>> GetGenresAsync(PaginationParams paginationParams);
+    Task<Genre> AddGenreAsync(Genre genre);
+    void RemoveGenre(Genre genre);
+    void AddGenre(Genre genre);
+    Task<IEnumerable<GenreDto>> GetAllGenresAsync();
+    Task<int> GetTotalGenresAsync();
 }

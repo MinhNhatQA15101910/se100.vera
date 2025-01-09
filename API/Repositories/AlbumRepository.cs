@@ -58,8 +58,6 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
     {
         var query = context.Albums.AsQueryable();
 
-        query = query.Where(s => s.Songs.Count > 0);
-
         if (albumParams.PublisherId != null)
         {
             query = query.Where(s => s.PublisherId.ToString() == albumParams.PublisherId);
@@ -122,11 +120,6 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
         );
     }
 
-    public int GetTotalAlbums()
-    {
-        return context.Albums.Count();
-    }
-
     public async Task<int> GetMaxOrder(int albumId)
     {
         return await context.AlbumSongs
@@ -137,5 +130,10 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
     public void RemoveFavoriteUser(AlbumFavorite favoriteAlbum)
     {
         context.FavoriteAlbums.Remove(favoriteAlbum);
+    }
+
+    public async Task<int> GetTotalAlbumsAsync()
+    {
+        return await context.Albums.CountAsync();
     }
 }
