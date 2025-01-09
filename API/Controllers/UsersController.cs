@@ -52,6 +52,28 @@ public class UsersController(
         return NoContent();
     }
 
+    [HttpPost("activate-artist")]
+    [Authorize]
+    public async Task<ActionResult> ActivateArtist(ActivateArtistDto activateArtistDto)
+    {
+        var userId = User.GetUserId();
+
+        // Get user
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (user == null) return BadRequest("Could not find user");
+
+        // Update user info
+        user.ArtistName = activateArtistDto.ArtistName;
+        user.About = activateArtistDto.About;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        // Update user role
+        var roleResult = await userManager.AddToRoleAsync(user, "Artist");
+        if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
+
+        return NoContent();
+    }
+
     [HttpPost("add-photo")]
     public async Task<ActionResult<FileDto>> AddPhoto(IFormFile file)
     {
