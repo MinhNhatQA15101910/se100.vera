@@ -83,7 +83,7 @@ export default function TrendingSongs() {
                     <div>
                       <div className="font-semibold">{song.songName}</div>
                       <div className="text-sm text-gray-400">
-                        {song.artists[0].artistName}
+                        {song.publisherName}
                       </div>
                     </div>
                   </div>

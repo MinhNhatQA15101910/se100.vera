@@ -19,11 +19,6 @@ export interface Song {
   duration: string;
 }
 
-export interface Genre {
-  id: number;
-  genreName: string;
-}
-
 export interface Album {
   id: number;
   albumName: string;
@@ -47,10 +42,12 @@ export interface Album {
 export interface Playlist {
   id: number;
   playlistName: string;
-  songCount: number;
-  totalDuration: string;
-  songs: Song[];
+  description: string;
+  totalListeningHours: number;
+  totalSongs: number;
   createdAt: string;
+  publisher: User;
+  songs: Song[];
 }
 
 export interface User {
@@ -59,14 +56,14 @@ export interface User {
   lastName: string;
   email: string;
   role: Role;
-  artistName: string | '';
+  artistName: string | null;
   photoUrl: string;
   gender: string;
   dateOfBirth: string;
   about: string | '';
-  created: string;
+  createdAt: string;
   photos: Array<{ id: number; url: string; isMain: boolean }>;
-  token: string;
+  token: string | null;
 }
 
 export interface PaginatedResponses<T> {

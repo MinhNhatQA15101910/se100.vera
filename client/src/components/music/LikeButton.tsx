@@ -1,21 +1,32 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
-import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
+import { useLikeSongMutation } from '@/app/(app)/(artitst)/upload-song/_hooks/useSongMutation';
 import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
+import { toast } from 'react-toastify';
+import { useQuery } from '@tanstack/react-query';
+import { isFavoriteSong } from '@/actions/song-actions';
+import { useLoading } from '@/contexts/LoadingContext';
 
 interface LikeButtonProps {
   songId: number;
-  size?: number; // Optional size prop for flexibility
+  size?: number;
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
-  const router = useRouter();
   const { userDetails } = useUser();
+  const { setLoadingState } = useLoading();
+  const likeSongMutation = useLikeSongMutation();
+  const { data, isLoading } = useQuery({
+    queryKey: ['is_fav_song'],
+    queryFn: async () => await isFavoriteSong(songId),
+  });
 
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+  useEffect(() => {
+    setLoadingState(isLoading);
+  }, [isLoading]);
 
   useEffect(() => {
     if (!userDetails?.id) {
@@ -24,20 +35,26 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
   }, [songId]);
 
   const handleLike = async () => {
-    setIsLiked(!isLiked);
-    router.refresh();
+    likeSongMutation.mutate(userDetails?.id || -1, {
+      onSuccess: () => {
+        toast.success('Song Added to Favorites!');
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   };
 
   return (
     <button onClick={handleLike}>
-      {isLiked ? (
+      {data ? (
         <MdFavorite
-          size={size} // Use the size prop here
+          size={size}
           className="text-general-pink hover:text-general-pink-hover transition-colors duration-200"
         />
       ) : (
         <MdFavoriteBorder
-          size={size} // Use the size prop here
+          size={size}
           className="text-general-pink hover:text-general-pink-hover transition-colors duration-200"
         />
       )}

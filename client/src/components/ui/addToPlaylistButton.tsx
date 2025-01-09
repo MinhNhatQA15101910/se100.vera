@@ -27,7 +27,7 @@ const AddToPlaylistButton: React.FC<AddToPlaylistProps> = ({ songId }) => {
         onChange={setIsModalOpen}
         title="CHOOSE YOUR PLAYLIST"
       >
-        <ChoosePlaylistCard />
+        <ChoosePlaylistCard songId={songId} />
       </Modal>
     </>
   );

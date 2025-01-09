@@ -27,6 +27,45 @@ export async function getAllPlaylists(): Promise<Playlist[]> {
   }
 }
 
+export async function getOwnPlaylist(userId: number): Promise<Playlist[]> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    const response = await client<Playlist[]>(
+      `/api/playlists?publisherId=${userId}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('get all playlists error: ', error);
+    throw error;
+  }
+}
+
+export async function getPlaylistById(playlistId: number): Promise<Playlist> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    const response = await client<Playlist>(`/api/playlists/${playlistId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('get playlist by id error: ', error);
+    throw error;
+  }
+}
+
 export async function createPlaylist(formData: FormData): Promise<void> {
   const token = await getAuthTokenFromCookies();
 

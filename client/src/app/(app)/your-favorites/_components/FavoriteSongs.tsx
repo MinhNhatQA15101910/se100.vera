@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getAllSongs } from '@/actions/song-actions';
+import { getFavoriteSongs } from '@/actions/song-actions';
 import SongCard from '@/components/music/SongCard';
 import { useLoading } from '@/contexts/LoadingContext';
 
@@ -10,7 +10,7 @@ const FavoriteSongs = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['favorite_songs'],
     queryFn: async () => {
-      return await getAllSongs();
+      return await getFavoriteSongs(1, 1, 1);
     },
   });
 
