@@ -201,7 +201,7 @@ public class UserRepository(
 
     public int GetTotalUsers()
     {
-        return context.Users.Count();
+        return context.Users.Count(u => !u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
     }
 
     public int GetTotalArtists()
