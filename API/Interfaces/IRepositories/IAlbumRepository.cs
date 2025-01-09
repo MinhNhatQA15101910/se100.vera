@@ -13,5 +13,6 @@ public interface IAlbumRepository
     Task<AlbumFavorite?> GetAlbumFavoriteAsync(int albumId, int userId);
     Task<PagedList<AlbumDto>> GetAlbumsAsync(AlbumParams albumParams);
     Task<PagedList<AlbumDto>> GetFavoriteAlbumsAsync(int userId, AlbumParams albumParams);
+    int GetTotalAlbums();
     void RemoveFavoriteUser(AlbumFavorite existingFavoriteAlbum);
 }

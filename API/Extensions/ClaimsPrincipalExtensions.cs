@@ -1,3 +1,5 @@
+using API.Controllers;
+
 namespace API.Extensions;
 
 public static class ClaimsPrincipalExtensions
@@ -15,5 +17,19 @@ public static class ClaimsPrincipalExtensions
             ?? throw new Exception("Cannot get user id from token"));
 
         return userId;
+    }
+
+    public static PincodeAction GetAction(this ClaimsPrincipal user)
+    {
+        var actionString = user.FindFirstValue("action")
+            ?? throw new Exception("Cannot get action from token");
+
+        PincodeAction action = actionString == "Signup"
+            ? PincodeAction.Signup
+            : actionString == "VerifyEmail"
+                ? PincodeAction.VerifyEmail
+                : PincodeAction.None;
+
+        return action;
     }
 }
