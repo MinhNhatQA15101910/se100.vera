@@ -8,6 +8,11 @@ export interface ArtistsReponse {
   artists: User[];
 }
 
+export interface ActivateArtistAccountProps {
+  artistName: string,
+  description: string
+}
+
 export async function getAllArtists(): Promise<ArtistsReponse> {
   const token = await getAuthTokenFromCookies();
 
@@ -26,4 +31,8 @@ export async function getAllArtists(): Promise<ArtistsReponse> {
     console.error('Get all Artists: ', error);
     throw error;
   }
+}
+
+export async function activateArtistAccount({}) {
+  
 }

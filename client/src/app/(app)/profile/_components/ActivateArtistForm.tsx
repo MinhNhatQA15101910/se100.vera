@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/textarea';
+
+
 
 export default function ActivateArtistForm() {
   const [formData, setFormData] = useState({

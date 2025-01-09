@@ -1,4 +1,4 @@
-import { Role } from "./declaration";
+import { Role } from './declaration';
 
 export interface LoginCredentials {
   email: string;
@@ -12,7 +12,7 @@ export interface SignupCredentials {
   email: string;
   password: string;
   gender: string;
-  role?: 'Listener' | 'Artist'; 
+  role?: 'Listener' | 'Artist';
 }
 
 export interface ResetPasswordCredentials {
@@ -24,7 +24,7 @@ export interface UserDto {
   firstName: string;
   lastName: string;
   email: string;
-  roles: Role[];  
+  roles: Role[];
   artistName: string | null;
   photoUrl: string | null;
   gender: string;
@@ -35,7 +35,11 @@ export interface UserDto {
   token: string;
 }
 
+export interface ValidateType {
+  token: string;
+}
+
 export interface SendEmailDto {
-    email: string;
-    pincode: string
+  email: string;
+  pincode: string;
 }

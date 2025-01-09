@@ -14,7 +14,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
       <div className="p-4 bg-[#1F1F1F] rounded-lg cursor-pointer hover:bg-gray-700 transition">
         <div className="relative w-full aspect-square">
           <DynamicImage
-            src={playlist.songs[0].songPhotoUrl || '/vera-icon.png'}
+            src={'https://picsum.photos/400/400?random=4'}
             alt={playlist.playlistName}
             className="object-cover rounded-md items-center flex"
           />

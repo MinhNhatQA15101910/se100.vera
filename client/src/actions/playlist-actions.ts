@@ -82,3 +82,19 @@ export async function createPlaylist(formData: FormData): Promise<void> {
     throw error;
   }
 }
+
+export async function deletePlaylist(playlistId: number): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/playlists/${playlistId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('delete playlist error: ', error);
+    throw error;
+  }
+}
