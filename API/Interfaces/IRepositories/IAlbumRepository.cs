@@ -14,6 +14,7 @@ public interface IAlbumRepository
     Task<PagedList<AlbumDto>> GetAlbumsAsync(AlbumParams albumParams);
     Task<List<AlbumSong>> GetAlbumsSongsAsync(int albumId);
     Task<PagedList<AlbumDto>> GetFavoriteAlbumsAsync(int userId, AlbumParams albumParams);
+    int GetTotalAlbums();
     Task<int> GetMaxOrder(int albumId);
     void RemoveFavoriteUser(AlbumFavorite existingFavoriteAlbum);
 }

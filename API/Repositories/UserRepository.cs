@@ -198,4 +198,14 @@ public class UserRepository(
     {
         context.ArtistAlbums.Remove(artistAlbum);
     }
+
+    public int GetTotalUsers()
+    {
+        return context.Users.Count(u => !u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
+    }
+
+    public int GetTotalArtists()
+    {
+        return context.Users.Count(u => u.UserRoles.Any(ur => ur.Role.Name == "Artist"));
+    }
 }

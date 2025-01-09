@@ -53,6 +53,11 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
       );
    }
 
+   public int GetTotalPlaylists()
+   {
+      return context.Playlists.Count();
+   }
+
    public void RemovePlaylist(Playlist playlist)
    {
       context.Playlists.Remove(playlist);

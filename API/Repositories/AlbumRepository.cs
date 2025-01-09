@@ -122,6 +122,11 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
         );
     }
 
+    public int GetTotalAlbums()
+    {
+        return context.Albums.Count();
+    }
+
     public async Task<int> GetMaxOrder(int albumId)
     {
         return await context.AlbumSongs

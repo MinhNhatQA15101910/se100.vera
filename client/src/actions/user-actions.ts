@@ -1,0 +1,29 @@
+'server only';
+
+import client from '@/services/client';
+import { getAuthTokenFromCookies } from './utils';
+import { User } from '@/types/global';
+
+export interface ArtistsReponse {
+  artists: User[];
+}
+
+export async function getAllArtists(currentPage: number, pageSize: number): Promise<ArtistsReponse> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    const response = await client<User[]>('/api/users/artists', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return {
+      artists: response.data,
+    };
+  } catch (error) {
+    console.error('Get all Artists: ', error);
+    throw error;
+  }
+}
