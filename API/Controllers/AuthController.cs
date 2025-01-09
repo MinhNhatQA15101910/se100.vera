@@ -2,6 +2,7 @@ using API.DTOs.Users;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
+using API.Interfaces.IRepositories;
 using API.Interfaces.IServices;
 
 namespace API.Controllers;
@@ -13,17 +14,12 @@ public enum PincodeAction
     VerifyEmail
 }
 
-public class PincodeStore
-{
-    public Dictionary<string, string> PincodeMap { get; set; } = [];
-    public Dictionary<string, RegisterDto> ValidateUserMap { get; set; } = [];
-}
-
 public class AuthController(
     PincodeStore pincodeStore,
     IEmailService emailService,
     ITokenService tokenService,
     UserManager<AppUser> userManager,
+    IUnitOfWork unitOfWork,
     IMapper mapper
 ) : BaseApiController
 {
@@ -107,6 +103,27 @@ public class AuthController(
             return false;
         }
 
+        // Add to pincode map
+        var pincode = GeneratePincode();
+        pincodeStore.PincodeMap[validateEmailDto.Email] = pincode;
+
+        // Send pincode email
+        var displayName = validateEmailDto.Email;
+        var email = validateEmailDto.Email;
+        var subject = "VERA ACCOUNT VERIFICATION CODE";
+        var message = await System.IO.File.ReadAllTextAsync("./Assets/EmailContent.html");
+        message = message.Replace("{{hideEmail}}", HideEmail(email));
+        message = message.Replace("{{pincode}}", pincode);
+
+        await emailService.SendEmailAsync(
+            new EmailMessage(
+                displayName,
+                email,
+                subject,
+                message
+            )
+        );
+
         var token = tokenService.CreateVerifyPincodeTokenAsync(validateEmailDto.Email, PincodeAction.VerifyEmail);
         return Ok(new { Token = token });
     }
@@ -177,6 +194,31 @@ public class AuthController(
         }
 
         return BadRequest("Invalid action");
+    }
+
+    [HttpPatch("reset-password")]
+    [Authorize]
+    public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+    {
+        // Get userId
+        var userId = User.GetUserId();
+
+        // Get user
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            return Unauthorized("User not found");
+        }
+
+        // Reset password
+        user.PasswordHash = userManager.PasswordHasher.HashPassword(user, resetPasswordDto.NewPassword);
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Could not reset password");
+        }
+
+        return NoContent();
     }
 
     private async Task<bool> UserExists(string email)

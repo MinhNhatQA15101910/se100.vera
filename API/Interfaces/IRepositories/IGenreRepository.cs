@@ -9,6 +9,7 @@ public interface IGenreRepository
    Task<Genre?> GetGenreByIdAsync(int id);
    Task<Genre?> GetGenreByNameAsync(string name);
    Task<PagedList<GenreDto>> GetGenresAsync(PaginationParams paginationParams);
+   int GetTotalGenres();
    Task<Genre> AddGenreAsync(Genre genre);
    void RemoveGenre(Genre genre);
    void AddGenre(Genre genre);

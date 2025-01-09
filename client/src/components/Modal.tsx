@@ -10,19 +10,14 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  onChange,
-  title,
-  children,
-}) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onChange, title, children }) => {
   return (
     <Dialog.Root open={isOpen} defaultOpen={isOpen} onOpenChange={onChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="bg-neutral-900/90 black-drop-blur-sm fixed inset-0">
           <Dialog.Content
             className="fixed drop-shadow-md border border-neutral-700 top-[50%] left-[50%] max-h-full h-full 
-              md:h-auto md:max-h-[85vh] w-[90vw] md:w-[900px] translate-x-[-50%] translate-y-[-50%] rounded-md 
+              md:h-auto md:max-h-[85vh]  translate-x-[-50%] translate-y-[-50%] rounded-md 
               bg-neutral-800 p-[25px] focus:outline-none"
           >
             <Dialog.Title className="text-xl text-center font-bold mb-4">

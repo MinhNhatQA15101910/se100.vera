@@ -83,6 +83,14 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
         );
     }
 
+    public async Task<List<AlbumSong>> GetAlbumsSongsAsync(int albumId)
+    {
+        return await context.AlbumSongs
+            .Where(s => s.AlbumId == albumId)
+            .OrderBy(s => s.Order)
+            .ToListAsync();
+    }
+
     public async Task<PagedList<AlbumDto>> GetFavoriteAlbumsAsync(int userId, AlbumParams albumParams)
     {
         var query = context.Albums.AsQueryable();
@@ -112,6 +120,18 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             albumParams.PageNumber,
             albumParams.PageSize
         );
+    }
+
+    public int GetTotalAlbums()
+    {
+        return context.Albums.Count();
+    }
+
+    public async Task<int> GetMaxOrder(int albumId)
+    {
+        return await context.AlbumSongs
+            .Where(s => s.AlbumId == albumId)
+            .CountAsync();
     }
 
     public void RemoveFavoriteUser(AlbumFavorite favoriteAlbum)

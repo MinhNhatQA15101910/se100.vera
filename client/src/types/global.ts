@@ -19,6 +19,13 @@ export interface Song {
   duration: string;
 }
 
+export interface Genre {
+  id: number;
+  genreName: string;
+  createdAt: string;
+
+}
+
 export interface Album {
   id: number;
   albumName: string;

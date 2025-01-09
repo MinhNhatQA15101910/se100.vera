@@ -56,4 +56,8 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
          paginationParams.PageSize
       );
    }
+   public int GetTotalGenres()
+   {
+      return context.Genres.Count();
+   }
 }
