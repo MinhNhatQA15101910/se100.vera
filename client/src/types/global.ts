@@ -49,10 +49,12 @@ export interface Album {
 export interface Playlist {
   id: number;
   playlistName: string;
-  songCount: number;
-  totalDuration: string;
-  songs: Song[];
+  description: string;
+  totalListeningHours: number;
+  totalSongs: number;
   createdAt: string;
+  publisher: User;
+  songs: Song[];
 }
 
 export interface User {
@@ -61,14 +63,14 @@ export interface User {
   lastName: string;
   email: string;
   role: Role;
-  artistName: string | '';
+  artistName: string | null;
   photoUrl: string;
   gender: string;
   dateOfBirth: string;
   about: string | '';
   createdAt: string;
   photos: Array<{ id: number; url: string; isMain: boolean }>;
-  token: string;
+  token: string | null;
 }
 
 export interface PaginatedResponses<T> {

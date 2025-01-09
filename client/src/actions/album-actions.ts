@@ -64,12 +64,48 @@ export async function getArtistAlbums(artistId: number): Promise<Album[]> {
   }
 }
 
-export async function deleteAlbum(AlbumId: number): Promise<void> {
+// Only artist can add desires songs of their into an album
+export async function updateAlbum(albumId: number) {
   const token = await getAuthTokenFromCookies();
 
   try {
-    await client(`/api/albums/${AlbumId}`, {
-      method: 'DELETE',
+    await client<Album[]>(`/api/albums=${albumId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('delete an album error: ', error);
+    throw error;
+  }
+}
+
+// Only artist can add desires songs of their into an album
+export async function addSongToAlbum(albumId: number, songId: number) {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client<Album[]>(`/api/album/add-song/${albumId}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ songId }),
+    });
+  } catch (error) {
+    console.error('add a song to an album error: ', error);
+    throw error;
+  }
+}
+
+// Only artist themselves can delete the album
+export async function deleteAlbum(albumId: number) {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client<Album[]>(`/api/albums=${albumId}`, {
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
       },

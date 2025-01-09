@@ -155,9 +155,9 @@ export async function deleteSong(songId: number): Promise<void> {
 }
 
 export async function getArtistSongsByArtistId(
-  pageNumber: number = 1,
-  pageSize: number = 7,
-  artistId: number
+  artistId: number,
+  pageNumber?: number,
+  pageSize?: number
 ) {
   const token = getAuthTokenFromCookies();
 
@@ -192,6 +192,82 @@ export async function getArtistSongsByArtistId(
     };
   } catch (error) {
     console.error('Error in getAllSongs for Artist:', error);
+    throw error;
+  }
+}
+
+export async function getFavoriteSongs(
+  userId: number,
+  pageNumber = 1,
+  pageSize = 1
+) {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    const response = await client<Song[]>(
+      !pageNumber || !pageSize
+        ? `/api/songs`
+        : `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const paginationHeader = response.headers.get('Pagination');
+    if (!paginationHeader) {
+      throw new Error('Pagination data not found in headers');
+    }
+
+    const pagination = JSON.parse(paginationHeader);
+
+    if (!response.headers.get('Content-Type')?.includes('application/json')) {
+      throw new Error('Response does not contain valid JSON data');
+    }
+
+    return {
+      songs: response.data,
+      pagination,
+    };
+  } catch (error) {
+    console.error('Error in get Favourite songs:', error);
+    throw error;
+  }
+}
+
+export async function isFavoriteSong(songId: number): Promise<boolean> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    const response = await client<boolean>(`/api/songs/is-favorite/${songId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error in checking Favourite song:', error);
+    throw error;
+  }
+}
+
+export async function ToggleFavoriteSongById(songId: number) {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/songs/toggle-favorite/${songId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('Error in toggle like song:', error);
     throw error;
   }
 }

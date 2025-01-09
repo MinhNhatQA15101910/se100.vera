@@ -144,6 +144,7 @@ const MusicPlayerContent = () => {
     toggleLyricMode,
     togglePlaylistMode,
     playlist,
+    setActiveTrack,
   } = usePlayerStore();
 
   const [play, { pause, sound }] = useSound(activeSong?.musicUrl || '', {
@@ -237,6 +238,11 @@ const MusicPlayerContent = () => {
       sound.unload();
     };
   }, [sound]);
+  React.useEffect(() => {
+    if (playlist.length > 0) {
+      setActiveTrack(playlist[0]);
+    }
+  }, [playlist]);
 
   if (!mounted || !activeSong) {
     return null;
@@ -255,14 +261,14 @@ const MusicPlayerContent = () => {
               activeSong.songPhotoUrl ||
               'https://picsum.photos/400/400?random=42'
             }
-            className="w-14 h-14"
+            className="w-14 h-14 flex items-center"
           />
           <div className="flex flex-col">
             <span className="text-sm font-medium text-general-pink">
               {activeSong.songName}
             </span>
             <span className="text-xs text-muted-foreground">
-              {activeSong.artists[0].artistName}
+              {activeSong.publisherName}
             </span>
           </div>
         </div>

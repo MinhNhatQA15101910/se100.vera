@@ -16,12 +16,12 @@ import {
 } from '@/components/ui/tableV2';
 import { Button } from '@/components/ui/button';
 import LikeButton from '@/components/music/LikeButton';
-import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
 import { useSearchParams } from 'next/navigation';
 import { useQueries } from '@tanstack/react-query';
 import { getArtistSongsByArtistId } from '@/actions/song-actions';
 import { getArtistAlbums } from '@/actions/album-actions';
 import { useLoading } from '@/contexts/LoadingContext';
+import DynamicImage from '@/components/custom/DynamicImage';
 
 export default function ArtistDetailPage() {
   const searchParams = useSearchParams();
@@ -30,18 +30,19 @@ export default function ArtistDetailPage() {
 
   const [
     { data: theArtist, isLoading: artistLoading },
-    { data: artistAlbums, isLoading: albumsLoading }
+    { data: artistAlbums, isLoading: albumsLoading },
   ] = useQueries({
     queries: [
       {
-        queryKey: ['artist', userId],
-        queryFn: async () => await getArtistSongsByArtistId(Number(userId), 1, 7),
+        queryKey: ['theArtist', userId],
+        queryFn: async () =>
+          await getArtistSongsByArtistId(Number(userId), 1, 7),
       },
       {
         queryKey: ['artistAlbums', userId],
         queryFn: async () => await getArtistAlbums(Number(userId)),
-      }
-    ]
+      },
+    ],
   });
 
   const [visibleSongs, setVisibleSongs] = useState(5);
@@ -63,7 +64,7 @@ export default function ArtistDetailPage() {
             <div className="flex-col items-center gap-8 mb-8 relative">
               <div className="relative w-full">
                 <Image
-                  src="https://via.placeholder.com/1000"
+                  src={theArtist?.songs[0].publisherImageUrl || ''}
                   alt="Eminem"
                   width={1000} // Provide the width explicitly
                   height={400} // Provide the height explicitly
@@ -78,8 +79,8 @@ export default function ArtistDetailPage() {
                 </div>
               </div>
               <div className="-mt-16 ml-4">
-                <h1 className="text-8xl font-bold text-white drop-shadow-lg">
-                  Eminem
+                <h1 className="text-8xl font-bold text-general-pink drop-shadow-lg">
+                  {theArtist?.songs[0].publisherName}
                 </h1>
               </div>
             </div>
@@ -148,19 +149,17 @@ export default function ArtistDetailPage() {
                         </TableCell>
                         <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
                           <div className="flex items-center space-x-4">
-                            <Image
-                              src="https://via.placeholder.com/50"
-                              alt={`${song.songName} Thumbnail`}
-                              width={55}
-                              height={55}
-                              className="rounded-md"
+                            <DynamicImage
+                              alt="Artist Image"
+                              src={
+                                song.songPhotoUrl ||
+                                'https://picsum.photos/400/400?random=42'
+                              }
+                              className="w-14 h-14"
                             />
                             <div>
                               <p className="font-bold text-white">
                                 {song.songName}
-                              </p>
-                              <p className="text-muted-foreground text-sm text-white">
-                                Artist Name
                               </p>
                             </div>
                           </div>
@@ -186,7 +185,6 @@ export default function ArtistDetailPage() {
                               <LikeButton songId={song.id} />
                             </div>
                             <div className="ml-4">
-                              <AddToPlaylistButton songId={song.id} />
                             </div>
                           </div>
                         </TableCell>

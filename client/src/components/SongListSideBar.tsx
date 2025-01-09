@@ -60,7 +60,7 @@ const SongListSideBar = () => {
                   {song.songName}
                 </p>
                 <p className="text-xs text-gray-400 truncate">
-                  {song.artists[0].artistName}
+                  {song.publisherName}
                 </p>
               </div>
             </div>
