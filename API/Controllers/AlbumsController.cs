@@ -353,7 +353,6 @@ public class AlbumsController(
 
         // Update album's total songs and update date
         album.TotalSongs++;
-        album.UpdatedAt = DateTime.UtcNow;
 
         // Update album's total duration
         if (string.IsNullOrEmpty(album.TotalDuration))
@@ -367,6 +366,8 @@ public class AlbumsController(
             albumTotalDuration += songDuration;
             album.TotalDuration = albumTotalDuration.ToString(@"hh\:mm\:ss");
         }
+
+        album.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete())
         {
@@ -415,15 +416,26 @@ public class AlbumsController(
         // Remove song from album
         unitOfWork.AlbumSongRepository.RemoveAlbumSong(albumSong);
 
+        // Update songAlbums order.
+        var albumSongs = await unitOfWork.AlbumRepository.GetAlbumsSongsAsync(album.Id);
+        foreach (var albSong in albumSongs)
+        {
+            if (albSong.Order > albumSong.Order)
+            {
+                albSong.Order--;
+            }
+        }
+
         // Update album's total songs and update date
         album.TotalSongs--;
-        album.UpdatedAt = DateTime.UtcNow;
 
         // Update album's total duration
         _ = TimeSpan.TryParse(album.TotalDuration, out TimeSpan albumTotalDuration);
         _ = TimeSpan.TryParse(song.Duration, out TimeSpan songDuration);
         albumTotalDuration -= songDuration;
         album.TotalDuration = albumTotalDuration.TotalSeconds == 0 ? "" : albumTotalDuration.ToString(@"hh\:mm\:ss");
+
+        album.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete())
         {
