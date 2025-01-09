@@ -58,6 +58,37 @@ public class PlaylistsController(
       return mapper.Map<PlaylistDto>(playlist);
    }
 
+   [HttpPut("{id:int}")]
+   [Authorize(Roles = "Listener, Artist")]
+   public async Task<ActionResult<PlaylistDto>> UpdatePlaylist([FromForm] UpdatePlaylistDto updatePlaylistDto, int id)
+   {
+      if (updatePlaylistDto == null)
+      {
+         return BadRequest("Invalid playlist data.");
+      }
+
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
+      if (playlist == null)
+      {
+         return NotFound("Playlist not found.");
+      }
+
+      var userId = User.GetUserId();
+      if (playlist.PublisherId != userId)
+      {
+         return Unauthorized("The playlist does not belong to you.");
+      }
+
+      mapper.Map(updatePlaylistDto, playlist);
+
+      if (!await unitOfWork.Complete())
+      {
+         return BadRequest("Failed to update playlist.");
+      }
+
+      return mapper.Map<PlaylistDto>(playlist);
+   }
+
    [HttpPut("add-song/{id:int}")]
    [Authorize(Roles = "Listener, Artist")]
    public async Task<ActionResult<PlaylistDto>> AddSongToPlaylist(int id, AddRemovePlaylistSongDto addRemovePlaylistSongDto)
@@ -136,5 +167,31 @@ public class PlaylistsController(
       }
 
       return BadRequest("Failed to remove song from playlist.");
+   }
+
+   [HttpDelete("{id:int}")]
+   [Authorize(Roles = "Listener, Artist")]
+   public async Task<ActionResult> DeletePlaylist(int id)
+   {
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
+      if (playlist == null)
+      {
+         return NotFound("Playlist not found.");
+      }
+
+      var userId = User.GetUserId();
+      if (playlist.PublisherId != userId)
+      {
+         return Unauthorized("The playlist does not belong to you.");
+      }
+
+      unitOfWork.PlaylistRepository.RemovePlaylist(playlist);
+
+      if (await unitOfWork.Complete())
+      {
+         return NoContent();
+      }
+
+      return BadRequest("Failed to delete playlist.");
    }
 }

@@ -185,7 +185,7 @@ public class SongsController(
 
         if (updateSongDto.GenreIds != null)
         {
-            var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresAsync(song.Id);
+            var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresBySongIdAsync(song.Id);
             if (songGenres != null)
             {
                 foreach (var songGenre in songGenres)
@@ -345,33 +345,6 @@ public class SongsController(
         if (albumSongs != null)
         {
             return BadRequest("Song is in an album.");
-        }
-
-        var playlistSongs = await unitOfWork.PlaylistSongRepository.GetPlaylistSongsAsync(song.Id);
-        if (playlistSongs != null)
-        {
-            foreach (var playlistSong in playlistSongs)
-            {
-                unitOfWork.PlaylistSongRepository.RemovePlaylistSong(playlistSong);
-            }
-        }
-
-        var artistSongs = await unitOfWork.ArtistSongRepository.GetArtistSongsAsync(song.Id);
-        if (artistSongs != null)
-        {
-            foreach (var artistSong in artistSongs)
-            {
-                unitOfWork.ArtistSongRepository.RemoveArtistSong(artistSong);
-            }
-        }
-
-        var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresAsync(song.Id);
-        if (songGenres != null)
-        {
-            foreach (var songGenre in songGenres)
-            {
-                unitOfWork.SongGenreRepository.RemoveSongGenre(songGenre);
-            }
         }
 
         var songPhotos = await unitOfWork.SongPhotoRepository.GetSongPhotoAsync(song.Id);

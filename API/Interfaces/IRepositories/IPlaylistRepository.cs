@@ -8,5 +8,6 @@ public interface IPlaylistRepository
    Task<Playlist> CreatePlaylistAsync(NewPlaylistDto newPlaylistDto);
    Task<Playlist?> GetPlaylistByIdAsync(int id);
    Task<PagedList<PlaylistDto>> GetPlaylistsAsync(PlaylistParams playlistParams);
+   void RemovePlaylist(Playlist playlist);
 
 }
