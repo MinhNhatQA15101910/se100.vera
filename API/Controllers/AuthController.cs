@@ -13,12 +13,6 @@ public enum PincodeAction
     VerifyEmail
 }
 
-public class PincodeStore
-{
-    public Dictionary<string, string> PincodeMap { get; set; } = [];
-    public Dictionary<string, RegisterDto> ValidateUserMap { get; set; } = [];
-}
-
 public class AuthController(
     PincodeStore pincodeStore,
     IEmailService emailService,
@@ -107,6 +101,27 @@ public class AuthController(
             return false;
         }
 
+        // Add to pincode map
+        var pincode = GeneratePincode();
+        pincodeStore.PincodeMap[validateEmailDto.Email] = pincode;
+
+        // Send pincode email
+        var displayName = validateEmailDto.Email;
+        var email = validateEmailDto.Email;
+        var subject = "VERA ACCOUNT VERIFICATION CODE";
+        var message = await System.IO.File.ReadAllTextAsync("./Assets/EmailContent.html");
+        message = message.Replace("{{hideEmail}}", HideEmail(email));
+        message = message.Replace("{{pincode}}", pincode);
+
+        await emailService.SendEmailAsync(
+            new EmailMessage(
+                displayName,
+                email,
+                subject,
+                message
+            )
+        );
+
         var token = tokenService.CreateVerifyPincodeTokenAsync(validateEmailDto.Email, PincodeAction.VerifyEmail);
         return Ok(new { Token = token });
     }
@@ -177,6 +192,35 @@ public class AuthController(
         }
 
         return BadRequest("Invalid action");
+    }
+
+    [HttpPut("reset-password")]
+    [Authorize]
+    public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+    {
+        // Get userId
+        var userId = User.GetUserId();
+
+        // Get user
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            return Unauthorized("User not found");
+        }
+
+        // Reset password
+        var result = await userManager.ChangePasswordAsync(
+            user,
+            user.PasswordHash!,
+            resetPasswordDto.NewPassword
+        );
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return NoContent();
     }
 
     private async Task<bool> UserExists(string email)
