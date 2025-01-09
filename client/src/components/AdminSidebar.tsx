@@ -54,16 +54,14 @@ const sidebarSections: SidebarSection[] = [
 
 const Sidebar = ({ paddingBottom = '0' }) => {
   const { logout, isAuthenticated } = useUser();
-  const { setLoadingState } = useLoading();
+
   const [isAddPlaylistModalOpen, setIsAddPlaylistModalOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = () => {
-    setLoadingState(true);
     logout();
     router.push('/login');
-    setLoadingState(false);
   };
 
   return (

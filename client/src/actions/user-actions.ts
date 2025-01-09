@@ -9,8 +9,8 @@ export interface ArtistsReponse {
 }
 
 export interface ActivateArtistAccountProps {
-  artistName: string,
-  description: string
+  artistName: string;
+  description: string;
 }
 
 export async function getAllArtists(): Promise<ArtistsReponse> {
@@ -33,6 +33,24 @@ export async function getAllArtists(): Promise<ArtistsReponse> {
   }
 }
 
-export async function activateArtistAccount({}) {
-  
+export async function activateArtistAccount(
+  artistName: string,
+  description: string
+) {
+  const token = await getAuthTokenFromCookies();
+  try {
+    await client<User[]>('/api/users/activate-artist', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        artistName: artistName,
+        description: description,
+      }),
+    });
+  } catch (error) {
+    console.error('Error in activate Artists: ', error);
+    throw error;
+  }
 }

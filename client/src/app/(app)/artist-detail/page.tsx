@@ -36,7 +36,7 @@ export default function ArtistDetailPage() {
       {
         queryKey: ['theArtist', userId],
         queryFn: async () =>
-          await getArtistSongsByArtistId(Number(userId), 1, 7),
+          await getArtistSongsByArtistId(Number(userId)),
       },
       {
         queryKey: ['artistAlbums', userId],

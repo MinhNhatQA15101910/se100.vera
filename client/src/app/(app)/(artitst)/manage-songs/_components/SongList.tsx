@@ -27,7 +27,7 @@ const SongList = () => {
   const { userDetails } = useUser();
   const { setLoadingState } = useLoading();
   const { data, isLoading } = useQuery({
-    queryKey: ['songs'],
+    queryKey: ['mysongs'],
     queryFn: async () => await getArtistSongsByArtistId(userDetails?.id || -1),
   });
 

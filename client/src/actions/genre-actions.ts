@@ -28,6 +28,42 @@ export interface UpdateGenrePayload {
   genreName: string;
 }
 
+export async function getAllGenresNopage(): Promise<GenreResponse> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    const response = await client<Genre[]>(
+      `/api/genres`,
+
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const paginationHeader = response.headers.get('Pagination');
+    if (!paginationHeader) {
+      throw new Error('Pagination data not found in headers');
+    }
+
+    const pagination = JSON.parse(paginationHeader);
+
+    if (!response.headers.get('Content-Type')?.includes('application/json')) {
+      throw new Error('Response does not contain valid JSON data');
+    }
+
+    return {
+      genres: response.data,
+      pagination,
+    };
+  } catch (error) {
+    console.error('Error in getAllGenres:', error);
+    throw error;
+  }
+}
+
 export async function getAllGenres(
   pageNumber?: number,
   pageSize?: number
@@ -91,10 +127,9 @@ export async function addGenre(genreName: string): Promise<AddGenreResponse> {
   }
 }
 
-
 export async function updateGenre(
   genreName: string,
-  genreId: number,
+  genreId: number
 ): Promise<void> {
   const token = await getAuthTokenFromCookies();
 

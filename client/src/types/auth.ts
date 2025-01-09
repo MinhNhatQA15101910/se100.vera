@@ -12,7 +12,7 @@ export interface SignupCredentials {
   email: string;
   password: string;
   gender: string;
-  role?: 'Listener' | 'Artist';
+  role?: 'Listener' | 'Artist' | 'Admin';
 }
 
 export interface ResetPasswordCredentials {
