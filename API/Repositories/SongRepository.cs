@@ -76,6 +76,11 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
         );
     }
 
+    public int GetTotalSongs()
+    {
+        return context.Songs.Count();
+    }
+
     public void AddFavoriteUser(SongFavorite songFavorite)
     {
         context.FavoriteSongs.Add(songFavorite);
