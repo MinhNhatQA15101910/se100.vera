@@ -96,4 +96,30 @@ public class GenresController(
 
         return NoContent();
     }
+
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> DeleteGenre(int id)
+    {
+        var genre = await unitOfWork.GenreRepository.GetGenreByIdAsync(id);
+        if (genre == null)
+        {
+            return NotFound();
+        }
+
+        var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresByGenreIdAsync(id);
+        if (songGenres != null)
+        {
+            return BadRequest("Genre is associated with songs");
+        }
+
+        unitOfWork.GenreRepository.RemoveGenre(genre);
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to delete genre");
+        }
+
+        return NoContent();
+    }
 }

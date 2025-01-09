@@ -1,6 +1,7 @@
 using API.DTOs.Playlists;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces.IRepositories;
 
 namespace API.Controllers;
@@ -22,6 +23,24 @@ public class PlaylistsController(
       return mapper.Map<PlaylistDto>(playlist);
    }
 
+   [HttpGet]
+   public async Task<ActionResult<IEnumerable<PlaylistDto>>> GetPlaylists([FromQuery] PlaylistParams playlistParams)
+   {
+      if (playlistParams.PageNumber < 1 || playlistParams.PageSize < 1)
+      {
+         return BadRequest("Invalid page number or page size.");
+      }
+      if (playlistParams.PublisherId != null && !int.TryParse(playlistParams.PublisherId, out _))
+      {
+         return BadRequest("Invalid publisher id.");
+      }
+      var playlists = await unitOfWork.PlaylistRepository.GetPlaylistsAsync(playlistParams);
+
+      Response.AddPaginationHeader(playlists);
+
+      return Ok(playlists);
+   }
+
    [HttpPost]
    [Authorize(Roles = "Listener, Artist")]
    public async Task<ActionResult<PlaylistDto>> CreatePlaylist([FromForm] NewPlaylistDto newPlaylistDto)
@@ -35,6 +54,37 @@ public class PlaylistsController(
       newPlaylistDto.PublisherId = userId;
 
       var playlist = await unitOfWork.PlaylistRepository.CreatePlaylistAsync(newPlaylistDto);
+
+      return mapper.Map<PlaylistDto>(playlist);
+   }
+
+   [HttpPut("{id:int}")]
+   [Authorize(Roles = "Listener, Artist")]
+   public async Task<ActionResult<PlaylistDto>> UpdatePlaylist([FromForm] UpdatePlaylistDto updatePlaylistDto, int id)
+   {
+      if (updatePlaylistDto == null)
+      {
+         return BadRequest("Invalid playlist data.");
+      }
+
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
+      if (playlist == null)
+      {
+         return NotFound("Playlist not found.");
+      }
+
+      var userId = User.GetUserId();
+      if (playlist.PublisherId != userId)
+      {
+         return Unauthorized("The playlist does not belong to you.");
+      }
+
+      mapper.Map(updatePlaylistDto, playlist);
+
+      if (!await unitOfWork.Complete())
+      {
+         return BadRequest("Failed to update playlist.");
+      }
 
       return mapper.Map<PlaylistDto>(playlist);
    }
@@ -117,5 +167,31 @@ public class PlaylistsController(
       }
 
       return BadRequest("Failed to remove song from playlist.");
+   }
+
+   [HttpDelete("{id:int}")]
+   [Authorize(Roles = "Listener, Artist")]
+   public async Task<ActionResult> DeletePlaylist(int id)
+   {
+      var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
+      if (playlist == null)
+      {
+         return NotFound("Playlist not found.");
+      }
+
+      var userId = User.GetUserId();
+      if (playlist.PublisherId != userId)
+      {
+         return Unauthorized("The playlist does not belong to you.");
+      }
+
+      unitOfWork.PlaylistRepository.RemovePlaylist(playlist);
+
+      if (await unitOfWork.Complete())
+      {
+         return NoContent();
+      }
+
+      return BadRequest("Failed to delete playlist.");
    }
 }

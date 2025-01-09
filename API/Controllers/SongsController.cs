@@ -102,7 +102,10 @@ public class SongsController(
             unitOfWork.SongGenreRepository.AddSongGenre(songGenre);
         }
 
-        var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id, newSongDto.MusicFile);
+        // Get song duration
+        song.Duration = GetSongDuration(newSongDto.MusicFile);
+
+        var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id + "/audio/", newSongDto.MusicFile);
 
         if (uploadAudioResult.Error != null)
             return BadRequest("Upload song file to cloudinary failed: " + uploadAudioResult.Error.Message);
@@ -112,7 +115,7 @@ public class SongsController(
 
         if (newSongDto.LyricFile != null)
         {
-            var uploadResult = await fileService.UploadLyricAsync("/songs/" + song.Id, newSongDto.LyricFile);
+            var uploadResult = await fileService.UploadLyricAsync("/songs/" + song.Id + "lyric", newSongDto.LyricFile);
 
             if (uploadResult.Error != null) return BadRequest("Upload lyric file to cloudinary failed: " + uploadResult.Error.Message);
 
@@ -125,7 +128,7 @@ public class SongsController(
         {
             foreach (var photo in newSongDto.PhotoFiles)
             {
-                var uploadResult = await fileService.UploadImageAsync("/songs/" + song.Id, photo);
+                var uploadResult = await fileService.UploadImageAsync("/songs/" + song.Id + "/images", photo);
 
                 if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
 
@@ -173,60 +176,70 @@ public class SongsController(
         {
             return NotFound("Song not found.");
         }
-
-        if (updateSongDto.MusicFile == null)
+        if (userId != song.PublisherId)
         {
-            return BadRequest("Song file is required.");
-        }
-
-        if (updateSongDto.GenreIds == null)
-        {
-            return BadRequest("At least one genre is required.");
-        }
-        else
-        {
-            foreach (var genreId in updateSongDto.GenreIds)
-            {
-                var genre = await unitOfWork.GenreRepository.GetGenreByIdAsync(genreId);
-                if (genre == null)
-                {
-                    return BadRequest("Invalid genre id.");
-                }
-            }
+            return Unauthorized("You are not authorized to update this song.");
         }
 
         mapper.Map(updateSongDto, song);
 
-        var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresAsync(song.Id);
-        if (songGenres != null)
+        if (updateSongDto.GenreIds != null)
         {
-            foreach (var songGenre in songGenres)
+            var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresBySongIdAsync(song.Id);
+            if (songGenres != null)
             {
-                unitOfWork.SongGenreRepository.RemoveSongGenre(songGenre);
+                foreach (var songGenre in songGenres)
+                {
+                    unitOfWork.SongGenreRepository.RemoveSongGenre(songGenre);
+                }
+            }
+            foreach (var genreId in updateSongDto.GenreIds)
+            {
+                var songGenre = new SongGenre
+                {
+                    SongId = song.Id,
+                    GenreId = genreId
+                };
+                unitOfWork.SongGenreRepository.AddSongGenre(songGenre);
             }
         }
-        foreach (var genreId in updateSongDto.GenreIds)
+
+        if (updateSongDto.ArtistIds != null)
         {
-            var songGenre = new SongGenre
+            var artistSongs = await unitOfWork.ArtistSongRepository.GetArtistSongsAsync(song.Id);
+            if (artistSongs != null)
             {
-                SongId = song.Id,
-                GenreId = genreId
-            };
-            unitOfWork.SongGenreRepository.AddSongGenre(songGenre);
+                foreach (var artistSong in artistSongs)
+                {
+                    unitOfWork.ArtistSongRepository.RemoveArtistSong(artistSong);
+                }
+            }
+            foreach (var artistId in updateSongDto.ArtistIds)
+            {
+                var artistSong = new ArtistSong
+                {
+                    ArtistId = artistId,
+                    SongId = song.Id
+                };
+                unitOfWork.ArtistSongRepository.AddArtistSong(artistSong);
+            }
         }
 
-        if (song.MusicPublicId != null)
+        if (updateSongDto.MusicFile != null)
         {
-            var deleteResult = await fileService.DeleteFileAsync(song.MusicPublicId, ResourceType.Video);
-            if (deleteResult.Error != null) return BadRequest("Delete song file from cloudinary failed: " + deleteResult.Error.Message);
+            if (song.MusicPublicId != null)
+            {
+                var deleteResult = await fileService.DeleteFileAsync(song.MusicPublicId, ResourceType.Video);
+                if (deleteResult.Error != null) return BadRequest("Delete song file from cloudinary failed: " + deleteResult.Error.Message);
+            }
+
+            var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id, updateSongDto.MusicFile);
+
+            if (uploadAudioResult.Error != null) return BadRequest("Upload song file to cloudinary failed: " + uploadAudioResult.Error.Message);
+
+            song.MusicUrl = uploadAudioResult.Url.ToString();
+            song.MusicPublicId = uploadAudioResult.PublicId;
         }
-
-        var uploadAudioResult = await fileService.UploadAudioAsync("/songs/" + song.Id, updateSongDto.MusicFile);
-
-        if (uploadAudioResult.Error != null) return BadRequest("Upload song file to cloudinary failed: " + uploadAudioResult.Error.Message);
-
-        song.MusicUrl = uploadAudioResult.Url.ToString();
-        song.MusicPublicId = uploadAudioResult.PublicId;
 
         if (updateSongDto.LyricFile != null)
         {
@@ -242,11 +255,6 @@ public class SongsController(
 
             song.LyricUrl = uploadResult.Url.ToString();
             song.LyricPublicId = uploadResult.PublicId;
-        }
-        else
-        {
-            song.LyricUrl = null;
-            song.LyricPublicId = null;
         }
 
         if (updateSongDto.PhotoFiles != null)
@@ -293,27 +301,7 @@ public class SongsController(
                 isMain = false;
             }
         }
-        else
-        {
-            var songPhotos = await unitOfWork.SongPhotoRepository.GetSongPhotoAsync(song.Id);
-            if (songPhotos != null)
-            {
-                foreach (var songPhoto in songPhotos)
-                {
-                    var photo = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(songPhoto.PhotoId);
-                    if (photo != null)
-                    {
-                        if (photo.PublicId != null)
-                        {
-                            var deleteResult = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
-                            if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
-                        }
-                        unitOfWork.PhotoRepository.RemovePhoto(photo);
-                    }
-                    unitOfWork.SongPhotoRepository.RemoveSongPhoto(songPhoto);
-                }
-            }
-        }
+
 
         if (!await unitOfWork.Complete())
         {
@@ -327,6 +315,14 @@ public class SongsController(
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SongDto>>> GetSongs([FromQuery] SongParams songParams)
     {
+        if (songParams.PageNumber < 1 || songParams.PageSize < 1)
+        {
+            return BadRequest("Invalid page number or page size.");
+        }
+        if (songParams.PublisherId != null && !int.TryParse(songParams.PublisherId, out _))
+        {
+            return BadRequest("Invalid publisher id.");
+        }
         var songs = await unitOfWork.SongRepository.GetSongsAsync(songParams);
 
         Response.AddPaginationHeader(songs);
@@ -349,33 +345,6 @@ public class SongsController(
         if (albumSongs != null)
         {
             return BadRequest("Song is in an album.");
-        }
-
-        var playlistSongs = await unitOfWork.PlaylistSongRepository.GetPlaylistSongsAsync(song.Id);
-        if (playlistSongs != null)
-        {
-            foreach (var playlistSong in playlistSongs)
-            {
-                unitOfWork.PlaylistSongRepository.RemovePlaylistSong(playlistSong);
-            }
-        }
-
-        var artistSongs = await unitOfWork.ArtistSongRepository.GetArtistSongsAsync(song.Id);
-        if (artistSongs != null)
-        {
-            foreach (var artistSong in artistSongs)
-            {
-                unitOfWork.ArtistSongRepository.RemoveArtistSong(artistSong);
-            }
-        }
-
-        var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresAsync(song.Id);
-        if (songGenres != null)
-        {
-            foreach (var songGenre in songGenres)
-            {
-                unitOfWork.SongGenreRepository.RemoveSongGenre(songGenre);
-            }
         }
 
         var songPhotos = await unitOfWork.SongPhotoRepository.GetSongPhotoAsync(song.Id);
@@ -417,5 +386,63 @@ public class SongsController(
         }
 
         return NoContent();
+    }
+
+    [HttpPost("toggle-favorite/{songId:int}")]
+    [Authorize]
+    public async Task<ActionResult> ToggleFavorite(int songId)
+    {
+        int userId = User.GetUserId();
+
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(songId);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        var existingFavoriteSong = await unitOfWork.SongRepository.GetSongFavoriteAsync(songId, userId);
+        if (existingFavoriteSong == null)
+        {
+            var favoriteSong = new SongFavorite
+            {
+                SongId = songId,
+                UserId = userId
+            };
+
+            unitOfWork.SongRepository.AddFavoriteUser(favoriteSong);
+        }
+        else
+        {
+            unitOfWork.SongRepository.RemoveFavoriteUser(existingFavoriteSong);
+        }
+
+        if (await unitOfWork.Complete()) return Ok();
+
+        return BadRequest("Failed to add song to favorite.");
+    }
+
+    [HttpGet("is-favorite/{songId:int}")]
+    [Authorize]
+    public async Task<ActionResult<bool>> IsUserFavorite(int songId)
+    {
+        int userId = User.GetUserId();
+
+        var favoriteSong = await unitOfWork.SongRepository.GetSongFavoriteAsync(songId, userId);
+
+        return favoriteSong != null;
+    }
+
+    private static string GetSongDuration(IFormFile audioFile)
+    {
+        if (audioFile == null)
+        {
+            return "";
+        }
+
+        using var stream = audioFile.OpenReadStream();
+        using var reader = new Mp3FileReader(stream);
+
+        var duration = reader.TotalTime;
+        return duration.ToString(@"hh\:mm\:ss");
     }
 }

@@ -11,6 +11,7 @@ public class AlbumDto
     public string? PhotoUrl { get; set; }
     public int TotalListeningHours { get; set; }
     public int TotalSongs { get; set; }
+    public required string TotalDuration { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<string>? Photos { get; set; }
     public List<SongOrderDto>? Songs { get; set; }

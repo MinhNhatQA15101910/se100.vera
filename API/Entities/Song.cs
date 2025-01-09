@@ -10,6 +10,7 @@ public class Song
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public required string MusicUrl { get; set; } = "";
     public string? MusicPublicId { get; set; }
+    public required string Duration { get; set; } = "";
     public string? LyricUrl { get; set; }
     public string? LyricPublicId { get; set; }
     public List<SongPhoto> Photos { get; set; } = [];
@@ -17,6 +18,7 @@ public class Song
     public List<AlbumSong> Albums { get; set; } = [];
     public List<PlaylistSong> Playlists { get; set; } = [];
     public List<SongGenre> Genres { get; set; } = [];
+    public List<SongFavorite> UserFavorites { get; set; } = [];
 
     // Navigation properties
     public int PublisherId { get; set; }

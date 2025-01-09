@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20250101034046_SqlInitial")]
+[Migration("20250108091911_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -39,6 +39,10 @@ partial class SqlInitial
                 b.Property<int>("PublisherId")
                     .HasColumnType("integer");
 
+                b.Property<string>("TotalDuration")
+                    .IsRequired()
+                    .HasColumnType("text");
+
                 b.Property<int>("TotalListeningHours")
                     .HasColumnType("integer");
 
@@ -53,6 +57,21 @@ partial class SqlInitial
                 b.HasIndex("PublisherId");
 
                 b.ToTable("Albums");
+            });
+
+        modelBuilder.Entity("API.Entities.AlbumFavorite", b =>
+            {
+                b.Property<int>("UserId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("AlbumId")
+                    .HasColumnType("integer");
+
+                b.HasKey("UserId", "AlbumId");
+
+                b.HasIndex("AlbumId");
+
+                b.ToTable("FavoriteAlbums");
             });
 
         modelBuilder.Entity("API.Entities.AlbumGenre", b =>
@@ -452,6 +471,10 @@ partial class SqlInitial
                     .IsRequired()
                     .HasColumnType("text");
 
+                b.Property<string>("Duration")
+                    .IsRequired()
+                    .HasColumnType("text");
+
                 b.Property<string>("LyricPublicId")
                     .HasColumnType("text");
 
@@ -483,6 +506,21 @@ partial class SqlInitial
                 b.HasIndex("PublisherId");
 
                 b.ToTable("Songs");
+            });
+
+        modelBuilder.Entity("API.Entities.SongFavorite", b =>
+            {
+                b.Property<int>("UserId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("SongId")
+                    .HasColumnType("integer");
+
+                b.HasKey("UserId", "SongId");
+
+                b.HasIndex("SongId");
+
+                b.ToTable("FavoriteSongs");
             });
 
         modelBuilder.Entity("API.Entities.SongGenre", b =>
@@ -683,6 +721,25 @@ partial class SqlInitial
                     .IsRequired();
 
                 b.Navigation("Publisher");
+            });
+
+        modelBuilder.Entity("API.Entities.AlbumFavorite", b =>
+            {
+                b.HasOne("API.Entities.Album", "Album")
+                    .WithMany("UserFavorites")
+                    .HasForeignKey("AlbumId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.AppUser", "User")
+                    .WithMany("FavoriteAlbums")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Album");
+
+                b.Navigation("User");
             });
 
         modelBuilder.Entity("API.Entities.AlbumGenre", b =>
@@ -889,6 +946,25 @@ partial class SqlInitial
                 b.Navigation("Publisher");
             });
 
+        modelBuilder.Entity("API.Entities.SongFavorite", b =>
+            {
+                b.HasOne("API.Entities.Song", "Song")
+                    .WithMany("UserFavorites")
+                    .HasForeignKey("SongId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.AppUser", "User")
+                    .WithMany("FavoriteSongs")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Song");
+
+                b.Navigation("User");
+            });
+
         modelBuilder.Entity("API.Entities.SongGenre", b =>
             {
                 b.HasOne("API.Entities.Genre", "Genre")
@@ -1021,6 +1097,8 @@ partial class SqlInitial
                 b.Navigation("Photos");
 
                 b.Navigation("Songs");
+
+                b.Navigation("UserFavorites");
             });
 
         modelBuilder.Entity("API.Entities.AppRole", b =>
@@ -1031,6 +1109,10 @@ partial class SqlInitial
         modelBuilder.Entity("API.Entities.AppUser", b =>
             {
                 b.Navigation("Albums");
+
+                b.Navigation("FavoriteAlbums");
+
+                b.Navigation("FavoriteSongs");
 
                 b.Navigation("Followers");
 
@@ -1094,6 +1176,8 @@ partial class SqlInitial
                 b.Navigation("Photos");
 
                 b.Navigation("Playlists");
+
+                b.Navigation("UserFavorites");
             });
 
         modelBuilder.Entity("API.Entities.SubscriptionPlan", b =>

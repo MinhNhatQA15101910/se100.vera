@@ -117,6 +117,7 @@ public partial class SqlInitial : Migration
                 Description = table.Column<string>(type: "text", nullable: false),
                 TotalListeningHours = table.Column<int>(type: "integer", nullable: false),
                 TotalSongs = table.Column<int>(type: "integer", nullable: false),
+                TotalDuration = table.Column<string>(type: "text", nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 PublisherId = table.Column<int>(type: "integer", nullable: false)
@@ -304,6 +305,7 @@ public partial class SqlInitial : Migration
                 UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 MusicUrl = table.Column<string>(type: "text", nullable: false),
                 MusicPublicId = table.Column<string>(type: "text", nullable: true),
+                Duration = table.Column<string>(type: "text", nullable: false),
                 LyricUrl = table.Column<string>(type: "text", nullable: true),
                 LyricPublicId = table.Column<string>(type: "text", nullable: true),
                 PublisherId = table.Column<int>(type: "integer", nullable: false)
@@ -466,6 +468,30 @@ public partial class SqlInitial : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "FavoriteAlbums",
+            columns: table => new
+            {
+                UserId = table.Column<int>(type: "integer", nullable: false),
+                AlbumId = table.Column<int>(type: "integer", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_FavoriteAlbums", x => new { x.UserId, x.AlbumId });
+                table.ForeignKey(
+                    name: "FK_FavoriteAlbums_Albums_AlbumId",
+                    column: x => x.AlbumId,
+                    principalTable: "Albums",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "FK_FavoriteAlbums_AspNetUsers_UserId",
+                    column: x => x.UserId,
+                    principalTable: "AspNetUsers",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
             name: "AlbumSongs",
             columns: table => new
             {
@@ -508,6 +534,30 @@ public partial class SqlInitial : Migration
                     onDelete: ReferentialAction.Cascade);
                 table.ForeignKey(
                     name: "FK_ArtistSongs_Songs_SongId",
+                    column: x => x.SongId,
+                    principalTable: "Songs",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "FavoriteSongs",
+            columns: table => new
+            {
+                UserId = table.Column<int>(type: "integer", nullable: false),
+                SongId = table.Column<int>(type: "integer", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_FavoriteSongs", x => new { x.UserId, x.SongId });
+                table.ForeignKey(
+                    name: "FK_FavoriteSongs_AspNetUsers_UserId",
+                    column: x => x.UserId,
+                    principalTable: "AspNetUsers",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "FK_FavoriteSongs_Songs_SongId",
                     column: x => x.SongId,
                     principalTable: "Songs",
                     principalColumn: "Id",
@@ -684,6 +734,16 @@ public partial class SqlInitial : Migration
             unique: true);
 
         migrationBuilder.CreateIndex(
+            name: "IX_FavoriteAlbums_AlbumId",
+            table: "FavoriteAlbums",
+            column: "AlbumId");
+
+        migrationBuilder.CreateIndex(
+            name: "IX_FavoriteSongs_SongId",
+            table: "FavoriteSongs",
+            column: "SongId");
+
+        migrationBuilder.CreateIndex(
             name: "IX_Follows_TargetUserId",
             table: "Follows",
             column: "TargetUserId");
@@ -771,6 +831,12 @@ public partial class SqlInitial : Migration
             name: "AspNetUserTokens");
 
         migrationBuilder.DropTable(
+            name: "FavoriteAlbums");
+
+        migrationBuilder.DropTable(
+            name: "FavoriteSongs");
+
+        migrationBuilder.DropTable(
             name: "Follows");
 
         migrationBuilder.DropTable(
@@ -789,10 +855,10 @@ public partial class SqlInitial : Migration
             name: "UserPhotos");
 
         migrationBuilder.DropTable(
-            name: "Albums");
+            name: "AspNetRoles");
 
         migrationBuilder.DropTable(
-            name: "AspNetRoles");
+            name: "Albums");
 
         migrationBuilder.DropTable(
             name: "Payments");

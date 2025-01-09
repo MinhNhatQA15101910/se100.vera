@@ -17,6 +17,7 @@ public static class ApplicationServiceExtensions
             opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
         });
         services.AddCors();
+        services.AddSingleton<PincodeStore>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<ITokenService, TokenService>();
