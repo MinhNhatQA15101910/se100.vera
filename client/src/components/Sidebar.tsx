@@ -126,7 +126,9 @@ const Sidebar = ({ paddingBottom = '0' }) => {
                     </button>
                   ) : item.href === '/add-playlist' ? (
                     <div
-                      onClick={() => {setIsAddPlaylistModalOpen(true)}}
+                      onClick={() => {
+                        setIsAddPlaylistModalOpen(true);
+                      }}
                       className={`group flex items-center space-x-3 hover:bg-slate-400/20 p-2 rounded-md cursor-pointer`}
                     >
                       <item.icon

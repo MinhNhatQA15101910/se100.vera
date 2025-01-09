@@ -46,6 +46,10 @@ const sidebarSections: SidebarSection[] = [
       { name: 'Manage genres', icon: FaUserAlt, href: '/admin/manage-genres' },
     ],
   },
+  {
+    title: 'General',
+    items: [{ name: 'Logout', icon: FaSignOutAlt, href: '#' }],
+  },
 ];
 
 const Sidebar = ({ paddingBottom = '0' }) => {
