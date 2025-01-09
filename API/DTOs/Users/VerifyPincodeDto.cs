@@ -2,7 +2,6 @@ namespace API.DTOs.Users;
 
 public class VerifyPincodeDto
 {
-    public required string Email { get; set; }
+    [Required, MinLength(6), MaxLength(6), RegularExpression(@"^\d{6}$")]
     public required string Pincode { get; set; }
-    public string? Action { get; set; } = "signup";
 }
