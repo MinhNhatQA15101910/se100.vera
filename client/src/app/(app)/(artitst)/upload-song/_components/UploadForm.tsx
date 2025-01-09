@@ -73,7 +73,7 @@ export default function UploadForm() {
   const { data: genresData } = useQuery({
     queryKey: ['genres', 'upload_song'],
     queryFn: async () => {
-      return await getAllGenres({ pageSize: 30 });
+      return await getAllGenres();
     },
   });
 
@@ -308,7 +308,7 @@ export default function UploadForm() {
                       {/* Display selected genres */}
                       <div className="flex flex-wrap gap-2 mb-2">
                         {field.value.map((genreId) => {
-                          const genreName = genresData?.find(
+                          const genreName = genresData?.genres.find(
                             (genre) => genre.id === genreId
                           )?.genreName;
                           return (
@@ -331,7 +331,7 @@ export default function UploadForm() {
                         })}
                       </div>
                       <GenreSelect
-                        genresData={genresData || []}
+                        genresData={genresData?.genres || []}
                         field={field}
                       />
                     </FormItem>

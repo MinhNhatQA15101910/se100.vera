@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@/contexts/LoadingContext';
 import { getPlaylistById } from '@/actions/playlist-actions';
@@ -21,9 +21,21 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import LikeButton from '@/components/music/LikeButton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Edit, Delete } from 'lucide-react';
+import { useDeletePlaylistMutation } from '@/hooks/usePlaylistMutation';
+import { toast } from 'react-toastify';
 
 const PlaylistDetail = () => {
   const params = useParams();
+  const router = useRouter();
   const { id } = params;
   const { setLoadingState } = useLoading();
 
@@ -31,6 +43,23 @@ const PlaylistDetail = () => {
     queryKey: ['playlistDetail'],
     queryFn: async () => await getPlaylistById(Number(id)),
   });
+  const deletePlaylistMutation = useDeletePlaylistMutation();
+
+  const handleDelelePlaylist = () => {
+    const confirmValue = confirm('Do you really want to delete this playlist?');
+
+    if (!confirmValue) return;
+
+    deletePlaylistMutation.mutate(playlistDetail?.id || -1, {
+      onSuccess: () => {
+        toast.success('Delete Album Successfully!');
+        router.push('/your-playlist');
+      },
+      onError: () => {
+        toast.error('Server went wrong, delete is not working!');
+      },
+    });
+  };
 
   useEffect(() => {
     setLoadingState(isLoading);
@@ -44,20 +73,41 @@ const PlaylistDetail = () => {
             <div className="w-full bg-blue-gradient rounded-lg">
               <div className="p-4">
                 <div className="flex justify-between items-center">
-                  <Link href="/albums">
+                  <Link href="/your-playlist">
                     <IoArrowBack className="text-4xl text-white" />
                   </Link>
-                  <FiMoreHorizontal className="text-4xl text-white" />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <FiMoreHorizontal className="text-4xl text-white hover:text-general-pink-hover" />
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 bg-general-pink border-general-pink-border"
+                    >
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-general-pink-border" />
+                      <DropdownMenuItem
+                        className="hover:bg-general-pink-hover"
+                        onClick={() => {}}
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-general-pink-border" />
+                      <DropdownMenuItem onClick={handleDelelePlaylist}>
+                        <Delete className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
 
               <div className="p-4">
                 <div className="grid grid-cols-12 items-start gap-12 mb-8">
                   <Image
-                    src={
-                      playlistDetail?.songs[0].songPhotoUrl ||
-                      'https://picsum.photos/400/400?random=4'
-                    }
+                    src={'https://picsum.photos/400/400?random=4'}
                     alt={playlistDetail?.playlistName || 'X'}
                     width={268}
                     height={268}
@@ -74,8 +124,6 @@ const PlaylistDetail = () => {
                       <p className="text-lg font-bold">
                         {playlistDetail?.totalSongs} songs
                       </p>
-                      <span className="leading-none text-[#EE10B0]">●</span>
-                      <p className="text-lg font-bold">1h 36m</p>
                     </div>
                   </div>
                   <div className="flex h-60 col-span-3 justify-end items-end mr-6">
@@ -101,7 +149,7 @@ const PlaylistDetail = () => {
                   <TableHead style={{ width: '35%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-opacity-30"
+                      className="flex items-center space-x-1 text-white text-lg font-bold"
                     >
                       <span>Title</span>
                     </Button>
@@ -109,7 +157,7 @@ const PlaylistDetail = () => {
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-opacity-30"
+                      className="flex items-center space-x-1 text-white text-lg font-bold "
                     >
                       <span>Release</span>
                     </Button>
@@ -117,7 +165,7 @@ const PlaylistDetail = () => {
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-opacity-30"
+                      className="flex items-center space-x-1 text-white text-lg font-bold "
                     >
                       <span>Total Listening Hours</span>
                     </Button>
@@ -125,7 +173,7 @@ const PlaylistDetail = () => {
                   <TableHead>
                     <Button
                       variant="ghost"
-                      className="flex w-full items-center justify-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-opacity-30"
+                      className="flex w-full items-center justify-center space-x-1 text-white text-lg font-bold "
                     >
                       <span>Actions</span>
                     </Button>

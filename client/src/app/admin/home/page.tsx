@@ -1,12 +1,39 @@
+'use client';
+
+import { getStatistic } from '@/actions/statistic-actions';
 import { AppButton } from '@/components/ui/AppButton';
 import { CustomBarChart } from '@/components/ui/CustomBarChart';
 import { DonutPieChart } from '@/components/ui/DonutPieChart';
-import React from 'react';
+import { useLoading } from '@/contexts/LoadingContext';
+import { useQuery } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
 
 const Home = () => {
+  const { setLoadingState } = useLoading();
+  const { data, isLoading } = useQuery({
+    queryKey: ['statistic'],
+    queryFn: async () => await getStatistic(),
+  });
+
+  useEffect(() => {
+    setLoadingState(isLoading);
+  }, [isLoading]);
+
+  // Chuẩn bị dữ liệu biểu đồ từ API
+
+  const totalListeners = (data?.totalUsers ?? 0) - (data?.totalArtists ?? 0);
+
   const pieChartData = [
-    { browser: 'listeners', visitors: 275, fill: '#85F4FA' },
-    { browser: 'artists', visitors: 200, fill: '#3A57E8' },
+    {
+      browser: 'Listeners',
+      visitors: Math.max(totalListeners, 0), // Đảm bảo không có giá trị âm
+      fill: '#85F4FA',
+    },
+    {
+      browser: 'Artists',
+      visitors: data?.totalArtists ?? 0, // Giá trị mặc định là 0
+      fill: '#3A57E8',
+    },
   ];
 
   const barChartData = [
@@ -19,7 +46,13 @@ const Home = () => {
     { day: 'Saturday', visitors: 250 },
   ];
 
-  
+  // Hiển thị tổng quan dữ liệu
+  const overviewData = [
+    { label: 'Songs', value: data?.totalSongs || 0 },
+    { label: 'Albums', value: data?.totalAlbums || 0 },
+    { label: 'Users', value: data?.totalUsers || 0 },
+    { label: 'Genres', value: data?.totalGenres || 0 },
+  ];
 
   return (
     <div className="flex-col min-h-screen text-white px-8 py-6">
@@ -51,7 +84,7 @@ const Home = () => {
                     Manage Songs
                   </AppButton>
                   <AppButton className="flex h-10 items-center justify-center rounded px-6 border border-[#0E9EEF] text-[#0E9EEF] hover:bg-[#0E9EEF] hover:text-white">
-                    Manage Atists
+                    Manage Artists
                   </AppButton>
                 </div>
               </div>
@@ -59,22 +92,19 @@ const Home = () => {
           </div>
         </div>
       </div>
+
       <section>
         <h2 className="text-2xl font-bold mb-4 mt-16">
-          Reports & <span className="text-pink-500">Statistic</span>
+          Reports & <span className="text-pink-500">Statistics</span>
         </h2>
       </section>
+
       {/* Overview Section */}
       <div className="grid grid-cols-4 gap-6 mb-8">
-        {[
-          { label: 'Songs', value: 750 },
-          { label: 'Album', value: 70 },
-          { label: 'Users', value: 100 },
-          { label: 'Artists', value: 30 },
-        ].map((item, index) => (
+        {overviewData.map((item, index) => (
           <div
             key={index}
-            className=" p-6 rounded-lg text-center border border-general-pink"
+            className="p-6 rounded-lg text-center border border-general-pink"
           >
             <div className="text-4xl font-bold text-general-pink">
               {item.value}

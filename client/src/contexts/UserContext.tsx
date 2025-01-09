@@ -13,6 +13,7 @@ import {
   ResetPasswordCredentials,
   UserDto,
   SendEmailDto,
+  ValidateType,
 } from '@/types/auth';
 
 interface IUserContext {
@@ -21,7 +22,8 @@ interface IUserContext {
   isAuthenticated: boolean;
   userDetails: UserDto | null;
   login: (loginCreds: LoginCredentials | null) => Promise<void>;
-  signup: () => Promise<void>;
+  validateSignup: (signupCreds: SignupCredentials) => Promise<ValidateType>;
+  signup: (pincode: string) => Promise<void>;
   verifyEmailSignup: (signupCreds: SignupCredentials) => Promise<void>;
   resetPassword: (
     resetPasswordCreds: ResetPasswordCredentials
@@ -36,14 +38,7 @@ const UserContext = createContext<IUserContext | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [tempSignupCreds, setTempSignupCreds] = useState<SignupCredentials>({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    gender: 'male',
-    role: 'Listener',
-  });
+  const [tempTokenSignUp, setTempTokenSignUp] = useState<string>('');
   const [userDetails, setUserDetails] = useState<UserDto | null>(null);
   const { setLoadingState } = useLoading();
 
@@ -103,7 +98,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         },
         body: JSON.stringify(signupCreds),
       });
-      setTempSignupCreds(signupCreds);
     } catch (error) {
       console.error('Verify email failed:', error);
     } finally {
@@ -111,20 +105,39 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const signup = async (): Promise<void> => {
-    if (!tempSignupCreds) {
-      throw new Error('Signup credentials are required');
-    }
-
+  const validateSignup = async (
+    signupCreds: SignupCredentials
+  ): Promise<ValidateType> => {
     setLoadingState(true);
+
     try {
-      const response = await client<UserDto>('/api/auth/signup', {
+      const response = await client<ValidateType>(`/api/auth/validate-signup`, {
+        method: 'POST',
+        body: JSON.stringify(signupCreds),
+      });
+
+      setTempTokenSignUp(response.data.token);
+
+      router.push('/verify-code');
+      return response.data;
+    } catch (error) {
+      console.error('Validate Signup failed:', error);
+      throw error;
+    } finally {
+      setLoadingState(false);
+    }
+  };
+
+  const signup = async (pincode: string): Promise<void> => {
+    setLoadingState(true);
+
+    try {
+      const response = await client<UserDto>('/api/auth/verify-pincode', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${tempTokenSignUp}`,
         },
-        cache: 'no-store',
-        body: JSON.stringify(tempSignupCreds),
+        body: JSON.stringify({ pincode: pincode }),
       });
 
       if (!response || !response.data.token) {
@@ -144,7 +157,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const login = async (loginCreds: LoginCredentials | null): Promise<void> => {
-    setLoadingState(true)
+    setLoadingState(true);
     if (!loginCreds) {
       throw new Error('Login credentials are required');
     }
@@ -177,7 +190,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Login failed:', error);
       throw error;
     } finally {
-      setLoadingState(false)
+      setLoadingState(false);
     }
   };
 
@@ -236,8 +249,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (authToken && userDetailsCookie) {
       try {
-        const parsedUserDetails = JSON.parse(decodeURIComponent(userDetailsCookie)) as UserDto;
-        setToken(authToken);  
+        const parsedUserDetails = JSON.parse(
+          decodeURIComponent(userDetailsCookie)
+        ) as UserDto;
+        setToken(authToken);
         setIsAuthenticated(true);
         setUserDetails(parsedUserDetails);
       } catch (error) {
@@ -271,6 +286,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     userDetails,
     sendEmail,
     verifyEmailSignup,
+    validateSignup,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

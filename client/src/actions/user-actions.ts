@@ -8,7 +8,12 @@ export interface ArtistsReponse {
   artists: User[];
 }
 
-export async function getAllArtists(currentPage: number, pageSize: number): Promise<ArtistsReponse> {
+export interface ActivateArtistAccountProps {
+  artistName: string;
+  description: string;
+}
+
+export async function getAllArtists(): Promise<ArtistsReponse> {
   const token = await getAuthTokenFromCookies();
 
   try {
@@ -24,6 +29,28 @@ export async function getAllArtists(currentPage: number, pageSize: number): Prom
     };
   } catch (error) {
     console.error('Get all Artists: ', error);
+    throw error;
+  }
+}
+
+export async function activateArtistAccount(
+  artistName: string,
+  description: string
+) {
+  const token = await getAuthTokenFromCookies();
+  try {
+    await client<User[]>('/api/users/activate-artist', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        artistName: artistName,
+        description: description,
+      }),
+    });
+  } catch (error) {
+    console.error('Error in activate Artists: ', error);
     throw error;
   }
 }

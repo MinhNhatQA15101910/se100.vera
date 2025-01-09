@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import FormContainer from '@/components/FormContainer';
-import { Label, LabelInputContainer } from '@/components/ui/label';
+import { Label, LabelInputContainer } from '@/components/ui/Label';
 import { Input } from '@/components/ui/Input';
 import { AppButton } from '@/components/ui/AppButton';
 import Separator from '@/components/Separator';
@@ -36,7 +36,7 @@ const signupSchema = z
 
 const SignupForm = () => {
   const { setLoadingState } = useLoading();
-  const { verifyEmailSignup } = useUser();
+  const { validateSignup } = useUser();
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -76,7 +76,7 @@ const SignupForm = () => {
         gender: isGender,
       });
 
-      await verifyEmailSignup({
+      await validateSignup({
         email: validatedData.email,
         password: validatedData.password,
         firstName: validatedData.firstname,
@@ -93,7 +93,7 @@ const SignupForm = () => {
           }
         });
         setErrors(formattedErrors);
-      } 
+      }
     } finally {
       setLoadingState(false);
     }

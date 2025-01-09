@@ -46,20 +46,22 @@ const sidebarSections: SidebarSection[] = [
       { name: 'Manage genres', icon: FaUserAlt, href: '/admin/manage-genres' },
     ],
   },
+  {
+    title: 'General',
+    items: [{ name: 'Logout', icon: FaSignOutAlt, href: '#' }],
+  },
 ];
 
 const Sidebar = ({ paddingBottom = '0' }) => {
   const { logout, isAuthenticated } = useUser();
-  const { setLoadingState } = useLoading();
+
   const [isAddPlaylistModalOpen, setIsAddPlaylistModalOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = () => {
-    setLoadingState(true);
     logout();
     router.push('/login');
-    setLoadingState(false);
   };
 
   return (

@@ -16,8 +16,8 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ artist }) => {
         {/* Artist Image */}
         <div className="rounded-full overflow-hidden w-36 h-36 mb-4 shadow-lg">
           <DynamicImage
-            src={artist.photoUrl}
-            alt={artist.artistName}
+            src={artist.photoUrl || ""}
+            alt={artist.artistName || ""}
             className="w-full h-full object-cover"
           />
         </div>

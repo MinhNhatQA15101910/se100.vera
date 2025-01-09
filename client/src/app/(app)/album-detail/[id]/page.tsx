@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import LikeButton from '@/components/music/LikeButton';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { getAlbumById } from '@/actions/album-actions';
 import { useLoading } from '@/contexts/LoadingContext';
@@ -34,10 +34,13 @@ import {
 import { Delete, Edit } from 'lucide-react';
 import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
+import { useUser } from '@/contexts/UserContext';
 
 const Page: React.FC = () => {
   const params = useParams();
+  const router = useRouter();
   const { id } = params;
+  const { userDetails } = useUser();
   const { setActiveTrack, setPlaylist } = usePlayerStore();
   const { setLoadingState } = useLoading();
   const { data: albumDetailData, isLoading } = useQuery({
@@ -56,11 +59,12 @@ const Page: React.FC = () => {
 
     deleteAlbumMutation.mutate(albumDetailData?.id || -1, {
       onSuccess: () => {
-        toast.success("Delete Album Successfully!")
+        toast.success('Delete Album Successfully!');
+        router.push('/albums');
       },
       onError: () => {
-        toast.error("Server went wrong, delete is not working!")
-      }
+        toast.error('Server went wrong, delete is not working!');
+      },
     });
   };
 
@@ -70,7 +74,7 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     if (albumDetailData?.songs) {
-      const updatedPlaylist = albumDetailData.songs.map(({ song }) => song);
+      const updatedPlaylist = albumDetailData.songs.map(({ song }) => song);  
       setPlaylist(updatedPlaylist);
     }
   }, [albumDetailData]);
@@ -86,31 +90,33 @@ const Page: React.FC = () => {
                   <Link href="/albums">
                     <IoArrowBack className="text-4xl text-white" />
                   </Link>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <FiMoreHorizontal className="text-4xl text-white hover:text-general-pink-hover" />
-                    </DropdownMenuTrigger>
+                  {userDetails?.roles[0] === "Artist" && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <FiMoreHorizontal className="text-4xl text-white hover:text-general-pink-hover" />
+                      </DropdownMenuTrigger>
 
-                    <DropdownMenuContent
-                      align="end"
-                      className="w-56 bg-general-pink border-general-pink-border"
-                    >
-                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-general-pink-border" />
-                      <DropdownMenuItem
-                        className="hover:bg-general-pink-hover"
-                        onClick={() => {}}
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-56 bg-general-pink border-general-pink-border"
                       >
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator className="bg-general-pink-border" />
-                      <DropdownMenuItem onClick={handleDeleteAlbum}>
-                        <Delete className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-general-pink-border" />
+                        <DropdownMenuItem
+                          className="hover:bg-general-pink-hover"
+                          onClick={() => {}}
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-general-pink-border" />
+                        <DropdownMenuItem onClick={handleDeleteAlbum}>
+                          <Delete className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
               </div>
 

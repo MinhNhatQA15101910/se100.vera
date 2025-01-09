@@ -3,24 +3,31 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/textarea';
 
+import { useActivateArtistAccountMutation } from '@/hooks/useUserMutation';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+
 export default function ActivateArtistForm() {
+  const router = useRouter();
+  const activateArtistAccountMutation = useActivateArtistAccountMutation();
+
   const [formData, setFormData] = useState({
     artistName: '',
-    description: ''
+    description: '',
   });
   const [errors, setErrors] = useState({
     artistName: '',
-    description: ''
+    description: '',
   });
-  
+
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
       artistName: '',
-      description: ''
+      description: '',
     };
 
     if (!formData.artistName.trim()) {
@@ -40,24 +47,41 @@ export default function ActivateArtistForm() {
     return isValid;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { id, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [id]: value
+      [id]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     try {
-      // TODO: Implement API call to activate artist account
-      console.log('Form submitted:', formData);
+      activateArtistAccountMutation.mutate(
+        {
+          artistName: formData.artistName,
+          description: formData.description,
+        },
+        {
+          onSuccess: () => {
+            toast.success(
+              'Congrats, You are now available to contribute your Songs and Albums!'
+            );
+            router.refresh();
+          },
+          onError: () => {
+            toast.error('Failed to Compile, Building in Progress.');
+          },
+        }
+      );
     } catch (error) {
       console.error('Error submitting form:', error);
     }
