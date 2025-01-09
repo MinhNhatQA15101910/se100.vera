@@ -304,16 +304,55 @@ public class AlbumsController(
             return Unauthorized("The song does not belong to you.");
         }
 
-        // Add album song to database
-        unitOfWork.AlbumSongRepository.AddAlbumSong(new AlbumSong
+        // Check if the song is already in the album
+        var albumSong = await unitOfWork.AlbumSongRepository.GetAlbumSongAsync(album.Id, song.Id);
+        if (albumSong != null)
         {
-            AlbumId = album.Id,
-            SongId = song.Id
-        });
+            return BadRequest("Song already in album.");
+        }
+
+        // Add album song to database
+        if (addSongDto.Order != null)
+        {
+            if (addSongDto.Order < 1)
+            {
+                return BadRequest("Invalid order.");
+            }
+
+            var maxOrder = await unitOfWork.AlbumRepository.GetMaxOrder(album.Id);
+            if (addSongDto.Order <= maxOrder)
+            {
+                var albumSongs = await unitOfWork.AlbumRepository.GetAlbumsSongsAsync(album.Id);
+                foreach (var albSong in albumSongs)
+                {
+                    if (albSong.Order >= addSongDto.Order)
+                    {
+                        albSong.Order++;
+                    }
+                }
+            }
+
+            unitOfWork.AlbumSongRepository.AddAlbumSong(new AlbumSong
+            {
+                AlbumId = album.Id,
+                SongId = song.Id,
+                Order = addSongDto.Order.Value
+            });
+        }
+        else
+        {
+            var maxOrder = await unitOfWork.AlbumRepository.GetMaxOrder(album.Id);
+
+            unitOfWork.AlbumSongRepository.AddAlbumSong(new AlbumSong
+            {
+                AlbumId = album.Id,
+                SongId = song.Id,
+                Order = maxOrder + 1
+            });
+        }
 
         // Update album's total songs and update date
         album.TotalSongs++;
-        album.UpdatedAt = DateTime.UtcNow;
 
         // Update album's total duration
         if (string.IsNullOrEmpty(album.TotalDuration))
@@ -327,6 +366,8 @@ public class AlbumsController(
             albumTotalDuration += songDuration;
             album.TotalDuration = albumTotalDuration.ToString(@"hh\:mm\:ss");
         }
+
+        album.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete())
         {
@@ -375,15 +416,26 @@ public class AlbumsController(
         // Remove song from album
         unitOfWork.AlbumSongRepository.RemoveAlbumSong(albumSong);
 
+        // Update songAlbums order.
+        var albumSongs = await unitOfWork.AlbumRepository.GetAlbumsSongsAsync(album.Id);
+        foreach (var albSong in albumSongs)
+        {
+            if (albSong.Order > albumSong.Order)
+            {
+                albSong.Order--;
+            }
+        }
+
         // Update album's total songs and update date
         album.TotalSongs--;
-        album.UpdatedAt = DateTime.UtcNow;
 
         // Update album's total duration
         _ = TimeSpan.TryParse(album.TotalDuration, out TimeSpan albumTotalDuration);
         _ = TimeSpan.TryParse(song.Duration, out TimeSpan songDuration);
         albumTotalDuration -= songDuration;
         album.TotalDuration = albumTotalDuration.TotalSeconds == 0 ? "" : albumTotalDuration.ToString(@"hh\:mm\:ss");
+
+        album.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete())
         {
