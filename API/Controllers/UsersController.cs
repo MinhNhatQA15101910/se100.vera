@@ -11,6 +11,7 @@ namespace API.Controllers;
 
 public class UsersController(
     IUnitOfWork unitOfWork,
+    UserManager<AppUser> userManager,
     IMapper mapper,
     IFileService fileService
 ) : BaseApiController
@@ -40,27 +41,35 @@ public class UsersController(
     [Authorize]
     public async Task<ActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
     {
-        var existingUser = await unitOfWork.UserRepository.GetUserByEmailAsync(User.GetEmail()!);
-        if (existingUser == null)
-        {
-            return Unauthorized("User with this email does not exist.");
-        }
+        var userId = User.GetUserId();
 
-        var checkPasswordResult = await unitOfWork.UserRepository.CheckPasswordAsync(
-            existingUser,
-            changePasswordDto.CurrentPassword
-        );
-        if (!checkPasswordResult) return Unauthorized("Invalid current password");
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user == null) return NotFound("Could not find user");
 
-        var changePasswordResult = unitOfWork.UserRepository.ChangePasswordAsync(
-            existingUser,
-            changePasswordDto
-        );
+        var result = await userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+        if (!result.Succeeded) return BadRequest(result.Errors);
 
-        if (changePasswordResult.Result.Errors.Any())
-        {
-            return BadRequest("Failed to change password.");
-        }
+        return NoContent();
+    }
+
+    [HttpPost("activate-artist")]
+    [Authorize]
+    public async Task<ActionResult> ActivateArtist(ActivateArtistDto activateArtistDto)
+    {
+        var userId = User.GetUserId();
+
+        // Get user
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (user == null) return BadRequest("Could not find user");
+
+        // Update user info
+        user.ArtistName = activateArtistDto.ArtistName;
+        user.About = activateArtistDto.About;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        // Update user role
+        var roleResult = await userManager.AddToRoleAsync(user, "Artist");
+        if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
 
         return NoContent();
     }
