@@ -5,4 +5,4 @@ export enum Role {
 }
 
 export type GenderType = 'male' | 'female';
-export type UserType = 'Listener' | 'Artist';
+export type UserType = 'Listener' | 'Artist' | 'Admin';

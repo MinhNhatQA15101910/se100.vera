@@ -4,6 +4,13 @@ import client from '@/services/client';
 import { Album } from '@/types/global';
 import { getAuthTokenFromCookies } from './utils';
 
+export interface AddAlbumPayload {
+  albumName: string;
+  description: string;
+  photoFiles?: File[];
+  artistIds: number[];
+}
+
 export async function getAllAlbums(): Promise<Album[]> {
   const token = getAuthTokenFromCookies();
 
@@ -64,12 +71,29 @@ export async function getArtistAlbums(artistId: number): Promise<Album[]> {
   }
 }
 
+export async function addAlbum(formData: FormData): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client('/api/albums', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  } catch (error) {
+    console.error('Error in addSong:', error);
+    throw error;
+  }
+}
+
 // Only artist can add desires songs of their into an album
 export async function updateAlbum(albumId: number) {
   const token = await getAuthTokenFromCookies();
 
   try {
-    await client<Album[]>(`/api/albums=${albumId}`, {
+    await client<Album[]>(`/api/albums/${albumId}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -104,8 +128,8 @@ export async function deleteAlbum(albumId: number) {
   const token = await getAuthTokenFromCookies();
 
   try {
-    await client<Album[]>(`/api/albums=${albumId}`, {
-      method: 'GET',
+    await client<Album[]>(`/api/albums/${albumId}`, {
+      method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
       },

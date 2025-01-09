@@ -14,8 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@/contexts/LoadingContext';
 import React from 'react';
 import { getAllArtists } from '@/actions/user-actions';
-import PaginationButtons from '@/components/PaginatedButtons';
-
+import DynamicImage from '@/components/custom/DynamicImage';
 export default function ManageArtists() {
   const { setLoadingState } = useLoading();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -24,7 +23,7 @@ export default function ManageArtists() {
   const { data, isLoading } = useQuery({
     queryKey: ['artists', currentPage, pageSize],
     queryFn: async () => {
-      const response = await getAllArtists(currentPage, pageSize);
+      const response = await getAllArtists();
       return response;
     },
   });
@@ -84,12 +83,10 @@ export default function ManageArtists() {
                 <TableCell className="font-bold text-lg">{index + 1}</TableCell>
                 <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
                   <div className="flex items-center space-x-4">
-                    <Image
-                      src={artist.photoUrl || '/placeholder.png'}
-                      alt={`${artist.artistName} Thumbnail`}
-                      width={55}
-                      height={55}
-                      className="rounded-md"
+                    <DynamicImage
+                      src={artist.photoUrl || ''}
+                      alt={`X`}
+                      className="w-14 h-14 rounded-md"
                     />
                     <div>
                       <p className="font-bold text-white text-nowrap truncate">
@@ -116,12 +113,6 @@ export default function ManageArtists() {
           </TableBody>
         </Table>
       </div>
-      <PaginationButtons
-        pageSize={pageSize}
-        currentPage={currentPage}
-        totalCount={2}
-        onPageChange={handlePageChange}
-      />
     </div>
   );
 }

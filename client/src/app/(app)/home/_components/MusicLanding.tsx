@@ -4,6 +4,7 @@ import { AppButton } from '@/components/ui/AppButton';
 import { Input } from '@/components/ui/Input';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
+import UserDropDown from '@/components/UserDropDown';
 
 const Links = [
   { title: 'About us' },
@@ -41,6 +42,8 @@ export default function MusicLanding() {
               );
             })}
           </div>
+
+          <UserDropDown />
         </nav>
 
         {/* Hero Section */}

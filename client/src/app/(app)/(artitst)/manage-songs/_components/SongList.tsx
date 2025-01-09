@@ -22,18 +22,21 @@ import { useQuery } from '@tanstack/react-query';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
 import DynamicImage from '@/components/custom/DynamicImage';
+import usePlayerStore from '@/stores/player-store';
 
 const SongList = () => {
   const { userDetails } = useUser();
   const { setLoadingState } = useLoading();
+  const { setActiveTrack, setPlaylist } = usePlayerStore();
   const { data, isLoading } = useQuery({
     queryKey: ['mysongs'],
     queryFn: async () => await getArtistSongsByArtistId(userDetails?.id || -1),
   });
 
   useEffect(() => {
+    setPlaylist(data?.songs || []);
     setLoadingState(isLoading);
-  }, [isLoading]);
+  }, [isLoading, data]);
 
   return (
     <div className="flex items-center justify-center text-general-white w-[90%] manage-songs-table">
@@ -59,6 +62,7 @@ const SongList = () => {
             <TableRow
               key={index}
               className="border-none cursor-pointer hover:bg-transparent group"
+              onClick={() => setActiveTrack(song)}
             >
               <TableCell className="font-medium">#{index + 1}</TableCell>
               <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">

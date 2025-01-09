@@ -17,7 +17,6 @@ import { useLoading } from '@/contexts/LoadingContext';
 import React from 'react';
 import { getAllGenres } from '@/actions/genre-actions';
 import PaginationButtons from '@/components/PaginatedButtons';
-import AddPlaylistModal from '@/components/AddPlaylistModal';
 import Modal from '@/components/Modal';
 import AddUpdateGenresCard from '@/components/AddUpdateGenresCard';
 

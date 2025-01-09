@@ -79,11 +79,7 @@ export default function UploadForm() {
 
   const { data: artistsData } = useQuery({
     queryKey: ['user_artist', 'upload_song'],
-    queryFn: async () => {
-      return (await getAllArtists()).artists.filter(
-        (artist) => artist.artistName !== null && artist.artistName !== ''
-      );
-    },
+    queryFn: async () => await getAllArtists(),
   });
   const addSongMutation = useAddSongMutation();
 
@@ -131,7 +127,6 @@ export default function UploadForm() {
   const photoDropzone = CreateDropzone('photoFiles');
 
   const onSubmit = (data: FormValues) => {
-    console.log('data upload form data: ', data);
     addSongMutation.mutate(
       {
         songName: data.songName,
@@ -145,7 +140,7 @@ export default function UploadForm() {
       {
         onSuccess: () => {
           toast.success('Song uploaded successfully!');
-          router.push('/home');
+          router.push('/manage-songs');
         },
         onError: (error) => {
           toast.error(error.message);
@@ -348,9 +343,9 @@ export default function UploadForm() {
                       </FormLabel>
                       {/* Display selected artists */}
                       <div className="flex flex-wrap gap-2 mb-2">
-                        {field.value?.map((artistId) => {
-                          const artistName = artistsData?.find(
-                            (artist) => artist.id === artistId
+                        {field?.value?.map((artistId) => {
+                          const genreName = artistsData?.find(
+                            (genre) => genre.id === artistId
                           )?.artistName;
                           return (
                             <Badge
@@ -358,14 +353,14 @@ export default function UploadForm() {
                               variant="secondary"
                               className="gap-1"
                             >
-                              {artistName}
+                              {genreName}
                               <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => {
                                   field.onChange(
-                                    field.value?.filter(
+                                    field?.value?.filter(
                                       (id) => id !== artistId
-                                    ) || []
+                                    )
                                   );
                                 }}
                               />

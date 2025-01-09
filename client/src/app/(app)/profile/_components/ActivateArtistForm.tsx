@@ -8,10 +8,12 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { useActivateArtistAccountMutation } from '@/hooks/useUserMutation';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/contexts/UserContext';
 import { toast } from 'react-toastify';
 
 export default function ActivateArtistForm() {
   const router = useRouter();
+  const {logout} = useUser()
   const activateArtistAccountMutation = useActivateArtistAccountMutation();
 
   const [formData, setFormData] = useState({
@@ -75,7 +77,8 @@ export default function ActivateArtistForm() {
             toast.success(
               'Congrats, You are now available to contribute your Songs and Albums!'
             );
-            router.refresh();
+            logout()
+            router.push('/login')
           },
           onError: () => {
             toast.error('Failed to Compile, Building in Progress.');

@@ -341,11 +341,11 @@ public class SongsController(
             return NotFound();
         }
 
-        var albumSongs = await unitOfWork.AlbumSongRepository.GetAlbumSongsAsync(song.Id);
-        if (albumSongs != null)
-        {
-            return BadRequest("Song is in an album.");
-        }
+        // var albumSongs = await unitOfWork.AlbumSongRepository.GetAlbumSongsAsync(song.Id);
+        // if (albumSongs != null)
+        // {
+        //     return BadRequest("Song is in an album.");
+        // }
 
         var songPhotos = await unitOfWork.SongPhotoRepository.GetSongPhotoAsync(song.Id);
         if (songPhotos != null)

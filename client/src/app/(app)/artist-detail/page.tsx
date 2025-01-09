@@ -35,8 +35,7 @@ export default function ArtistDetailPage() {
     queries: [
       {
         queryKey: ['theArtist', userId],
-        queryFn: async () =>
-          await getArtistSongsByArtistId(Number(userId)),
+        queryFn: async () => await getArtistSongsByArtistId(Number(userId)),
       },
       {
         queryKey: ['artistAlbums', userId],
@@ -64,7 +63,7 @@ export default function ArtistDetailPage() {
             <div className="flex-col items-center gap-8 mb-8 relative">
               <div className="relative w-full">
                 <Image
-                  src={theArtist?.songs[0].publisherImageUrl || ''}
+                  src={theArtist?.songs[0]?.publisherImageUrl || ''}
                   alt="Eminem"
                   width={1000} // Provide the width explicitly
                   height={400} // Provide the height explicitly
@@ -80,7 +79,7 @@ export default function ArtistDetailPage() {
               </div>
               <div className="-mt-16 ml-4">
                 <h1 className="text-8xl font-bold text-general-pink drop-shadow-lg">
-                  {theArtist?.songs[0].publisherName}
+                  {theArtist?.songs[0]?.publisherName || ""}
                 </h1>
               </div>
             </div>
@@ -184,8 +183,7 @@ export default function ArtistDetailPage() {
                             <div className="ml-4">
                               <LikeButton songId={song.id} />
                             </div>
-                            <div className="ml-4">
-                            </div>
+                            <div className="ml-4"></div>
                           </div>
                         </TableCell>
                       </TableRow>

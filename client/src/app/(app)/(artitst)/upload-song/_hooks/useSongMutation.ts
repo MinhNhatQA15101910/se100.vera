@@ -13,6 +13,12 @@ import {
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
 
+enum Role {
+  Admin = 'Admin',
+  Artist = 'Artist',
+  User = 'User',
+}
+
 export function useAddSongMutation() {
   const queryClient = useQueryClient();
   const { userDetails } = useUser();
@@ -39,7 +45,7 @@ export function useAddSongMutation() {
       data.artistIds.forEach((id: number) => {
         formData.append('artistIds', id.toString());
       });
-      if (userDetails?.id && userDetails.roles[0] === 'Artist') {
+      if (userDetails?.id && userDetails.roles.includes(Role.Artist)) {
         formData.append('artistIds', userDetails?.id.toString());
       } else {
         throw new Error('You have some problems to add this song bro.');

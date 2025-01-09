@@ -19,13 +19,15 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, X } from 'lucide-react';
 import { AppButton } from '@/components/ui/AppButton';
 import { useQuery } from '@tanstack/react-query';
-import { getAllGenres } from '@/actions/genre-actions';
+import { getAllArtists } from '@/actions/user-actions';
 import DynamicImage from '@/components/custom/DynamicImage';
-import { getAllSongs } from '@/actions/song-actions';
-import { toast } from 'react-toastify';
+
 import { useRouter } from 'next/navigation';
-import GenreSelect from './GenreSelect';
 import { useEffect } from 'react';
+
+import { useAddAlbumMutation } from '../_hooks/useAlbumMutation';
+import ArtistSelect from './ArtistSelect';
+import { toast } from 'react-toastify';
 
 const formSchema = z.object({
   albumName: z.string().min(1, 'Song name is required'),
@@ -40,8 +42,7 @@ const formSchema = z.object({
       (file) => file.size <= 5 * 1024 * 1024, // 5MB limit
       'File size must be less than 5MB'
     ),
-  genreIds: z.array(z.number()).min(1, 'At least one genre is required'),
-  songIds: z.array(z.number()).min(1, 'At least one song is required'),
+  artistIds: z.array(z.number()).min(1, 'At least one song is required'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -49,26 +50,22 @@ type FormValues = z.infer<typeof formSchema>;
 export default function UploadForm() {
   const router = useRouter();
   const { setLoadingState } = useLoading();
-  const { data: genresData } = useQuery({
-    queryKey: ['genres', 'add_album'],
+
+  const { data: artistsData, isLoading } = useQuery({
+    queryKey: ['user_artist', 'upload_song'],
     queryFn: async () => {
-      return await getAllGenres({ pageSize: 30 });
+      return await getAllArtists();
     },
   });
-  const { data: songsData, isLoading: isSongsLoading } = useQuery({
-    queryKey: ['songs', 'add_album'],
-    queryFn: async () => {
-      return await getAllSongs();
-    },
-  });
+
+  const addAlbumMutation = useAddAlbumMutation();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: '',
-      songIds: [],
+      artistIds: [],
       albumName: '',
-      genreIds: [],
     },
   });
 
@@ -98,12 +95,25 @@ export default function UploadForm() {
   const photoDropzone = CreateDropzone('photoFiles');
 
   const onSubmit = (data: FormValues) => {
-    console.log('data form Form and gay me: ', data);
+    addAlbumMutation.mutate(
+      {
+        albumName: data.albumName,
+        description: data.description || '',
+        photoFiles: [data.photoFiles],
+        artistIds: data.artistIds,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Successfully added the album!');
+          router.push('/manage-albums');
+        },
+      }
+    );
   };
 
   useEffect(() => {
-    setLoadingState(isSongsLoading);
-  }, [isSongsLoading]);
+    setLoadingState(isLoading);
+  }, [isLoading]);
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col w-full">
@@ -177,32 +187,35 @@ export default function UploadForm() {
                   )}
                 />
                 {/* Specify Added Genres */}
+
                 <FormField
                   control={form.control}
-                  name="genreIds"
+                  name="artistIds"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">
-                        Genre <span className="text-destructive">*</span>
+                        Co-artists (Optional)
                       </FormLabel>
-                      {/* Display selected genres */}
+                      {/* Display selected artists */}
                       <div className="flex flex-wrap gap-2 mb-2">
-                        {field.value.map((genreId) => {
-                          const genreName = genresData?.find(
-                            (genre) => genre.id === genreId
-                          )?.genreName;
+                        {field.value?.map((artistId) => {
+                          const artistName = artistsData?.find(
+                            (artist) => artist.id === artistId
+                          )?.artistName;
                           return (
                             <Badge
-                              key={genreId}
+                              key={artistId}
                               variant="secondary"
                               className="gap-1"
                             >
-                              {genreName}
+                              {artistName}
                               <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => {
                                   field.onChange(
-                                    field.value.filter((id) => id !== genreId)
+                                    field.value?.filter(
+                                      (id) => id !== artistId
+                                    ) || []
                                   );
                                 }}
                               />
@@ -210,8 +223,8 @@ export default function UploadForm() {
                           );
                         })}
                       </div>
-                      <GenreSelect
-                        genresData={genresData || []}
+                      <ArtistSelect
+                        artistsData={artistsData || []}
                         field={field}
                       />
                     </FormItem>
@@ -237,7 +250,6 @@ export default function UploadForm() {
               </div>
             </div>
             {/*List of music needed to be add*/}
-            
 
             {/* Add Album Button */}
             <div className="flex justify-center">
