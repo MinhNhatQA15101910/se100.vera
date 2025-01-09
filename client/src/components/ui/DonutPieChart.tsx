@@ -18,11 +18,11 @@ const chartConfig = {
   visitors: {
     label: 'All role',
   },
-  listeners: {
+  Listeners: {
     label: 'Listeners',
     color: '#85F4FA',
   },
-  artists: {
+  Artists: {
     label: 'Artists',
     color: '#3A57E8',
   },
