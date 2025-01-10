@@ -83,23 +83,15 @@ public class UsersController(
         var result = await fileService.UploadImageAsync("/users/" + user.Id, file);
         if (result.Error != null) return BadRequest(result.Error.Message);
 
-        var photo = new Photo
+        var userPhoto = new UserPhoto
         {
             Url = result.SecureUrl.AbsoluteUri,
             PublicId = result.PublicId
         };
-        await unitOfWork.PhotoRepository.AddPhotoAsync(photo);
 
-        var userPhoto = new UserPhoto
-        {
-            UserId = user.Id,
-            PhotoId = photo.Id
-        };
-        if (user.Photos.Count == 0)
-        {
-            userPhoto.IsMain = true;
-        }
-        unitOfWork.UserPhotoRepository.AddUserPhoto(userPhoto);
+        if (user.Photos.Count == 0) userPhoto.IsMain = true;
+
+        user.Photos.Add(userPhoto);
 
         if (!await unitOfWork.Complete()) return BadRequest("Problem adding photo");
 
@@ -116,11 +108,9 @@ public class UsersController(
         var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("Could not find user");
 
-        var photo = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(photoId);
-        if (photo == null) return BadRequest("Could not find photo");
+        var userPhoto = user.Photos.FirstOrDefault(x => x.Id == photoId);
+        if (userPhoto == null) return BadRequest("Could not find photo");
 
-        var userPhoto = await unitOfWork.UserPhotoRepository.GetUserPhotoAsync(user.Id, photoId);
-        if (userPhoto == null) return BadRequest("This photo does not belong to the user");
         if (userPhoto.IsMain) return BadRequest("This is already the main photo");
 
         var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
@@ -139,22 +129,17 @@ public class UsersController(
         var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("User not found");
 
-        var photo = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(photoId);
-        if (photo == null) return BadRequest("This photo cannot be deleted");
-
-        var userPhoto = await unitOfWork.UserPhotoRepository.GetUserPhotoAsync(user.Id, photoId);
-        if (userPhoto == null) return BadRequest("This photo does not belong to the user");
-
+        var userPhoto = user.Photos.FirstOrDefault(x => x.Id == photoId);
+        if (userPhoto == null) return BadRequest("This photo cannot be deleted");
         if (userPhoto.IsMain) return BadRequest("This photo cannot be deleted");
 
-        if (photo.PublicId != null)
+        if (userPhoto.PublicId != null)
         {
-            var result = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
+            var result = await fileService.DeleteFileAsync(userPhoto.PublicId, ResourceType.Image);
             if (result.Error != null) return BadRequest(result.Error.Message);
         }
 
-        unitOfWork.PhotoRepository.RemovePhoto(photo);
-        unitOfWork.UserPhotoRepository.RemoveUserPhoto(userPhoto);
+        user.Photos.Remove(userPhoto);
 
         if (!await unitOfWork.Complete()) return BadRequest("Problem deleting photo");
 

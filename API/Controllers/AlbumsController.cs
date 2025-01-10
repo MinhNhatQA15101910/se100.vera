@@ -60,20 +60,14 @@ public class AlbumsController(
 
                 if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
 
-                var newPhoto = new Photo
+                var albumPhoto = new AlbumPhoto
                 {
                     Url = uploadResult.SecureUrl.ToString(),
                     PublicId = uploadResult.PublicId,
-                };
-                newPhoto = await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
-
-                var albumPhoto = new AlbumPhoto
-                {
-                    PhotoId = newPhoto.Id,
-                    AlbumId = album.Id,
                     IsMain = isMain
                 };
-                unitOfWork.AlbumPhotoRepository.AddAlbumPhoto(albumPhoto);
+
+                album.Photos.Add(albumPhoto);
 
                 isMain = false;
             }
@@ -152,12 +146,12 @@ public class AlbumsController(
             var oldPhotos = album.Photos;
             foreach (var oldPhoto in oldPhotos)
             {
-                if (oldPhoto.Photo.PublicId != null)
+                if (oldPhoto.PublicId != null)
                 {
-                    var result = await fileService.DeleteFileAsync(oldPhoto.Photo.PublicId!, ResourceType.Image);
+                    var result = await fileService.DeleteFileAsync(oldPhoto.PublicId!, ResourceType.Image);
                     if (result.Error != null) return BadRequest("Delete album file from cloudinary failed: " + result.Error.Message);
                 }
-                unitOfWork.PhotoRepository.RemovePhoto(oldPhoto.Photo);
+                album.Photos.Remove(oldPhoto);
             }
 
             // Upload new images and add to database
@@ -167,20 +161,13 @@ public class AlbumsController(
                 var uploadResult = await fileService.UploadImageAsync("/albums/" + album.Id, photo);
                 if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
 
-                var newPhoto = new Photo
+                var albumPhoto = new AlbumPhoto
                 {
                     Url = uploadResult.SecureUrl.ToString(),
                     PublicId = uploadResult.PublicId,
-                };
-                newPhoto = await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
-
-                var albumPhoto = new AlbumPhoto
-                {
-                    PhotoId = newPhoto.Id,
-                    AlbumId = album.Id,
                     IsMain = isMain
                 };
-                unitOfWork.AlbumPhotoRepository.AddAlbumPhoto(albumPhoto);
+                album.Photos.Add(albumPhoto);
 
                 isMain = false;
             }
@@ -257,12 +244,12 @@ public class AlbumsController(
         var photos = album.Photos;
         foreach (var photo in photos)
         {
-            if (photo.Photo.PublicId != null)
+            if (photo.PublicId != null)
             {
-                var result = await fileService.DeleteFileAsync(photo.Photo.PublicId!, ResourceType.Image);
+                var result = await fileService.DeleteFileAsync(photo.PublicId!, ResourceType.Image);
                 if (result.Error != null) return BadRequest("Delete album file from cloudinary failed: " + result.Error.Message);
             }
-            unitOfWork.PhotoRepository.RemovePhoto(photo.Photo);
+            album.Photos.Remove(photo);
         }
 
         unitOfWork.AlbumRepository.DeleteAlbum(album);

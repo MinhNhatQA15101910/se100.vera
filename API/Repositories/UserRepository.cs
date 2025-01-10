@@ -116,7 +116,7 @@ public class UserRepository(
     public async Task<AppUser?> GetUserByEmailAsync(string email)
     {
         return await userManager.Users
-            .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .Include(u => u.Photos)
             .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
             .SingleOrDefaultAsync(x => x.NormalizedEmail == email.ToUpper());
     }
@@ -124,7 +124,7 @@ public class UserRepository(
     public async Task<AppUser?> GetUserByIdAsync(int id)
     {
         return await userManager.Users
-            .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .Include(u => u.Photos)
             .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
             .SingleOrDefaultAsync(u => u.Id == id);
     }

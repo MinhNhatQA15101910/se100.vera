@@ -1,8 +1,7 @@
 namespace API.Entities;
 
-
-[Table("SongPhotos")]
-public class SongPhoto
+[Table("CommentPhotos")]
+public class CommentPhoto
 {
     public int Id { get; set; }
     public required string Url { get; set; }
@@ -10,6 +9,6 @@ public class SongPhoto
     public bool IsMain { get; set; }
 
     // Navigation properties
-    public int SongId { get; set; }
-    public Song Song { get; set; } = null!;
+    public int CommentId { get; set; }
+    public Comment Comment { get; set; } = null!;
 }

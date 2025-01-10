@@ -132,20 +132,14 @@ public class SongsController(
 
                 if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
 
-                var newPhoto = new Photo
+                var songPhoto = new SongPhoto
                 {
                     Url = uploadResult.SecureUrl.ToString(),
                     PublicId = uploadResult.PublicId,
-                };
-                await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
-
-                var songPhoto = new SongPhoto
-                {
-                    PhotoId = newPhoto.Id,
-                    SongId = song.Id,
                     IsMain = isMain
                 };
-                unitOfWork.SongPhotoRepository.AddSongPhoto(songPhoto);
+                song.Photos.Add(songPhoto);
+
                 isMain = false;
             }
         }
@@ -259,24 +253,16 @@ public class SongsController(
 
         if (updateSongDto.PhotoFiles != null)
         {
-            var songPhotos = await unitOfWork.SongPhotoRepository.GetSongPhotoAsync(song.Id);
-            if (songPhotos != null)
+            foreach (var songPhoto in song.Photos)
             {
-                foreach (var songPhoto in songPhotos)
+                if (songPhoto.PublicId != null)
                 {
-                    var photo = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(songPhoto.PhotoId);
-                    if (photo != null)
-                    {
-                        if (photo.PublicId != null)
-                        {
-                            var deleteResult = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
-                            if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
-                        }
-                        unitOfWork.PhotoRepository.RemovePhoto(photo);
-                    }
-                    unitOfWork.SongPhotoRepository.RemoveSongPhoto(songPhoto);
+                    var deleteResult = await fileService.DeleteFileAsync(songPhoto.PublicId, ResourceType.Image);
+                    if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
                 }
+                song.Photos.Remove(songPhoto);
             }
+
             bool isMain = true;
             foreach (var photo in updateSongDto.PhotoFiles)
             {
@@ -284,20 +270,14 @@ public class SongsController(
 
                 if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
 
-                var newPhoto = new Photo
+                var songPhoto = new SongPhoto
                 {
                     Url = uploadResult.SecureUrl.ToString(),
                     PublicId = uploadResult.PublicId,
-                };
-                await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
-
-                var songPhoto = new SongPhoto
-                {
-                    PhotoId = newPhoto.Id,
-                    SongId = song.Id,
                     IsMain = isMain
                 };
-                unitOfWork.SongPhotoRepository.AddSongPhoto(songPhoto);
+                song.Photos.Add(songPhoto);
+
                 isMain = false;
             }
         }
@@ -347,23 +327,14 @@ public class SongsController(
             return BadRequest("Song is in an album.");
         }
 
-        var songPhotos = await unitOfWork.SongPhotoRepository.GetSongPhotoAsync(song.Id);
-        if (songPhotos != null)
+        foreach (var songPhoto in song.Photos)
         {
-            foreach (var songPhoto in songPhotos)
+            if (songPhoto.PublicId != null)
             {
-                var photo = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(songPhoto.PhotoId);
-                if (photo != null)
-                {
-                    if (photo.PublicId != null)
-                    {
-                        var deleteResult = await fileService.DeleteFileAsync(photo.PublicId, ResourceType.Image);
-                        if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
-                    }
-                    unitOfWork.PhotoRepository.RemovePhoto(photo);
-                }
-                unitOfWork.SongPhotoRepository.RemoveSongPhoto(songPhoto);
+                var deleteResult = await fileService.DeleteFileAsync(songPhoto.PublicId, ResourceType.Image);
+                if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
             }
+            song.Photos.Remove(songPhoto);
         }
 
         if (song.MusicPublicId != null)

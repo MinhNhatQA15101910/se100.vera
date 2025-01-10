@@ -3,9 +3,12 @@ namespace API.Entities;
 [Table("UserPhotos")]
 public class UserPhoto
 {
+    public int Id { get; set; }
+    public required string Url { get; set; }
+    public string? PublicId { get; set; }
+    public bool IsMain { get; set; }
+
+    // Navigation properties
     public int UserId { get; set; }
     public AppUser User { get; set; } = null!;
-    public int PhotoId { get; set; }
-    public Photo Photo { get; set; } = null!;
-    public bool IsMain { get; set; }
 }

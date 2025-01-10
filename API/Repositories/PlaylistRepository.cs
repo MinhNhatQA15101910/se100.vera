@@ -22,7 +22,7 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
    {
       return context.Playlists
          .Include(p => p.Publisher)
-         .Include(p => p.Songs).ThenInclude(ps => ps.Song).ThenInclude(s => s.Photos).ThenInclude(sp => sp.Photo)
+         .Include(p => p.Songs).ThenInclude(ps => ps.Song).ThenInclude(s => s.Photos)
          .FirstOrDefaultAsync(p => p.Id == id);
    }
 

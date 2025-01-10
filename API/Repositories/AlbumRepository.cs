@@ -32,18 +32,18 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
     {
         return await context.Albums
             // Include album photos navigation
-            .Include(a => a.Photos).ThenInclude(ap => ap.Photo)
+            .Include(a => a.Photos)
             // Include artists
             .Include(a => a.Artists).ThenInclude(aa => aa.Artist)
             // Include song photos
             .Include(a => a.Songs).ThenInclude(albumSong => albumSong.Song)
-            .ThenInclude(s => s.Photos).ThenInclude(sp => sp.Photo)
+            .ThenInclude(s => s.Photos)
             // Include song genres
             .Include(a => a.Songs).ThenInclude(albumSong => albumSong.Song)
             .ThenInclude(s => s.Genres).ThenInclude(sg => sg.Genre)
             // Include song username info
             .Include(a => a.Songs).ThenInclude(albumSong => albumSong.Song)
-            .ThenInclude(s => s.Publisher).ThenInclude(p => p.Photos).ThenInclude(pp => pp.Photo)
+            .ThenInclude(s => s.Publisher).ThenInclude(p => p.Photos)
             // Execute query
             .FirstOrDefaultAsync(a => a.Id == id);
     }
