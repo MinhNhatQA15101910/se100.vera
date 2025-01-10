@@ -156,7 +156,6 @@ export async function deleteSong(songId: number): Promise<void> {
 
 export async function getArtistSongsByArtistId(artistId: number) {
   const token = getAuthTokenFromCookies();
-
   try {
     const response = await client<Song[]>(
       `/api/songs?&publisherId=${artistId}`,
