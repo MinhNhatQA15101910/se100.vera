@@ -11,7 +11,7 @@ interface UpdateButtonProps {
   genreName: String;
 }
 
-const UpdateButton: React.FC<UpdateButtonProps> = ({ genreId, genreName }) => {
+const DeleteButton: React.FC<UpdateButtonProps> = ({ genreId, genreName }) => {
   const router = useRouter();
   const { userDetails } = useUser();
 
@@ -38,4 +38,4 @@ const UpdateButton: React.FC<UpdateButtonProps> = ({ genreId, genreName }) => {
   );
 };
 
-export default UpdateButton;
+export default DeleteButton;

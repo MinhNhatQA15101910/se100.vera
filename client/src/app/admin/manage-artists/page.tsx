@@ -15,6 +15,7 @@ import { useLoading } from '@/contexts/LoadingContext';
 import React from 'react';
 import { getAllArtists } from '@/actions/user-actions';
 import PaginationButtons from '@/components/PaginatedButtons';
+import StatusToggleButton from '@/components/StatusToggleButton';
 
 export default function ManageArtists() {
   const { setLoadingState } = useLoading();
@@ -24,7 +25,7 @@ export default function ManageArtists() {
   const { data, isLoading } = useQuery({
     queryKey: ['artists', currentPage, pageSize],
     queryFn: async () => {
-      const response = await getAllArtists(currentPage, pageSize);
+      const response = await getAllArtists();
       return response;
     },
   });
@@ -57,22 +58,25 @@ export default function ManageArtists() {
             >
               #
             </TableHead>
-            <TableHead style={{ width: '25%' }}>
+            <TableHead style={{ width: '20%' }}>
               <span className="text-white text-lg font-bold">Artist</span>
             </TableHead>
-            <TableHead style={{ width: '18%' }}>
+            <TableHead style={{ width: '20%' }}>
               <span className="text-white text-lg font-bold">Created Date</span>
             </TableHead>
-            <TableHead style={{ width: '18%' }}>
+            <TableHead style={{ width: '20%' }}>
               <span className="text-white text-lg font-bold">
                 Date of Birth
               </span>
             </TableHead>
-            <TableHead style={{ width: '14%' }}>
+            <TableHead style={{ width: '10%' }}>
               <span className="text-white text-lg font-bold">Gender</span>
             </TableHead>
-            <TableHead style={{ width: '20%' }}>
+            <TableHead style={{ width: '15%' }}>
               <span className="text-white text-lg font-bold">Email</span>
+            </TableHead>
+            <TableHead style={{ width: '10%' }}>
+              <span className="text-white text-lg font-bold">Status</span>
             </TableHead>
           </TableHeader>
           <TableBody>
@@ -110,6 +114,13 @@ export default function ManageArtists() {
                 </TableCell>
                 <TableCell className="text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                   {artist.email || 'N/A'}
+                </TableCell>
+                <TableCell className="text-center bg-[#2E2E2E] group-hover:bg-[#595959]">
+                  <StatusToggleButton
+                    id={artist.id}
+                    type="artist"
+                    isActivated={true}
+                  />
                 </TableCell>
               </TableRow>
             ))}

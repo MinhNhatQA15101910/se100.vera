@@ -22,6 +22,7 @@ import DynamicImage from '@/components/custom/DynamicImage';
 import DeleteSongButton from '@/app/(app)/(artitst)/manage-songs/_components/DeleteSongButton';
 import { getAllSongs } from '@/actions/song-actions';
 import PaginationButtons from '@/components/PaginatedButtons';
+import StatusToggleButton from '@/components/StatusToggleButton'; // Import component toggle
 
 const AdminSongList = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -61,6 +62,10 @@ const AdminSongList = () => {
               Time
             </TableHead>
             <TableHead className="text-white text-center">Manage</TableHead>
+            <TableHead className="text-white text-center">
+              Status
+            </TableHead>{' '}
+            {/* Header mới */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -108,6 +113,13 @@ const AdminSongList = () => {
               </TableCell>
               <TableCell className="text-center bg-[#2E2E2E] group-hover:bg-[#595959] space-x-2">
                 <DeleteSongButton songId={song.id} />
+              </TableCell>
+              <TableCell className="text-center bg-[#2E2E2E] group-hover:bg-[#595959]">
+              <StatusToggleButton
+                  id={song.id}
+                  type="song"
+                  isActivated={true}
+                />
               </TableCell>
             </TableRow>
           ))}
