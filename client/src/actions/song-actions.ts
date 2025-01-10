@@ -154,9 +154,7 @@ export async function deleteSong(songId: number): Promise<void> {
   }
 }
 
-export async function getArtistSongsByArtistId(
-  artistId: number,
-) {
+export async function getArtistSongsByArtistId(artistId: number) {
   const token = getAuthTokenFromCookies();
 
   try {
@@ -245,14 +243,15 @@ export async function isFavoriteSong(songId: number): Promise<boolean> {
       },
     });
 
+    console.log('the fav: ', response.data);
+
     return response.data;
   } catch (error) {
     console.error('Error in checking Favourite song:', error);
     throw error;
   }
 }
-
-export async function ToggleFavoriteSongById(songId: number) {
+export async function toggleFavoriteSongById(songId: number): Promise<void> {
   const token = await getAuthTokenFromCookies();
 
   try {
@@ -263,7 +262,7 @@ export async function ToggleFavoriteSongById(songId: number) {
       },
     });
   } catch (error) {
-    console.error('Error in toggle like song:', error);
+    console.error('Error in toggling favorite song:', error);
     throw error;
   }
 }

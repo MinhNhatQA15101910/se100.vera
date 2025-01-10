@@ -3,7 +3,8 @@ import { toast } from 'react-toastify';
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 interface IErrorResponse {
-  code: string;
+  code?: string;
+  errorCode?: number;
   description: string;
 }
 
@@ -42,14 +43,33 @@ async function client<T>(
     });
 
     if (!response.ok) {
-      const errorData = (await response.json()) as IErrorResponse[];
-      toast.error(errorData[0].description)
-      throw {
-        data: errorData,
-        status: response.status,
-        ok: false,
-        headers: response.headers,
-      };
+      const contentType = response.headers.get('Content-Type');
+
+      if (contentType && contentType.includes('application/json')) {
+        const errorData = (await response.json()) as
+          | IErrorResponse
+          | IErrorResponse[];
+        const errorMessage = Array.isArray(errorData)
+          ? errorData[0]?.description
+          : errorData?.description;
+
+        toast.error(errorMessage || 'An error occurred');
+        throw {
+          data: errorData,
+          status: response.status,
+          ok: false,
+          headers: response.headers,
+        };
+      } else {
+        const errorText = await response.text();
+        toast.error(errorText || 'An error occurred');
+        throw {
+          data: { description: errorText },
+          status: response.status,
+          ok: false,
+          headers: response.headers,
+        };
+      }
     }
 
     const contentType = response.headers.get('Content-Type');

@@ -3,20 +3,21 @@
 import React, { useState } from 'react';
 import FormContainer from '@/components/FormContainer';
 import Image from 'next/image';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { LabelInputContainer } from '@/components/ui/label';
+import { Label, LabelInputContainer } from '@/components/ui/Label';
+import { Input } from '@/components/ui/Input';
 import { AppButton } from '@/components/ui/AppButton';
 import { useUser } from '@/contexts/UserContext';
 import * as z from 'zod';
 import { useLoading } from '@/contexts/LoadingContext';
+import { useRouter } from 'next/navigation';
 
 const resetPasswordSchema = z.object({
   email: z.string().email(),
 });
 
 const ResetPasswordForm = () => {
-  const { resetPassword } = useUser();
+  const router = useRouter();
+  const { resetPassword, userDetails } = useUser();
   const { setLoadingState } = useLoading();
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
     {}
@@ -89,19 +90,31 @@ const ResetPasswordForm = () => {
           placeholder="musicinmyheart@gmail.com"
           type="email"
           className="w-full"
+          defaultValue={userDetails?.email}
           onChange={handleInputChange}
         />
         {errors.email && (
           <span className="text-red-500 text-sm mt-1">{errors.email}</span>
         )}
       </LabelInputContainer>
-      <div className="flex w-full items-center justify-center">
+      <div className="flex w-full items-center justify-center space-x-6">
+        <AppButton
+          className="bg-general-pink hover:bg-general-pink-hover rounded-full h-12 w-full md:w-[120px] group"
+          type="button"
+          onClick={() => {
+            router.back();
+          }}
+        >
+          <p className="font-bold text-[14px] text-gray-950 group-hover:text-gray-700 transition-colors duration-200">
+            Return
+          </p>
+        </AppButton>
         <AppButton
           className="bg-general-pink hover:bg-general-pink-hover rounded-full h-12 w-full md:w-[120px] group"
           type="submit"
         >
           <p className="font-bold text-[14px] text-gray-950 group-hover:text-gray-700 transition-colors duration-200">
-            SEND LINK
+            Send Link
           </p>
         </AppButton>
       </div>

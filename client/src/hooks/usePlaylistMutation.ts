@@ -6,6 +6,7 @@ import {
   AddPlaylistPayload,
   createPlaylist,
   deletePlaylist,
+  addSongToPlaylist,
 } from '@/actions/playlist-actions';
 
 export function useAddPlaylistMutation() {
@@ -53,3 +54,36 @@ export const useDeletePlaylistMutation = () => {
 
   return mutation;
 };
+
+export function useAddSongToPlaylistMutation() {
+  const queryClient = useQueryClient();
+  const { setLoadingState } = useLoading();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      playlistId,
+      songId,
+    }: {
+      playlistId: number;
+      songId: number;
+    }) => {
+      setLoadingState(true);
+
+      try {
+        await addSongToPlaylist(playlistId, songId);
+      } catch (error) {
+        console.error('Error adding song to playlist:', error);
+        throw error;
+      } finally {
+        setLoadingState(false);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['playlists'],
+      });
+    },
+  });
+
+  return mutation;
+}

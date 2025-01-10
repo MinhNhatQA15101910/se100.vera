@@ -1,10 +1,9 @@
 'use client';
 
 import { AppButton } from '@/components/ui/AppButton';
-import { Input } from '@/components/ui/Input';
-import { Search } from 'lucide-react';
 import Link from 'next/link';
 import UserDropDown from '@/components/UserDropDown';
+import SearchBarBox from '@/components/SearchBarBox';
 
 const Links = [
   { title: 'About us' },
@@ -22,11 +21,7 @@ export default function MusicLanding() {
         {/* Navigation */}
         <nav className="container mx-auto p-4 flex items-center justify-between">
           <div className="relative w-[300px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              className="pl-10 bg-zinc-900 border-none text-white placeholder:text-muted-foreground"
-              placeholder="Search For Musics, Artists, ..."
-            />
+            <SearchBarBox />
           </div>
 
           <div className="flex items-center gap-8">

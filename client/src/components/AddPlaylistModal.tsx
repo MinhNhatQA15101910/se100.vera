@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/Input';
 import { Label } from './ui/Label';
 import { Textarea } from '@/components/ui/textarea';
 import { useAddPlaylistMutation } from '@/hooks/usePlaylistMutation';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 interface AddPlaylistModalProps {
   isOpen: boolean;
@@ -20,12 +22,13 @@ const AddPlaylistModal: React.FC<AddPlaylistModalProps> = ({
 }) => {
   return (
     <Modal isOpen={isOpen} onChange={onClose} title="CREATE PLAYLIST">
-      <CreateNewPlaylistForm />
+      <CreateNewPlaylistForm onClose={onClose} />
     </Modal>
   );
 };
 
-export function CreateNewPlaylistForm() {
+export function CreateNewPlaylistForm({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     playlistName: '',
     description: '',
@@ -79,12 +82,22 @@ export function CreateNewPlaylistForm() {
     }
 
     try {
-      addPlaylistMutation.mutate({
-        description: formData.description,
-        playlistName: formData.playlistName,
-      });
+      addPlaylistMutation.mutate(
+        {
+          description: formData.description,
+          playlistName: formData.playlistName,
+        },
+        {
+          onSuccess: () => {
+            toast.success('Playlist Added Successfully!');
+            onClose(); // Close the modal on success
+          },
+        }
+      );
     } catch (error) {
       console.error('Error submitting form:', error);
+    } finally {
+      router.push('/your-playlist');
     }
   };
 

@@ -22,6 +22,7 @@ import { getArtistSongsByArtistId } from '@/actions/song-actions';
 import { getArtistAlbums } from '@/actions/album-actions';
 import { useLoading } from '@/contexts/LoadingContext';
 import DynamicImage from '@/components/custom/DynamicImage';
+import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
 
 export default function ArtistDetailPage() {
   const searchParams = useSearchParams();
@@ -63,7 +64,10 @@ export default function ArtistDetailPage() {
             <div className="flex-col items-center gap-8 mb-8 relative">
               <div className="relative w-full">
                 <Image
-                  src={theArtist?.songs[0]?.publisherImageUrl || ''}
+                  src={
+                    theArtist?.songs[0]?.publisherImageUrl ||
+                    'https://picsum.photos/400/400?random=99'
+                  }
                   alt="Eminem"
                   width={1000} // Provide the width explicitly
                   height={400} // Provide the height explicitly
@@ -79,7 +83,7 @@ export default function ArtistDetailPage() {
               </div>
               <div className="-mt-16 ml-4">
                 <h1 className="text-8xl font-bold text-general-pink drop-shadow-lg">
-                  {theArtist?.songs[0]?.publisherName || ""}
+                  {theArtist?.songs[0]?.publisherName || ''}
                 </h1>
               </div>
             </div>
@@ -136,6 +140,14 @@ export default function ArtistDetailPage() {
                         <span>Time</span>
                       </Button>
                     </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      >
+                        <span>Actions</span>
+                      </Button>
+                    </TableHead>
                   </TableHeader>
                   <TableBody>
                     {theArtist?.songs.map((song, index) => (
@@ -154,7 +166,7 @@ export default function ArtistDetailPage() {
                                 song.songPhotoUrl ||
                                 'https://picsum.photos/400/400?random=42'
                               }
-                              className="w-14 h-14"
+                              className="w-14 h-14 "
                             />
                             <div>
                               <p className="font-bold text-white">
@@ -179,11 +191,13 @@ export default function ArtistDetailPage() {
                         </TableCell>
                         <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                           <div className="flex items-center">
-                            <span>{song.duration}</span>
-                            <div className="ml-4">
-                              <LikeButton songId={song.id} />
-                            </div>
-                            <div className="ml-4"></div>
+                            <span>{song.duration.slice(-5)}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                          <div className="ml-4 flex flex-row justify-around">
+                            <LikeButton songId={song.id} />
+                            <AddToPlaylistButton songId={song.id} />
                           </div>
                         </TableCell>
                       </TableRow>

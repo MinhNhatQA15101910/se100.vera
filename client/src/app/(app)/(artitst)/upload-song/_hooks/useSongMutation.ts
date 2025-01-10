@@ -8,7 +8,7 @@ import {
   AddSongPayload,
   UpdateSongPayload,
   updateSong,
-  ToggleFavoriteSongById,
+  toggleFavoriteSongById,
 } from '@/actions/song-actions';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
@@ -16,7 +16,7 @@ import { useLoading } from '@/contexts/LoadingContext';
 enum Role {
   Admin = 'Admin',
   Artist = 'Artist',
-  User = 'User',
+  Listener = 'Listener'
 }
 
 export function useAddSongMutation() {
@@ -127,11 +127,11 @@ export function useLikeSongMutation() {
 
   const mutation = useMutation({
     mutationFn: async (songId: number) => {
-      await ToggleFavoriteSongById(songId);
+      await toggleFavoriteSongById(songId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: ['songs'],
+        queryKey: ['is_fav_song'],
       });
     },
   });

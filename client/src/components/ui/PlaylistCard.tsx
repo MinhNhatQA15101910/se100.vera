@@ -23,7 +23,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
           {playlist.playlistName}
         </h3>
         <p className="text-gray-400 text-sm">
-          {playlist.songs.length} songs • {playlist.totalListeningHours}
+          {playlist.songs.length} songs
         </p>
       </div>
     </Link>

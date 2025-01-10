@@ -9,6 +9,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useUser } from '@/contexts/UserContext';
 
+enum Role {
+  Artist = 'Artist',
+  Listener = 'Listener',
+  Admin = 'Admin',
+}
+
 export function useDeleteAlbumMutation() {
   const queryClient = useQueryClient();
 
@@ -19,7 +25,7 @@ export function useDeleteAlbumMutation() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: ['albums'],
+        queryKey: ['all_albums'],
       });
     },
   });
@@ -44,7 +50,7 @@ export function useAddAlbumMutation() {
           formData.append(`photoFiles[${index}]`, file);
         });
       }
-      if (userDetails?.id && userDetails.roles[0] === 'Artist') {
+      if (userDetails?.id && userDetails.roles.includes(Role.Artist)) {
         formData.append('artistIds', userDetails?.id.toString());
       } else {
         throw new Error('You have some problems to add this album bro.');
@@ -57,7 +63,7 @@ export function useAddAlbumMutation() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: ['albums'],
+        queryKey: ['all_albums'],
       });
     },
   });

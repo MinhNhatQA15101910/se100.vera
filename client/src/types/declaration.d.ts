@@ -1,7 +1,7 @@
 export enum Role {
   Admin = 'Admin',
   Artist = 'Artist',
-  User = 'User',
+  Listener = 'Listener'
 }
 
 export type GenderType = 'male' | 'female';

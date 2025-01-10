@@ -110,7 +110,7 @@ export async function addSongToAlbum(albumId: number, songId: number) {
   const token = await getAuthTokenFromCookies();
 
   try {
-    await client<Album[]>(`/api/albums/add-song/${albumId}`, {
+    await client(`/api/albums/add-song/${albumId}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,

@@ -42,7 +42,7 @@ const formSchema = z.object({
       (file) => file.size <= 5 * 1024 * 1024, // 5MB limit
       'File size must be less than 5MB'
     ),
-  artistIds: z.array(z.number()).min(1, 'At least one song is required'),
+  artistIds: z.array(z.number()).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -100,7 +100,7 @@ export default function UploadForm() {
         albumName: data.albumName,
         description: data.description || '',
         photoFiles: [data.photoFiles],
-        artistIds: data.artistIds,
+        artistIds: data.artistIds || [],
       },
       {
         onSuccess: () => {

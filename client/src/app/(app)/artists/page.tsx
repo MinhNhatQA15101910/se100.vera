@@ -31,9 +31,11 @@ export default function ArtistsPage() {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {artistsData?.artists.slice(0, 5).map((artist, idx) => (
-                  <ArtistCard key={idx} artist={artist} />
-                ))}
+                {artistsData
+                  ?.slice(0, 5)
+                  .map((artist, idx) => (
+                    <ArtistCard key={idx} artist={artist} />
+                  ))}
               </div>
             </div>
 
@@ -46,9 +48,11 @@ export default function ArtistsPage() {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {artistsData?.artists.slice(0, 5).map((artist, idx) => (
-                  <ArtistCard key={idx} artist={artist} />
-                ))}
+                {artistsData
+                  ?.slice(0, 5)
+                  .map((artist, idx) => (
+                    <ArtistCard key={idx} artist={artist} />
+                  ))}
               </div>
             </div>
 
@@ -59,9 +63,11 @@ export default function ArtistsPage() {
                 <span className="text-[#EE10B0]">Artists</span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {artistsData?.artists ? [...artistsData.artists, ...artistsData.artists].map((artist, index) => (
-                  <ArtistCard key={index} artist={artist} />
-                )) : null}
+                {artistsData
+                  ? [...artistsData, ...artistsData].map((artist, index) => (
+                      <ArtistCard key={index} artist={artist} />
+                    ))
+                  : null}
               </div>
             </div>
           </div>

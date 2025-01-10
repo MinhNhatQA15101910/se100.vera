@@ -14,7 +14,7 @@ const AlbumToAddModal = ({ songId }: { songId: number }) => {
   const { userDetails } = useUser();
   const { setLoadingState } = useLoading();
   const { data: albums, isLoading } = useQuery({
-    queryKey: ['albums'],
+    queryKey: ['all_albums'],
     queryFn: async () => await getArtistAlbums(userDetails?.id || -1),
   });
   const addSongToAlbumMutation = useAddSongToAlbumMutation();
@@ -38,7 +38,7 @@ const AlbumToAddModal = ({ songId }: { songId: number }) => {
   }, [isLoading]);
 
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-2 gap-4">
       {albums?.map((album, index) => {
         return (
           <div
@@ -52,8 +52,8 @@ const AlbumToAddModal = ({ songId }: { songId: number }) => {
               className="w-14 h-14"
             />
 
-            <span className="text-general-white">{album.albumName}</span>
-            <span className="text-general-white">{album.totalSongs}</span>
+            <span className="text-general-pink">{album.albumName}</span>
+            <span className="text-general-white text-nowrap truncate">{album.totalSongs} songs</span>
           </div>
         );
       })}

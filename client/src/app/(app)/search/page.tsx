@@ -10,10 +10,15 @@ import { useLoading } from '@/contexts/LoadingContext';
 import { getAllArtists } from '@/actions/user-actions';
 import { useEffect } from 'react';
 
+import { useSearchParams } from 'next/navigation';
+
 export default function SearchPage() {
+  const params = useSearchParams();
+  const { setLoadingState } = useLoading();
+
   const [
     { data: albumData, isLoading: albumIsLoading },
-    { data: songData, isLoading: songIsLoading }, 
+    { data: songData, isLoading: songIsLoading },
     { data: artistsData, isLoading: artistIsLoading },
   ] = useQueries({
     queries: [
@@ -31,7 +36,6 @@ export default function SearchPage() {
       },
     ],
   });
-  const { setLoadingState } = useLoading();
 
   useEffect(() => {
     setLoadingState(albumIsLoading || songIsLoading || artistIsLoading);
@@ -63,7 +67,7 @@ export default function SearchPage() {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {artistsData?.artists?.map((artist, idx) => (
+                {artistsData?.map((artist, idx) => (
                   <ArtistCard key={idx} artist={artist} />
                 ))}
               </div>

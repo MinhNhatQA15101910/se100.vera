@@ -4,13 +4,15 @@ import React from 'react';
 
 import AlbumCard from '@/components/ui/AlbumCard';
 import { useQuery } from '@tanstack/react-query';
-import { getAllAlbums } from '@/actions/album-actions';
+import { getArtistAlbums } from '@/actions/album-actions';
 import { useLoading } from '@/contexts/LoadingContext';
+import { useUser } from '@/contexts/UserContext';
 
 const AlbumList = () => {
+  const { userDetails } = useUser();
   const { data, isLoading } = useQuery({
-    queryKey: ['all_albums'],
-    queryFn: async () => await getAllAlbums(),
+    queryKey: ['albums'],
+    queryFn: async () => await getArtistAlbums(userDetails?.id || -1),
   });
   const { setLoadingState } = useLoading();
 

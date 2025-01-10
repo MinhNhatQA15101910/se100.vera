@@ -12,7 +12,7 @@ const YourPlaylist = () => {
   const { userDetails } = useUser();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['user_playlists'],
+    queryKey: ['playlists'],
     queryFn: async () => await getOwnPlaylist(userDetails?.id || 1),
   });
 

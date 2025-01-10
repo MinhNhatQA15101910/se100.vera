@@ -8,6 +8,8 @@ import { AppButton } from '@/components/ui/AppButton';
 import Modal from '@/components/Modal';
 import ActivateArtistForm from './ActivateArtistForm';
 import { formatDate } from '@/lib/utils';
+import EditProfileButton from '@/components/EditProfileButton';
+import ChangePasswordButton from '@/components/ChangePasswordButton';
 
 export default function ListenerProfile() {
   const { userDetails } = useUser();
@@ -28,7 +30,7 @@ export default function ListenerProfile() {
     },
     {
       title: 'Date of birth',
-      detail: formatDate(userDetails?.dateOfBirth || "N/A"),
+      detail: formatDate(userDetails?.dateOfBirth || 'N/A'),
     },
   ];
 
@@ -88,12 +90,8 @@ export default function ListenerProfile() {
         >
           Activate Artist Account
         </AppButton>
-        <AppButton className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl">
-          Change Profile
-        </AppButton>
-        <AppButton className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl">
-          Change Password
-        </AppButton>
+        <EditProfileButton user={userDetails} />
+        <ChangePasswordButton />
       </div>
 
       {/* Modal */}

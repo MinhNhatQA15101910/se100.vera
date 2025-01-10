@@ -19,7 +19,7 @@ export function useAddSongToAlbumMutation() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: ['manage_albums'],
+        queryKey: ['all_albums'],
       });
     },
   });

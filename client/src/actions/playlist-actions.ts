@@ -98,3 +98,20 @@ export async function deletePlaylist(playlistId: number): Promise<void> {
     throw error;
   }
 }
+
+export async function addSongToPlaylist(playlistId: number, songId: number) {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client<Playlist[]>(`/api/playlists/add-song/${playlistId}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ songId }),
+    });
+  } catch (error) {
+    console.error('add song to playlist error: ', error);
+    throw error;
+  }
+}

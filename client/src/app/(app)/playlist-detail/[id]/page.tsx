@@ -32,10 +32,12 @@ import {
 import { Edit, Delete } from 'lucide-react';
 import { useDeletePlaylistMutation } from '@/hooks/usePlaylistMutation';
 import { toast } from 'react-toastify';
+import usePlayerStore from '@/stores/player-store';
 
 const PlaylistDetail = () => {
   const params = useParams();
   const router = useRouter();
+  const { setActiveTrack, setPlaylist } = usePlayerStore();
   const { id } = params;
   const { setLoadingState } = useLoading();
 
@@ -62,8 +64,9 @@ const PlaylistDetail = () => {
   };
 
   useEffect(() => {
+    setPlaylist(playlistDetail?.songs || []);
     setLoadingState(isLoading);
-  }, [isLoading]);
+  }, [isLoading, playlistDetail]);
 
   return (
     <div className="flex min-h-screen w-full overflow-hidden">
@@ -184,6 +187,9 @@ const PlaylistDetail = () => {
                     <TableRow
                       key={index}
                       className="border-none cursor-pointer hover:bg-transparent group"
+                      onClick={() => {
+                        setActiveTrack(song);
+                      }}
                     >
                       <TableCell className="font-bold text-lg">
                         {index + 1}

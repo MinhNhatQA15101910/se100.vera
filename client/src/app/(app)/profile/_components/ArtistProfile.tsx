@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppButton } from '@/components/ui/AppButton';
+import EditProfileButton from '@/components/EditProfileButton';
+import ChangePasswordButton from '@/components/ChangePasswordButton';
 
 export default function ArtistProfile() {
   const { userDetails } = useUser();
@@ -37,7 +39,10 @@ export default function ArtistProfile() {
         <div className="flex flex-col space-y-1.5 p-6">
           <div className="flex items-center gap-6">
             <Avatar className="w-[25%] h-auto border-4 border-white/10">
-              <AvatarImage src={userDetails?.photoUrl || "https://github.com/shadcn.png"} alt="@shadcn" />
+              <AvatarImage
+                src={userDetails?.photoUrl || 'https://github.com/shadcn.png'}
+                alt="@shadcn"
+              />
               <AvatarFallback>Load chưa xong</AvatarFallback>
             </Avatar>
             <div className="flex flex-col justify-center">
@@ -102,12 +107,8 @@ export default function ArtistProfile() {
 
       {/* Displaying buttons */}
       <div className="flex flex-col w-full space-y-2">
-        <AppButton className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl">
-          Change profile
-        </AppButton>
-        <AppButton className="w-full bg-[#FF1493] hover:bg-[#FF1493]/90 text-white h-12 rounded-xl">
-          Change password
-        </AppButton>
+        <EditProfileButton user={userDetails} />
+        <ChangePasswordButton />
       </div>
     </div>
   );

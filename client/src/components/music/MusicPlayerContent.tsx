@@ -25,6 +25,7 @@ import DynamicImage from '../custom/DynamicImage';
 import usePlayerStore from '@/stores/player-store';
 import useSound from 'use-sound';
 import { formatTime } from '@/lib/utils';
+import { FaDoorClosed } from 'react-icons/fa';
 
 interface PlaybackControlProps {
   isPlaying: boolean;
@@ -145,6 +146,8 @@ const MusicPlayerContent = () => {
     togglePlaylistMode,
     playlist,
     setActiveTrack,
+    setPlaylist,
+    reset,
   } = usePlayerStore();
 
   const [play, { pause, sound }] = useSound(activeSong?.musicUrl || '', {
@@ -158,30 +161,40 @@ const MusicPlayerContent = () => {
       const currentIndex = playlist.findIndex(
         (song) => song.id === activeSong?.id
       );
-      if (currentIndex >= 0 && currentIndex < playlist.length - 1) {
-        onNext();
+      if (currentIndex !== -1) {
+        if (currentIndex < playlist.length - 1) {
+          onNext();
+        } else {
+          // Reset to first song if at end of playlist
+          setActiveTrack(playlist[0]);
+        }
       }
     },
     onpause: () => onPause(),
     format: ['mp3'],
     onload: () => {
       setIsLoading(false);
-      play();
+      if (isPlaying) {
+        play();
+      }
     },
     onloaderror: () => {
       setIsLoading(false);
       console.error('Error loading audio');
       alert('Failed to load the audio. Please try again.');
+      // Try to load next song on error
+      onNext();
     },
   });
 
   const handlePlayPause = React.useCallback((): void => {
+    if (!activeSong) return;
     if (isPlaying) {
       pause();
     } else {
       play();
     }
-  }, [isPlaying, pause, play]);
+  }, [isPlaying, pause, play, activeSong]);
 
   const handleVolumeChange = React.useCallback(
     (value: number): void => {
@@ -209,7 +222,7 @@ const MusicPlayerContent = () => {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [sound]);
+  }, [sound, setCurrentDuration]);
 
   React.useEffect(() => {
     setMounted(true);
@@ -222,12 +235,13 @@ const MusicPlayerContent = () => {
   }, [volume, sound]);
 
   React.useEffect(() => {
+    setIsLoading(true);
     if (sound) {
       sound.unload();
     }
     if (activeSong) {
-      setIsLoading(true);
       play();
+      setIsLoading(false);
     }
   }, [activeSong, play, sound]);
 
@@ -238,11 +252,6 @@ const MusicPlayerContent = () => {
       sound.unload();
     };
   }, [sound]);
-  React.useEffect(() => {
-    if (playlist.length > 0) {
-      setActiveTrack(playlist[0]);
-    }
-  }, [playlist]);
 
   if (!mounted || !activeSong) {
     return null;
@@ -281,6 +290,14 @@ const MusicPlayerContent = () => {
                 icon={Shuffle}
                 tooltip="Shuffle"
                 disabled={isLoading}
+                onClick={() => {
+                  const shuffledPlaylist = [...playlist].sort(
+                    () => Math.random() - 0.5
+                  );
+                  setPlaylist(shuffledPlaylist);
+
+                  setActiveTrack(shuffledPlaylist[0]);
+                }}
               />
             )}
             {playlist.length > 1 && (
@@ -358,6 +375,12 @@ const MusicPlayerContent = () => {
             disabled={isLoading}
           />
         </div>
+      </div>
+      <div className="absolute right-0 bottom-0 bg-transparent">
+        <FaDoorClosed
+          className="text-general-blue hover:text-general-pink duration-200 transition-colors"
+          onClick={reset}
+        />
       </div>
     </div>
   );

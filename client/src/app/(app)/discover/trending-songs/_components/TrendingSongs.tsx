@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@/contexts/LoadingContext';
 import { getAllSongs } from '@/actions/song-actions';
 import usePlayerStore from '@/stores/player-store';
+import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
 
 export default function TrendingSongs() {
   const { setLoadingState } = useLoading();
@@ -57,6 +58,7 @@ export default function TrendingSongs() {
               Album
             </TableHead>
             <TableHead className="text-right text-white">Time</TableHead>
+            <TableHead className="text-right text-white">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -96,10 +98,15 @@ export default function TrendingSongs() {
                 </TableCell>
                 <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                   <div className="flex items-center justify-end space-x-4">
-                    <LikeButton songId={song.id} />
                     <span className="text-gray-400 mx-auto">
                       {song.duration.slice(-5)}
                     </span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
+                  <div className="flex items-center justify-end space-x-4">
+                    <LikeButton songId={song.id} />
+                    <AddToPlaylistButton songId={song.id} />
                   </div>
                 </TableCell>
               </TableRow>

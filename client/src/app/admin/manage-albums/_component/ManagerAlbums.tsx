@@ -10,7 +10,7 @@ const ManageAlbums = () => {
   const { setLoadingState } = useLoading();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['manage_albums'],
+    queryKey: ['albums'],
     queryFn: async () => await getAllAlbums(),
   });
 

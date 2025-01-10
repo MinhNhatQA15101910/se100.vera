@@ -1,41 +1,81 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { IoAddOutline } from 'react-icons/io5';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useQuery } from '@tanstack/react-query';
 import { getOwnPlaylist } from '@/actions/playlist-actions';
 import { useUser } from '@/contexts/UserContext';
+import { useAddSongToPlaylistMutation } from '@/hooks/usePlaylistMutation';
+import DynamicImage from '../custom/DynamicImage';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
-export default function ChoosePlaylistCard({ songId }: { songId: number }) {
+export default function ChoosePlaylistCard({
+  songId,
+  closeModal,
+}: {
+  songId: number;
+  closeModal?: () => void;
+}) {
+  const router = useRouter();
   const { setLoadingState } = useLoading();
   const { userDetails } = useUser();
   const { data: ownPlaylists, isLoading } = useQuery({
-    queryKey: ['playlists'],
-    queryFn: async () => await getOwnPlaylist(userDetails?.id || -1),
+    queryKey: ['playlists', userDetails?.id],
+    queryFn: async () => {
+      if (!userDetails?.id) {
+        throw new Error('User ID is not available');
+      }
+      return await getOwnPlaylist(userDetails.id);
+    },
   });
+  const addSongToPlaylistMutation = useAddSongToPlaylistMutation();
+
+  const handleAddSongToPlaylist = (playlistId: number) => {
+    addSongToPlaylistMutation.mutate(
+      { playlistId: playlistId, songId: songId },
+      {
+        onSuccess: () => {
+          toast.success('Added successfully!');
+          if (closeModal) {
+            closeModal();
+          }
+          router.refresh();
+        },
+        onError: (error) => {
+          console.error('Error adding song to playlist:', error);
+          toast.error('Failed to add song to playlist');
+        },
+      }
+    );
+  };
 
   useEffect(() => {
     setLoadingState(isLoading);
-  }, [isLoading]);
+  }, [isLoading, setLoadingState]);
 
   return (
-    <div>
-      <div className="p-6 h-96 overflow-y-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="p-4 bg-[#1F1F1F] rounded-lg cursor-pointer hover:bg-gray-700 transition flex flex-col justify-center items-center">
-            <div className="w-16 h-16 bg-[#EE10B0] text-white rounded-full flex justify-center items-center text-4xl font-bold">
-              <IoAddOutline />
-            </div>
-            <h3 className="text-white text-md font-lg mt-4">
-              Create a Playlist
-            </h3>
-          </div>
+    <div className="grid grid-cols-2 gap-4">
+      {ownPlaylists?.map((playlist) => {
+        return (
+          <div
+            key={playlist.id}
+            onClick={() => handleAddSongToPlaylist(playlist.id)}
+            className="flex flex-row justify-between items-center bg-transparent hover:bg-slate-500/40 rounded-md space-x-6 p-2 transition-colors duration-200 cursor-pointer"
+          >
+            <DynamicImage
+              src={'https://picsum.photos/400/400'}
+              alt={playlist.playlistName || ''}
+              className="w-14 h-14"
+            />
 
-          {/* Existing playlists */}
-          {ownPlaylists?.map((playlist, index) => <div key={index}></div>)}
-        </div>
-      </div>
+            <span className="text-general-pink text-nowrap">{playlist.playlistName}</span>
+            <span className="text-general-white text-nowrap truncate">
+              {playlist.totalSongs} songs
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

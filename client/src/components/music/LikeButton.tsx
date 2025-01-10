@@ -19,8 +19,9 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
   const { userDetails } = useUser();
   const { setLoadingState } = useLoading();
   const likeSongMutation = useLikeSongMutation();
+
   const { data, isLoading } = useQuery({
-    queryKey: ['is_fav_song'],
+    queryKey: ['is_fav_song', `${songId}`],
     queryFn: async () => await isFavoriteSong(songId),
   });
 
@@ -36,9 +37,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
 
   const handleLike = async () => {
     likeSongMutation.mutate(userDetails?.id || -1, {
-      onSuccess: () => {
-        toast.success('Song Added to Favorites!');
-      },
+      onSuccess: () => {},
       onError: (error) => {
         toast.error(error.message);
       },

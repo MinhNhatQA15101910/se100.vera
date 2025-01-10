@@ -8,7 +8,7 @@ import { useUser } from '@/contexts/UserContext';
 enum Role {
   Admin = 'Admin',
   Artist = 'Artist',
-  User = 'User',
+  Listener = 'Listener'
 }
 
 const UserProfile = () => {
