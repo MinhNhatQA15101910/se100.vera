@@ -22,13 +22,9 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IAlbumRepository, AlbumRepository>();
-        services.AddScoped<IAlbumSongRepository, AlbumSongRepository>();
-        services.AddScoped<IArtistSongRepository, ArtistSongRepository>();
         services.AddScoped<IPlaylistRepository, PlaylistRepository>();
-        services.AddScoped<IPlaylistSongRepository, PlaylistSongRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<ISongRepository, SongRepository>();
-        services.AddScoped<ISongGenreRepository, SongGenreRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

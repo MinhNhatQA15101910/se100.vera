@@ -107,10 +107,14 @@ public class GenresController(
             return NotFound();
         }
 
-        var songGenres = await unitOfWork.SongGenreRepository.GetSongGenresByGenreIdAsync(id);
-        if (songGenres != null)
+        if (genre.Songs.Count > 0)
         {
             return BadRequest("Genre is associated with songs");
+        }
+
+        if (genre.Albums.Count > 0)
+        {
+            return BadRequest("Genre is associated with albums");
         }
 
         unitOfWork.GenreRepository.RemoveGenre(genre);
@@ -120,6 +124,6 @@ public class GenresController(
             return BadRequest("Failed to delete genre");
         }
 
-        return NoContent();
+        return Ok();
     }
 }

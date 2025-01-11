@@ -35,7 +35,10 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
 
    public async Task<Genre?> GetGenreByIdAsync(int id)
    {
-      return await context.Genres.FindAsync(id);
+      return await context.Genres
+         .Include(g => g.Songs)
+         .Include(g => g.Albums)
+         .FirstOrDefaultAsync(g => g.Id == id);
    }
 
    public async Task<Genre?> GetGenreByNameAsync(string name)

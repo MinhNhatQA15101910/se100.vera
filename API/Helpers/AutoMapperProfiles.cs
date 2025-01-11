@@ -1,5 +1,6 @@
 using API.DTOs.Artists;
 using API.DTOs.Files;
+using API.DTOs.Genres;
 using API.DTOs.Songs;
 using API.DTOs.Users;
 using API.Entities;
@@ -27,7 +28,7 @@ public class AutoMapperProfiles : Profile
                     s => s.UserRoles.Select(x => x.Role.Name)
                 )
             );
-        
+
         CreateMap<RegisterDto, AppUser>()
             .ForMember(
                 u => u.UserName,
@@ -80,6 +81,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<NewSongDto, Song>();
 
         CreateMap<UpdateSongDto, Song>();
+
+        CreateMap<Genre, GenreDto>();
+
+        CreateMap<AddUpdateGenreDto, Genre>();
         // CreateMap<ArtistSong, UserDto>()
         //     .ForMember(
         //         d => d.Id,
@@ -212,8 +217,6 @@ public class AutoMapperProfiles : Profile
         //         a => a.ArtistName,
         //         o => o.MapFrom(x => x.Artist.ArtistName)
         //     );
-        // CreateMap<Genre, GenreDto>();
-        // CreateMap<AddUpdateGenreDto, Genre>();
         // CreateMap<NewPlaylistDto, Playlist>();
         // CreateMap<UpdatePlaylistDto, Playlist>()
         //     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));

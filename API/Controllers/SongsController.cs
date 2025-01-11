@@ -282,6 +282,9 @@ public class SongsController(
             song.Photos.Add(songPhoto);
         }
 
+        // Update timestamp
+        song.UpdatedAt = DateTime.UtcNow;
+
         if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to update song.");
