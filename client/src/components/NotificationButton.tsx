@@ -3,8 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
-import { MdOutlineNotifications } from 'react-icons/md';
 import NotificationItem from './NotificationItem';
+import { Button } from './ui/button';
+import { Bell } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface Notification {
   id: number;
@@ -16,7 +23,6 @@ const NotificationButton: React.FC = () => {
   const router = useRouter();
   const { userDetails } = useUser();
 
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
@@ -54,30 +60,34 @@ const NotificationButton: React.FC = () => {
     ]);
   }, [userDetails?.id]);
 
-  const toggleDropdown = () => {
-    setIsDropdownVisible(!isDropdownVisible);
-  };
-
   return (
-    <div className="relative">
-      <button onClick={toggleDropdown}>
-        <div className="flex rounded-full bg-general-pink hover:text-general-pink-hover transition-colors duration-200 w-8 h-8 items-center justify-center ml-2">
-          <MdOutlineNotifications size="24" className="text-white" />
-        </div>
-      </button>
-      {isDropdownVisible && (
-        <div className="absolute right-0 mt-2 w-80 bg-pink-500 text-white rounded-lg shadow-lg z-10">
-          <ul className="">
-            {notifications.map((notification) => (
-              <NotificationItem
-                key={notification.id}
-                notification={notification}
-              />
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="default"
+          size="icon"
+          className="focus:outline-none rounded-full [&_svg]:size-[20px]"
+          onClick={toggleDropdown}
+        >
+          <Bell className="text-general-pink" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end"
+        className="border-none bg-zinc-800 text-general-pink-hover rounded-none font-semibold p-2
+             divide-y-2 divide-zinc-700"
+      >
+        {notifications.map((notification) => (
+          <DropdownMenuItem
+            key={notification.id}
+            className=" focus:bg-zinc-700 focus:text-general-pink-hover text-md"
+          >
+            <NotificationItem
+              notification={notification}
+            />
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

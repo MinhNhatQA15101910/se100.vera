@@ -1,5 +1,6 @@
 'use client';
 
+import { Check, CircleCheck, CircleX } from 'lucide-react';
 import React from 'react';
 
 interface Notification {
@@ -16,12 +17,14 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   notification,
 }) => {
   return (
-    <li className={`flex items-center p-2 border border-white`}>
-      <span className="mr-2">
-        {notification.status === 'success' ? '✅' : '❌'}
-      </span>
+    <div className={`flex flex-row w-full h-full items-center p-2`}>
+      <div className='mr-2'>
+        {notification.status === "success"
+          ? <CircleCheck className='text-green-500' />
+          : <CircleX className='text-red-500' />}
+      </div>
       {notification.message}
-    </li>
+    </div>
   );
 };
 

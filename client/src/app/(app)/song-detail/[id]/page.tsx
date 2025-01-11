@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { GoPlay } from 'react-icons/go';
-import { IoArrowBack } from 'react-icons/io5';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import Image from 'next/image';
 import {
@@ -14,7 +12,6 @@ import {
   TableRow,
 } from '@/components/ui/tableV2';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import LikeButton from '@/components/music/LikeButton';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -30,7 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Delete, Edit } from 'lucide-react';
+import { ArrowLeftIcon, Delete, Edit, PlayIcon } from 'lucide-react';
 import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
@@ -94,97 +91,98 @@ const Page: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="bg-dark-blue-gradient rounded-lg">
             <div className="w-full bg-blue-gradient rounded-lg">
-              <div className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <button
-                      onClick={() => router.back()}
-                      className="focus:outline-none"
-                      aria-label="Go back"
+              <div className="flex justify-between items-center p-4">
+                <Button
+                  onClick={() => router.back()}
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-transparent rounded-full w-fit [&_svg]:size-[40px]"
+                  aria-label="Go back"
+                >
+                  <ArrowLeftIcon className="text-white stroke-[3px]" />
+                </Button>
+
+                {userDetails?.roles[0] === 'Artist' && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <FiMoreHorizontal className="text-4xl text-white hover:text-general-pink-hover" />
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 bg-general-pink border-general-pink-border"
                     >
-                      <IoArrowBack className="text-4xl text-white" />
-                    </button>
-                  </div>
-                  {userDetails?.roles[0] === 'Artist' && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <FiMoreHorizontal className="text-4xl text-white hover:text-general-pink-hover" />
-                      </DropdownMenuTrigger>
-
-                      <DropdownMenuContent
-                        align="end"
-                        className="w-56 bg-general-pink border-general-pink-border"
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-general-pink-border" />
+                      <DropdownMenuItem
+                        className="hover:bg-general-pink-hover"
+                        onClick={() => { }}
                       >
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-general-pink-border" />
-                        <DropdownMenuItem
-                          className="hover:bg-general-pink-hover"
-                          onClick={() => {}}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-general-pink-border" />
-                        <DropdownMenuItem onClick={handleDeleteAlbum}>
-                          <Delete className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
-                </div>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-general-pink-border" />
+                      <DropdownMenuItem onClick={handleDeleteAlbum}>
+                        <Delete className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
 
-              <div className="p-4">
-                <div className="grid grid-cols-12 items-start gap-12 mb-8">
-                  <Image
-                    src={
-                      songDetailData?.songPhotoUrl ||
-                      'https://picsum.photos/400/400?random=4'
-                    }
-                    alt={songDetailData?.songName || 'X'}
-                    width={268}
-                    height={268}
-                    className="col-span-3 rounded-md object-cover shadow-2xl"
-                  />
-                  <div className="flex flex-col col-span-6 text-white">
-                    <h1 className="text-3xl font-bold mb-4">
-                      {songDetailData?.songName}
-                    </h1>
-                    <div className="flex items-center space-x-4 mb-2">
-                      <DynamicImage
-                        alt="Artist Image"
-                        src={
-                          songDetailData?.publisherImageUrl ||
-                          'https://picsum.photos/400/400?random=42'
-                        }
-                        className="w-14 h-14 flex items-center rounded-full"
-                      />
-                      <div>
-                        <p className="font-bold text-white text-nowrap truncate">
-                          {songDetailData?.publisherName}
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-muted-foreground mt-2 line-clamp-4 text-white mb-4">
-                      {songDetailData?.description}
+              <div className="grid grid-cols-12 items-start gap-12 mb-8 p-4">
+                <Image
+                  src={
+                    songDetailData?.songPhotoUrl ||
+                    'https://picsum.photos/400/400?random=4'
+                  }
+                  alt={songDetailData?.songName || 'X'}
+                  width={268}
+                  height={268}
+                  className="col-span-3 rounded-lg object-cover shadow-2xl"
+                />
+                <div className="flex flex-col col-span-6 text-white space-y-4">
+                  <h1 className="text-3xl font-bold">
+                    {songDetailData?.songName}
+                  </h1>
+                  <div className="flex items-center space-x-4">
+                    <DynamicImage
+                      alt="Artist Image"
+                      src={
+                        songDetailData?.publisherImageUrl ||
+                        'https://picsum.photos/400/400?random=42'
+                      }
+                      className="w-14 h-14 flex items-center rounded-full"
+                    />
+                    <p className="font-bold text-white text-nowrap truncate">
+                      {songDetailData?.publisherName}
                     </p>
-                    <div className="flex items-center space-x-2 mt-auto">
-                      <p className="text-lg font-bold">
-                        {'Duration: ' + songDetailData?.duration.slice(3, 8)}
-                      </p>
-                    </div>
                   </div>
-                  <div className="flex h-60 col-span-3 justify-end items-end mr-6">
-                    <button className="flex justify-center items-center space-x-2 focus:outline-none">
-                      <span className="text-lg font-medium text-[#EE10B0]">
-                        Play
-                      </span>
-                      <GoPlay className="text-6xl text-[#EE10B0]" />
-                    </button>
-                  </div>
+
+                  <p className="text-muted-foreground mt-2 line-clamp-4 text-white mb-4">
+                    {songDetailData?.description}
+                  </p>
+
+                  <p className="text-lg font-bold">
+                    {'Duration: ' + songDetailData?.duration.slice(3, 8)}
+                  </p>
+
                 </div>
+
+                <div className="flex h-60 col-span-3 justify-end items-end mr-6">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full w-auto h-auto p-4 [&_svg]:size-[30px]
+                        bg-blue-600 hover:bg-blue-700"
+                  >
+                    <PlayIcon fill="#fff" className='text-general-white' />
+                  </Button>
+                </div>
+
               </div>
+
             </div>
             <div className="w-full flex flex-col bg-transparent text-general-white items-start custom1-table p-4">
               <h1 className="text-3xl font-bold mb-4 mt-4">
@@ -202,49 +200,49 @@ const Page: React.FC = () => {
                   <TableHead style={{ width: '35%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex items-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Title</span>
+                      Title
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex items-center justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Release</span>
+                      Release
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Genre</span>
+                      Genre
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Total Listening Hours</span>
+                      Total Listening Hours
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Time</span>
+                      Time
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Actions</span>
+                      Actions
                     </Button>
                   </TableHead>
                 </TableHeader>
@@ -257,7 +255,7 @@ const Page: React.FC = () => {
                         setActiveTrack(song);
                       }}
                     >
-                      <TableCell className="font-bold text-lg">
+                      <TableCell className="font-bold text-lg w-1/20">
                         {index + 1}
                       </TableCell>
                       <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
@@ -280,21 +278,19 @@ const Page: React.FC = () => {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                         {song.createdAt.slice(0, 10)}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                         {song.genres}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                         {song.totalListeningHours}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                        <div className="flex items-center">
-                          <span>{song.duration.slice(-5)}</span>
-                        </div>
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                        {song.duration.slice(-5)}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] md:flex-row group-hover:bg-[#595959]">
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] md:flex-row group-hover:bg-[#595959]">
                         <div className="flex flex-row h-full items-center justify-around">
                           <LikeButton songId={3} />
                         </div>
@@ -347,7 +343,7 @@ const Page: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
