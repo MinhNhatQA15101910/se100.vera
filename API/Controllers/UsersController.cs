@@ -49,6 +49,9 @@ public class UsersController(
         var result = await userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
         if (!result.Succeeded) return BadRequest(result.Errors);
 
+        user.UpdatedAt = DateTime.UtcNow;
+        if (!await unitOfWork.Complete()) return BadRequest("Could not change password");
+
         return NoContent();
     }
 
@@ -65,11 +68,13 @@ public class UsersController(
         // Update user info
         user.ArtistName = activateArtistDto.ArtistName;
         user.About = activateArtistDto.About;
-        user.UpdatedAt = DateTime.UtcNow;
 
         // Update user role
         var roleResult = await userManager.AddToRoleAsync(user, "Artist");
         if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
+
+        user.UpdatedAt = DateTime.UtcNow;
+        if (!await unitOfWork.Complete()) return BadRequest("Could not activate artist");
 
         return NoContent();
     }
@@ -93,11 +98,12 @@ public class UsersController(
 
         user.Photos.Add(userPhoto);
 
+        user.UpdatedAt = DateTime.UtcNow;
         if (!await unitOfWork.Complete()) return BadRequest("Problem adding photo");
 
         return CreatedAtAction(
-            nameof(GetCurrentUser),
-            new { email = user.Email },
+            nameof(GetUser),
+            new { id = user.Id },
             mapper.Map<FileDto>(userPhoto)
         );
     }
@@ -118,6 +124,7 @@ public class UsersController(
 
         userPhoto.IsMain = true;
 
+        user.UpdatedAt = DateTime.UtcNow;
         if (await unitOfWork.Complete()) return NoContent();
 
         return BadRequest("Problem setting main photo");
@@ -141,6 +148,7 @@ public class UsersController(
 
         user.Photos.Remove(userPhoto);
 
+        user.UpdatedAt = DateTime.UtcNow;
         if (!await unitOfWork.Complete()) return BadRequest("Problem deleting photo");
 
         return Ok();

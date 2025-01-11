@@ -1,70 +1,85 @@
+using API.DTOs.Artists;
+using API.DTOs.Files;
+using API.DTOs.Songs;
+using API.DTOs.Users;
+using API.Entities;
+
 namespace API.Helpers;
 
 public class AutoMapperProfiles : Profile
 {
     public AutoMapperProfiles()
     {
-        // CreateMap<AppUser, UserDto>()
-        //     .ForMember(
-        //         d => d.PhotoUrl,
-        //         o => o.MapFrom(
-        //             s => s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
-        //         )
-        //     )
-        //     .ForMember(
-        //         d => d.Photos,
-        //         o => o.MapFrom(
-        //             s => s.Photos.Select(x => new FileDto
-        //             {
-        //                 Id = x.Photo.Id,
-        //                 Url = x.Photo.Url,
-        //                 IsMain = x.IsMain
-        //             })
-        //         )
-        //     )
-        //     .ForMember(
-        //         d => d.Roles,
-        //         o => o.MapFrom(
-        //             s => s.UserRoles.Select(x => x.Role.Name)
-        //         )
-        //     );
-        // CreateMap<RegisterDto, AppUser>()
-        //     .ForMember(
-        //         u => u.UserName,
-        //         r => r.MapFrom(x => x.FirstName.ToLower() + x.LastName.ToLower())
-        //     );
+        CreateMap<UserPhoto, FileDto>();
 
-        // CreateMap<Song, SongDto>()
-        //     .ForMember(
-        //         d => d.PublisherName,
-        //         o => o.MapFrom(
-        //             s => s.Publisher.ArtistName
-        //         )
-        //     )
-        //     .ForMember(
-        //         d => d.PublisherImageUrl,
-        //         o => o.MapFrom(
-        //             s => s.Publisher.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
-        //         )
-        //     )
-        //     .ForMember(
-        //         d => d.SongPhotoUrl,
-        //         o => o.MapFrom(
-        //             s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
-        //         )
-        //     )
-        //     .ForMember(
-        //         d => d.SongPhotoPublicId,
-        //         o => o.MapFrom(
-        //             s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.PublicId
-        //         )
-        //     )
-        //     .ForMember(
-        //         d => d.Genres,
-        //         o => o.MapFrom(
-        //             s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
-        //         )
-        //     );
+        CreateMap<SongPhoto, FileDto>();
+
+        CreateMap<AppUser, UserDto>()
+            .ForMember(
+                d => d.PhotoUrl,
+                o => o.MapFrom(
+                    s => s.Photos.FirstOrDefault(x => x.IsMain)!.Url
+                )
+            )
+            .ForMember(
+                d => d.Roles,
+                o => o.MapFrom(
+                    s => s.UserRoles.Select(x => x.Role.Name)
+                )
+            );
+        
+        CreateMap<RegisterDto, AppUser>()
+            .ForMember(
+                u => u.UserName,
+                r => r.MapFrom(x => RemoveDiacritics(
+                    x.FirstName.Replace(" ", "").ToLower() + x.LastName.Replace(" ", "").ToLower()
+                    )
+                )
+            );
+
+        CreateMap<Song, SongDto>()
+            .ForMember(
+                d => d.PublisherName,
+                o => o.MapFrom(
+                    s => s.Publisher.ArtistName
+                )
+            )
+            .ForMember(
+                d => d.PublisherImageUrl,
+                o => o.MapFrom(
+                    s => s.Publisher.Photos.FirstOrDefault(x => x.IsMain)!.Url
+                )
+            )
+            .ForMember(
+                d => d.PhotoUrl,
+                o => o.MapFrom(
+                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Url
+                )
+            )
+            .ForMember(
+                d => d.Genres,
+                o => o.MapFrom(
+                    s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
+                )
+            );
+
+        CreateMap<ArtistSong, ArtistDto>()
+            .ForMember(
+                d => d.Id,
+                o => o.MapFrom(
+                    s => s.Artist.Id
+                )
+            )
+            .ForMember(
+                d => d.ArtistName,
+                o => o.MapFrom(
+                    s => s.Artist.ArtistName
+                )
+            );
+
+        CreateMap<NewSongDto, Song>();
+
+        CreateMap<UpdateSongDto, Song>();
         // CreateMap<ArtistSong, UserDto>()
         //     .ForMember(
         //         d => d.Id,
@@ -148,15 +163,6 @@ public class AutoMapperProfiles : Profile
         //             s => s.Artist.ArtistName
         //         )
         //     );
-        // CreateMap<NewSongDto, Song>()
-        // .ForMember(
-        //     s => s.Artists,
-        //     o => o.MapFrom(
-        //         s => s.ArtistIds.Select(x => new ArtistSong { ArtistId = x }).ToList()
-        //     )
-        // );
-        // CreateMap<UpdateSongDto, Song>()
-        //     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         // CreateMap<SongPhoto, FileDto>()
         //     .ForMember(
         //         f => f.Id,
@@ -213,5 +219,22 @@ public class AutoMapperProfiles : Profile
         //     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         // CreateMap<Playlist, PlaylistDto>();
         // CreateMap<UpdateAlbumDto, Album>();
+    }
+
+    static string RemoveDiacritics(string text)
+    {
+        var normalizedString = text.Normalize(NormalizationForm.FormD);
+        var stringBuilder = new StringBuilder();
+
+        foreach (var c in normalizedString)
+        {
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
     }
 }

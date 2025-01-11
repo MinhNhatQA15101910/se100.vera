@@ -11,9 +11,11 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     public async Task<Song?> GetSongByIdAsync(int id)
     {
         return await context.Songs
+            .Include(s => s.Photos)
             .Include(s => s.Genres).ThenInclude(g => g.Genre)
-            .Include(s => s.Publisher)
+            .Include(s => s.Publisher).ThenInclude(p => p.Photos)
             .Include(s => s.Artists).ThenInclude(sa => sa.Artist)
+            .Include(s => s.UserFavorites).ThenInclude(sf => sf.User)
             .SingleOrDefaultAsync(s => s.Id == id);
     }
 
@@ -41,18 +43,18 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             query = query.Where(s => s.PublisherId.ToString() == songParams.PublisherId);
         }
 
-        if (songParams.SongName != null)
+        if (songParams.Keyword != null)
         {
-            query = query.Where(s => s.SongName.Contains(songParams.SongName));
-        }
-        if (songParams.Artist != null)
-        {
-            query = query.Where(s => s.Artists.Any(sa => sa.Artist.ArtistName != null && sa.Artist.ArtistName.Contains(songParams.Artist)));
+            query = query.Where(s => s.SongName.ToLower().Contains(songParams.Keyword.ToLower()));
         }
 
-        if (songParams.PublisherId != null)
+        if (songParams.ArtistName != null)
         {
-            query = query.Where(s => s.PublisherId.ToString() == songParams.PublisherId);
+            query = query.Where(s => s.Artists.Any(
+                sa => sa.Artist.ArtistName != null &&
+                sa.Artist.ArtistName.Contains(songParams.ArtistName)
+                )
+            );
         }
 
         query = songParams.OrderBy switch
@@ -60,13 +62,13 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             "songName" => songParams.SortBy == "asc"
                 ? query.OrderBy(s => s.SongName)
                 : query.OrderByDescending(s => s.SongName),
-            "artist" => songParams.SortBy == "asc"
-                ? query.OrderBy(s => s.Artists.FirstOrDefault()!.Artist.ArtistName)
-                : query.OrderByDescending(s => s.Artists.FirstOrDefault()!.Artist.ArtistName),
-            "publisher" => songParams.SortBy == "asc"
-                ? query.OrderBy(s => s.Publisher.Id)
-                : query.OrderByDescending(s => s.Publisher.Id),
-            _ => query.OrderBy(s => s.SongName)
+            "artistName" => songParams.SortBy == "asc"
+                ? query.OrderBy(s => s.Publisher.ArtistName)
+                : query.OrderByDescending(s => s.Publisher.ArtistName),
+            "createdAt" => songParams.SortBy == "asc"
+                ? query.OrderBy(s => s.CreatedAt)
+                : query.OrderByDescending(s => s.CreatedAt),
+            _ => query.OrderByDescending(s => s.CreatedAt)
         };
 
         return await PagedList<SongDto>.CreateAsync(
@@ -108,18 +110,18 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             query = query.Where(s => s.PublisherId.ToString() == songParams.PublisherId);
         }
 
-        if (songParams.SongName != null)
+        if (songParams.Keyword != null)
         {
-            query = query.Where(s => s.SongName.Contains(songParams.SongName));
-        }
-        if (songParams.Artist != null)
-        {
-            query = query.Where(s => s.Artists.Any(sa => sa.Artist.ArtistName != null && sa.Artist.ArtistName.Contains(songParams.Artist)));
+            query = query.Where(s => s.SongName.Contains(songParams.Keyword));
         }
 
-        if (songParams.PublisherId != null)
+        if (songParams.ArtistName != null)
         {
-            query = query.Where(s => s.PublisherId.ToString() == songParams.PublisherId);
+            query = query.Where(s => s.Artists.Any(
+                sa => sa.Artist.ArtistName != null &&
+                sa.Artist.ArtistName.Contains(songParams.ArtistName)
+                )
+            );
         }
 
         query = songParams.OrderBy switch
@@ -130,10 +132,10 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             "artist" => songParams.SortBy == "asc"
                 ? query.OrderBy(s => s.Artists.FirstOrDefault()!.Artist.ArtistName)
                 : query.OrderByDescending(s => s.Artists.FirstOrDefault()!.Artist.ArtistName),
-            "publisher" => songParams.SortBy == "asc"
-                ? query.OrderBy(s => s.Publisher.Id)
-                : query.OrderByDescending(s => s.Publisher.Id),
-            _ => query.OrderBy(s => s.SongName)
+            "createdAt" => songParams.SortBy == "asc"
+                ? query.OrderBy(s => s.CreatedAt)
+                : query.OrderByDescending(s => s.CreatedAt),
+            _ => query.OrderByDescending(s => s.CreatedAt)
         };
 
         return await PagedList<SongDto>.CreateAsync(
@@ -141,5 +143,20 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             songParams.PageNumber,
             songParams.PageSize
         );
+    }
+
+    public void AddSong(Song song)
+    {
+        context.Songs.Add(song);
+    }
+
+    public void AddSongGenre(SongGenre songGenre)
+    {
+        context.SongGenres.Add(songGenre);
+    }
+
+    public void AddArtistSong(ArtistSong artistSong)
+    {
+        context.ArtistSongs.Add(artistSong);
     }
 }

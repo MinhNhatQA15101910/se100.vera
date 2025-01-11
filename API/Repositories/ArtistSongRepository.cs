@@ -6,11 +6,6 @@ namespace API.Repositories;
 
 public class ArtistSongRepository(DataContext context) : IArtistSongRepository
 {
-   public void AddArtistSong(ArtistSong artistSong)
-   {
-      context.ArtistSongs.Add(artistSong);
-   }
-
    public async Task<List<ArtistSong>?> GetArtistSongsAsync(int songId)
    {
       return await context.ArtistSongs

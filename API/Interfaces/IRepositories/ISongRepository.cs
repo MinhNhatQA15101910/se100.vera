@@ -6,8 +6,10 @@ namespace API.Interfaces.IRepositories;
 
 public interface ISongRepository
 {
+    void AddArtistSong(ArtistSong artistSong);
     void AddFavoriteUser(SongFavorite songFavorite);
-    Task<Song> AddSongAsync(NewSongDto newSongDto);
+    void AddSong(Song song);
+    void AddSongGenre(SongGenre songGenre);
     Task<PagedList<SongDto>> GetFavoriteSongsAsync(int userId, SongParams songParams);
     Task<SongFavorite?> GetSongFavoriteAsync(int songId, int userId);
     Task<Song?> GetSongByIdAsync(int id);

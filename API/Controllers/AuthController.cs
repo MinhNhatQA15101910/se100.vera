@@ -213,6 +213,8 @@ public class AuthController(
         // Reset password
         user.PasswordHash = userManager.PasswordHasher.HashPassword(user, resetPasswordDto.NewPassword);
 
+        user.UpdatedAt = DateTime.UtcNow;
+
         if (!await unitOfWork.Complete())
         {
             return BadRequest("Could not reset password");
