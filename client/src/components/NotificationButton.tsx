@@ -67,7 +67,6 @@ const NotificationButton: React.FC = () => {
           variant="default"
           size="icon"
           className="focus:outline-none rounded-full [&_svg]:size-[20px]"
-          onClick={toggleDropdown}
         >
           <Bell className="text-general-pink" />
         </Button>
