@@ -57,6 +57,14 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             );
         }
 
+        if (songParams.GenreName != null)
+        {
+            query = query.Where(s => s.Genres.Any(
+                sg => sg.Genre.GenreName.Contains(songParams.GenreName)
+                )
+            );
+        }
+
         query = songParams.OrderBy switch
         {
             "songName" => songParams.SortBy == "asc"

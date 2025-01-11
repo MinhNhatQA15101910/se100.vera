@@ -19,6 +19,5 @@ public class SongDto
     public string? PhotoUrl { get; set; }
     public required List<ArtistDto> Artists { get; set; }
     public required List<string> Genres { get; set; }
-    public List<FileDto>? Photos { get; set; }
     public DateTime CreatedAt { get; set; }
 }

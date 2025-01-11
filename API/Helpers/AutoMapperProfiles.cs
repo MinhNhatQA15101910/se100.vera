@@ -1,3 +1,4 @@
+using API.DTOs.Albums;
 using API.DTOs.Artists;
 using API.DTOs.Files;
 using API.DTOs.Genres;
@@ -62,19 +63,11 @@ public class AutoMapperProfiles : Profile
                 o => o.MapFrom(
                     s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
                 )
-            );
-
-        CreateMap<ArtistSong, ArtistDto>()
-            .ForMember(
-                d => d.Id,
-                o => o.MapFrom(
-                    s => s.Artist.Id
-                )
             )
             .ForMember(
-                d => d.ArtistName,
+                d => d.Artists,
                 o => o.MapFrom(
-                    s => s.Artist.ArtistName
+                    s => s.Artists.Select(x => x.Artist)
                 )
             );
 
@@ -85,6 +78,36 @@ public class AutoMapperProfiles : Profile
         CreateMap<Genre, GenreDto>();
 
         CreateMap<AddUpdateGenreDto, Genre>();
+
+        CreateMap<Album, AlbumDto>()
+            .ForMember(
+                a => a.PhotoUrl,
+                o => o.MapFrom(
+                    s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Url
+                )
+            )
+            .ForMember(
+                a => a.Songs,
+                o => o.MapFrom(s => s.Songs)
+            )
+            .ForMember(
+                a => a.Artists,
+                o => o.MapFrom(s => s.Artists.Select(x => x.Artist))
+            )
+            .ForMember(
+                d => d.Genres,
+                o => o.MapFrom(
+                    s => s.Genres.Select(sg => sg.Genre.GenreName).ToList()
+                )
+            );
+
+        CreateMap<AppUser, ArtistDto>();
+
+        CreateMap<AlbumSong, SongOrderDto>();
+
+        CreateMap<NewAlbumDto, Album>();
+
+        CreateMap<UpdateAlbumDto, Album>();
         // CreateMap<ArtistSong, UserDto>()
         //     .ForMember(
         //         d => d.Id,
@@ -190,19 +213,6 @@ public class AutoMapperProfiles : Profile
         // CreateMap<AlbumPhoto, FileDto>();
         // CreateMap<SongGenre, Genre>();
         // CreateMap<NewAlbumDto, Album>();
-        // CreateMap<Album, AlbumDto>()
-        //     .ForMember(
-        //         a => a.PhotoUrl,
-        //         o => o.MapFrom(
-        //             s => s.Photos == null ? null : s.Photos.FirstOrDefault(x => x.IsMain)!.Photo.Url
-        //         )
-        //     )
-        //     .ForMember(
-        //         a => a.Photos,
-        //         o => o.MapFrom(
-        //             s => s.Photos.Select(x => x.Photo.Url).ToList()
-        //         )
-        //     );
         // CreateMap<AlbumSong, SongOrderDto>()
         //     .ForMember(
         //         s => s.Song,
@@ -221,11 +231,12 @@ public class AutoMapperProfiles : Profile
         // CreateMap<UpdatePlaylistDto, Playlist>()
         //     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         // CreateMap<Playlist, PlaylistDto>();
-        // CreateMap<UpdateAlbumDto, Album>();
     }
 
     static string RemoveDiacritics(string text)
     {
+        text = text.Replace("đ", "d").Replace("Đ", "D");
+        
         var normalizedString = text.Normalize(NormalizationForm.FormD);
         var stringBuilder = new StringBuilder();
 

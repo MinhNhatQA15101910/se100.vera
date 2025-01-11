@@ -31,6 +31,8 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
     public async Task<Album?> GetAlbumByIdAsync(int id)
     {
         return await context.Albums
+            // Include album publisher
+            .Include(a => a.Publisher).ThenInclude(p => p.Photos)
             // Include album photos navigation
             .Include(a => a.Photos)
             // Include artists
@@ -44,6 +46,10 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             // Include song username info
             .Include(a => a.Songs).ThenInclude(albumSong => albumSong.Song)
             .ThenInclude(s => s.Publisher).ThenInclude(p => p.Photos)
+            // Include favorite users
+            .Include(a => a.UserFavorites)
+            // Include genre            
+            .Include(a => a.Genres).ThenInclude(ag => ag.Genre)
             // Execute query
             .FirstOrDefaultAsync(a => a.Id == id);
     }
@@ -63,15 +69,33 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             query = query.Where(s => s.PublisherId.ToString() == albumParams.PublisherId);
         }
 
-        if (albumParams.AlbumName != null)
+        if (albumParams.Keyword != null)
         {
-            query = query.Where(s => s.AlbumName.Contains(albumParams.AlbumName));
+            query = query.Where(s => s.AlbumName.ToLower().Contains(albumParams.Keyword.ToLower()));
+        }
+
+        if (albumParams.ArtistName != null)
+        {
+            query = query.Where(s => s.Artists.Any(a => a.Artist.ArtistName!.Contains(albumParams.ArtistName)));
+        }
+
+        if (albumParams.GenreName != null)
+        {
+            query = query.Where(s => s.Genres.Any(a => a.Genre.GenreName.Contains(albumParams.GenreName)));
         }
 
         query = albumParams.OrderBy switch
         {
-            "albumName" => albumParams.SortBy == "asc" ? query.OrderBy(s => s.AlbumName) : query.OrderByDescending(s => s.AlbumName),
-            _ => query.OrderBy(s => s.AlbumName)
+            "albumName" => albumParams.SortBy == "asc"
+                ? query.OrderBy(s => s.AlbumName)
+                : query.OrderByDescending(s => s.AlbumName),
+            "artistName" => albumParams.SortBy == "asc"
+                ? query.OrderBy(s => s.Publisher.ArtistName)
+                : query.OrderByDescending(s => s.Publisher.ArtistName),
+            "createdAt" => albumParams.SortBy == "asc"
+                ? query.OrderBy(s => s.CreatedAt)
+                : query.OrderByDescending(s => s.CreatedAt),
+            _ => query.OrderByDescending(s => s.CreatedAt)
         };
 
         return await PagedList<AlbumDto>.CreateAsync(
@@ -93,24 +117,35 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
     {
         var query = context.Albums.AsQueryable();
 
-        query = query.Where(s => s.Songs.Count > 0);
-
         query = query.Where(a => a.UserFavorites.Any(f => f.UserId == userId));
 
-        if (albumParams.PublisherId != null)
+        if (albumParams.Keyword != null)
         {
-            query = query.Where(s => s.PublisherId.ToString() == albumParams.PublisherId);
+            query = query.Where(s => s.AlbumName.ToLower().Contains(albumParams.Keyword.ToLower()));
         }
 
-        if (albumParams.AlbumName != null)
+        if (albumParams.ArtistName != null)
         {
-            query = query.Where(s => s.AlbumName.Contains(albumParams.AlbumName));
+            query = query.Where(s => s.Artists.Any(a => a.Artist.ArtistName!.Contains(albumParams.ArtistName)));
+        }
+
+        if (albumParams.GenreName != null)
+        {
+            query = query.Where(s => s.Genres.Any(a => a.Genre.GenreName.Contains(albumParams.GenreName)));
         }
 
         query = albumParams.OrderBy switch
         {
-            "albumName" => albumParams.SortBy == "asc" ? query.OrderBy(s => s.AlbumName) : query.OrderByDescending(s => s.AlbumName),
-            _ => query.OrderBy(s => s.AlbumName)
+            "albumName" => albumParams.SortBy == "asc"
+                ? query.OrderBy(s => s.AlbumName)
+                : query.OrderByDescending(s => s.AlbumName),
+            "artistName" => albumParams.SortBy == "asc"
+                ? query.OrderBy(s => s.Publisher.ArtistName)
+                : query.OrderByDescending(s => s.Publisher.ArtistName),
+            "createdAt" => albumParams.SortBy == "asc"
+                ? query.OrderBy(s => s.CreatedAt)
+                : query.OrderByDescending(s => s.CreatedAt),
+            _ => query.OrderByDescending(s => s.CreatedAt)
         };
 
         return await PagedList<AlbumDto>.CreateAsync(
@@ -135,5 +170,10 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
     public async Task<int> GetTotalAlbumsAsync()
     {
         return await context.Albums.CountAsync();
+    }
+
+    public void CreateAlbum(Album album)
+    {
+        context.Albums.Add(album);
     }
 }

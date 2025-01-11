@@ -22,7 +22,28 @@ public class SongsController(
             return NotFound();
         }
 
-        return mapper.Map<SongDto>(song);
+        var songDto = mapper.Map<SongDto>(song);
+
+        var userId = User.GetUserId();
+        if (userId == -1)
+        {
+            songDto.State = null;
+        }
+        else
+        {
+            var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest("Invalid user id.");
+            }
+
+            if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin") || userId != song.PublisherId)
+            {
+                songDto.State = null;
+            }
+        }
+
+        return songDto;
     }
 
     [HttpPost]
@@ -176,7 +197,7 @@ public class SongsController(
         mapper.Map(updateSongDto, song);
 
         // Update genres
-        if (updateSongDto.GenreIds != null)
+        if (updateSongDto.GenreIds != null && updateSongDto.GenreIds.Count > 0)
         {
             song.Genres.Clear();
 
@@ -372,7 +393,6 @@ public class SongsController(
                 if (deleteResult.Error != null) return BadRequest("Delete photo file from cloudinary failed: " + deleteResult.Error.Message);
             }
         }
-        song.Photos.Clear();
 
         if (song.MusicPublicId != null)
         {
