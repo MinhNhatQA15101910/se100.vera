@@ -36,7 +36,7 @@ import * as commentActions from '@/actions/comment-actions';
 import CustomCommentInput from '@/components/CustomCommentInput';
 import CommentCard from '@/components/CommentCard';
 import { Comment } from '@/types/global';
-import { useAddCommentMutation, useDeleteCommentMutation } from '../../(artitst)/upload-song/_hooks/useCommentMutation';
+import { useAddCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from '../../(artitst)/upload-song/_hooks/useCommentMutation';
 
 const Page: React.FC = () => {
   const params = useParams();
@@ -65,7 +65,7 @@ const Page: React.FC = () => {
     enabled: !!songDetailData,
   });
 
-  const { data: commentData } = useQuery({
+  useQuery({
     queryKey: ['comments', id],
     queryFn: async () => {
       const comments = await commentActions.getComments(Number(id));
@@ -78,34 +78,35 @@ const Page: React.FC = () => {
 
   const addCommentMutation = useAddCommentMutation();
   const deleteCommentMutation = useDeleteCommentMutation();
-
+  const updateCommentMutation = useUpdateCommentMutation();
 
   const handleAddComment = async (content: string) => {
-    addCommentMutation.mutate(
-      {
-        songId: Number(id),
-        content,
-      },
-      {
-        onSuccess: () => {
-          toast.success('Comment Successfully!');
-        },
-        onError: () => {
-          toast.error('Server went wrong, comment is not working!');
-        },
-      }
-    );
+    addCommentMutation.mutate({
+      songId: Number(id),
+      content,
+    });
   }
 
   const handleDeleteComment = (commentId: number) => {
-    deleteCommentMutation.mutate(commentId, {
-      onSuccess: () => {
-        //toast.success('Delete Comment Successfully!');
+    deleteCommentMutation.mutate(commentId);
+  }
+
+  const handleUpdateComment = (commentId: number, content: string) => {
+    console.log('commentId', commentId, 'content', content);
+    updateCommentMutation.mutate(
+      {
+        commentId: commentId,
+        content: content,
       },
-      onError: () => {
-        //toast.error('Server went wrong, delete is not working!');
-      },
-    });
+      {
+        onSuccess: () => {
+          toast.success('Update Comment Successfully!');
+        },
+        onError: () => {
+          toast.error('Server went wrong, update is not working!');
+        }
+      }
+    );
   }
 
   const deleteAlbumMutation = useDeleteAlbumMutation();
@@ -352,6 +353,7 @@ const Page: React.FC = () => {
                     key={comment.id}
                     comment={comment}
                     handleDelete={() => handleDeleteComment(comment.id)}
+                    handleEdit={(content) => handleUpdateComment(comment.id, content)}
                   />
                 ))}
               </div>

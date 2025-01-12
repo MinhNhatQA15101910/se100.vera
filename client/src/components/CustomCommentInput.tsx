@@ -1,19 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 import { Input } from './ui/Input';
 import Image from 'next/image';
 import { Button } from './ui/button';
 
 interface ICommentInputProps {
-  className?: string;
   artistImage?: string;
   onCommentSubmit: (content: string) => void;
 }
 
 const CustomCommentInput: React.FC<ICommentInputProps> = ({
-  className,
   artistImage,
   onCommentSubmit,
 }) => {
@@ -29,8 +26,8 @@ const CustomCommentInput: React.FC<ICommentInputProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={className}>
-      <div className="flex items-center bg-zinc-900/90 text-sm text-white placeholder:text-muted-foreground rounded-lg p-2 w-auto">
+    <form onSubmit={handleSubmit}>
+      <div className="flex items-center bg-slate-900 text-white placeholder:text-muted-foreground rounded-lg p-2 w-auto">
         <Image
           src={artistImage || 'https://picsum.photos/400/400?random=4'}
           alt="Artist"

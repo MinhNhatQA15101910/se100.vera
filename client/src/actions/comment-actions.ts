@@ -39,6 +39,25 @@ export async function addComment(payload: AddCommentPayload): Promise<Comment> {
    }
 }
 
+export async function updateComment(id: number, content: string): Promise<Comment> {
+   const token = await getAuthTokenFromCookies();
+   try {
+      const response = await client<Comment>(`/api/comments/${id}`, {
+         method: 'PUT',
+         headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({ content }),
+      });
+
+      return response.data;
+   } catch (error) {
+      console.error('Edit comment error: ', error);
+      throw error;
+   }
+}
+
 export async function deleteComment(id: number): Promise<void> {
    const token = await getAuthTokenFromCookies();
    try {

@@ -25,7 +25,7 @@ import { Comment } from '@/types/global';
 interface ICommentCardProps {
   comment: Comment;
   handleDelete?: (commentId: string) => void;
-  handleEdit?: (commentId: string, content: string) => void;
+  handleEdit?: (content: string) => void;
 }
 
 
@@ -46,7 +46,7 @@ const CommentCard: React.FC<ICommentCardProps> = ({
   const onSave = () => {
     setIsEditing(false);
     if (handleEdit) {
-      handleEdit(comment.id.toString(), editedContent);
+      handleEdit(editedContent);
     }
   };
 
@@ -65,7 +65,7 @@ const CommentCard: React.FC<ICommentCardProps> = ({
     setIsDialogOpen(false);
   };
   return (
-    <div className="flex items-start text-white p-4 w-full mt-4 relative">
+    <div className="flex items-start rounded-xl bg-slate-900 text-white p-4 w-full mt-4">
       <div className="mr-3">
         <Image
           src={comment.publisherPhotoUrl}

@@ -28,6 +28,31 @@ export function useAddCommentMutation() {
   return mutation;
 }
 
+export function useUpdateCommentMutation() {
+  const queryClient = useQueryClient();
+  const { setLoadingState } = useLoading();
+
+  const mutation = useMutation({
+    mutationFn: async ({ commentId, content }: { commentId: number; content: string }) => {
+      setLoadingState(true);
+      console.log('commentId', commentId, 'content', content);
+      const response = await commentActions.updateComment(commentId, content);
+      return response;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['comments'],
+      });
+      setLoadingState(false);
+    },
+    onError: () => {
+      setLoadingState(false);
+    }
+  });
+
+  return mutation;
+}
+
 export function useDeleteCommentMutation() {
   const queryClient = useQueryClient();
   const { setLoadingState } = useLoading();
