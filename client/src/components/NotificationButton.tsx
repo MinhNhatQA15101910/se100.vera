@@ -16,6 +16,7 @@ import {
 interface Notification {
   id: number;
   message: string;
+  readStatus: boolean;
   status: 'success' | 'error'; // success: green check, error: red cross
 }
 
@@ -34,29 +35,38 @@ const NotificationButton: React.FC = () => {
       {
         id: 1,
         message: 'Your song: "Legend never die" confirmed by admin',
+        readStatus: false,
         status: 'success',
       },
       {
         id: 2,
         message: 'Your song: "Legend always die" rejected by admin',
+        readStatus: true,
         status: 'error',
       },
       {
         id: 3,
         message: 'Your album: "Welcome to noxus" confirmed by admin',
+        readStatus: false,
         status: 'success',
       },
       {
         id: 4,
         message: 'Your album: "Welcome to toilet" rejected by admin',
+        readStatus: true,
         status: 'error',
       },
       {
         id: 5,
         message: 'Your account has been locked by admin',
+        readStatus: true,
         status: 'error',
       },
-      { id: 6, message: 'Your account has been confirmed', status: 'success' },
+      {
+        id: 6, message: 'Your account has been confirmed',
+        readStatus: false,
+        status: 'success'
+      },
     ]);
   }, [userDetails?.id]);
 
@@ -72,13 +82,14 @@ const NotificationButton: React.FC = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end"
-        className="border-none bg-zinc-800 text-general-pink-hover rounded-none font-semibold p-2
+        className="border-none bg-zinc-800 text-general-pink-hover rounded-lg font-medium
              divide-y-2 divide-zinc-700"
       >
         {notifications.map((notification) => (
           <DropdownMenuItem
             key={notification.id}
-            className=" focus:bg-zinc-700 focus:text-general-pink-hover text-md"
+            className={`focus:bg-zinc-700 text-md rounded-none 
+              ${notification.status === 'success' ? 'text-green-500 focus:text-green-500' : 'text-red-500 focus:text-red-500'}`}
           >
             <NotificationItem
               notification={notification}
