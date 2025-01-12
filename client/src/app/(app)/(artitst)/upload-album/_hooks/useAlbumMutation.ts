@@ -24,14 +24,19 @@ export function useDeleteAlbumMutation() {
       return response;
     },
     onSuccess: () => {
+      console.log('Album deleted successfully!');
       void queryClient.invalidateQueries({
         queryKey: ['all_albums'],
       });
     },
+    onError: (error) => {
+      console.error('Error deleting album:', error);
+    }
   });
 
   return mutation;
 }
+
 
 export function useAddAlbumMutation() {
   const queryClient = useQueryClient();

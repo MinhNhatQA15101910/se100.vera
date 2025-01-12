@@ -1,6 +1,6 @@
 'use client';
 
-import { addSongToAlbum, deleteAlbum } from '@/actions/album-actions';
+import { addSongToAlbum, approveAlbum, deleteAlbum, rejectAlbum } from '@/actions/album-actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useAddSongToAlbumMutation() {
@@ -44,3 +44,44 @@ export function useDeleteAlbumMutation() {
 
   return mutation;
 }
+
+export function useApproveAlbumMutation() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (id: number) => {
+      await approveAlbum(id); // Gọi API để phê duyệt album
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['albums'], // Làm mới danh sách album sau khi phê duyệt
+      });
+    },
+    onError: (error) => {
+      console.error('Error approving the album:', error);
+    },
+  });
+
+  return mutation;
+}
+
+export function useRejectAlbumMutation() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (id: number) => {
+      await rejectAlbum(id); // Gọi API để từ chối album
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['albums'], // Làm mới danh sách album sau khi từ chối
+      });
+    },
+    onError: (error) => {
+      console.error('Error rejecting the album:', error);
+    },
+  });
+
+  return mutation;
+}
+

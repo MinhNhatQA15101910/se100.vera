@@ -9,6 +9,8 @@ import {
   UpdateSongPayload,
   updateSong,
   toggleFavoriteSongById,
+  rejectSong,
+  approveSong,
 } from '@/actions/song-actions';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
@@ -98,6 +100,46 @@ export function useUpdateSongMutation() {
       void queryClient.invalidateQueries({
         queryKey: ['songs'],
       });
+    },
+  });
+
+  return mutation;
+}
+
+export function useApproveSongMutation() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (id: number) => {
+      await approveSong(id); // Gọi API để duyệt bài hát
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['songs'], // Làm mới danh sách bài hát sau khi phê duyệt
+      });
+    },
+    onError: (error) => {
+      console.error('Error approving the song:', error);
+    },
+  });
+
+  return mutation;
+}
+
+export function useRejectSongMutation() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (id: number) => {
+      await rejectSong(id); // Gọi API để từ chối bài hát
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['songs'], // Làm mới danh sách bài hát sau khi từ chối
+      });
+    },
+    onError: (error) => {
+      console.error('Error rejecting the song:', error);
     },
   });
 

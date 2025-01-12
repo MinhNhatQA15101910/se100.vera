@@ -8,6 +8,7 @@ export interface Song {
   publisherImageUrl: string;
   genres: string[];
   totalListeningHours: number;
+  totalViews: number;
   musicUrl: string;
   musicPublicId: string | null;
   lyricUrl: string | null;
@@ -17,7 +18,9 @@ export interface Song {
   artists: User[];
   createdAt: string;
   duration: string;
+  state: string;
 }
+
 
 export interface Genre {
   id: number;
@@ -32,6 +35,7 @@ export interface Album {
   description: string;
   totalListeningHours: number;
   totalSongs: number;
+  totalDuration: string;
   createdAt: string;
   photoUrl: string;
   photos: string[];
@@ -40,11 +44,13 @@ export interface Album {
     order: number;
   }[];
   publisher: User;
+  state: string;
   artists: {
     id: number;
     artistName: string;
   }[];
 }
+
 
 export interface Playlist {
   id: number;
@@ -69,6 +75,7 @@ export interface User {
   dateOfBirth: string;
   about: string | '';
   createdAt: string;
+  state: string;
   photos: Array<{ id: number; url: string; isMain: boolean }>;
   token: string | null;
 }
