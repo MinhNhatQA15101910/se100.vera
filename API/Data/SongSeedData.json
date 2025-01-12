@@ -5,6 +5,29 @@
     "PublisherId": 3,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735208972/Vera/songs/1/audio/qqblzgrar99akgpw8mha.mp3",
     "Duration": "00:03:51",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735208828/Vera/songs/1/images/rcyluu1gcsxmvdmzm8em.png",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735208827/Vera/songs/1/images/h8osjjanfomwwhgcbajd.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735208825/Vera/songs/1/images/yng7u3frqmnadtzaqeez.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735208825/Vera/songs/1/images/fmvl47fj4uedyqqhrphs.png",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735208825/Vera/songs/1/images/ypshriycivkdzxrlw5tt.webp",
+        "IsMain": false
+      }
+    ],
     "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735208983/Vera/songs/1/lyrics/wosjttaxttuvxocfslnd.lrc"
   },
   {
@@ -13,7 +36,30 @@
     "PublisherId": 3,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735210230/Vera/songs/2/audio/zcimahycqvk3gnqkoemf.mp3",
     "Duration": "00:03:39",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735210290/Vera/songs/2/lyrics/oof0idzenesvio7wo1el.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735210290/Vera/songs/2/lyrics/oof0idzenesvio7wo1el.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210073/Vera/songs/2/images/wsfh7wbp71lvphzpgtww.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210072/Vera/songs/2/images/ax2aqeetn1ovwcglu3vk.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210069/Vera/songs/2/images/orkgf7vktnjvstdam14w.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210068/Vera/songs/2/images/rhtimppzin1ot4taw4cz.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210068/Vera/songs/2/images/yymkncthvwc16eo1vkev.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Believer",
@@ -21,7 +67,30 @@
     "PublisherId": 4,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735210518/Vera/songs/3/audio/qextgtfhhrcx6kg6jnl2.mp3",
     "Duration": "00:03:36",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735210559/Vera/songs/3/lyrics/pbqkkwymvr2fh4lf7jss.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735210559/Vera/songs/3/lyrics/pbqkkwymvr2fh4lf7jss.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210371/Vera/songs/3/images/kzfufnig4mihavitgk5t.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210369/Vera/songs/3/images/ojl1bvlmw1tgynlv03vk.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210367/Vera/songs/3/images/mzoivi8bfpvm1eo3pwue.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210365/Vera/songs/3/images/zh6cew2fohrl1t4csvhc.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735210364/Vera/songs/3/images/xpjzegadhpckimouvn8f.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Despacito",
@@ -29,7 +98,30 @@
     "PublisherId": 4,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735211798/Vera/songs/4/audio/tybtj0tycnjyogipnvdx.mp3",
     "Duration": "00:04:41",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735211842/Vera/songs/4/lyrics/yj8vy3ritjq6df4ofa3w.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735211842/Vera/songs/4/lyrics/yj8vy3ritjq6df4ofa3w.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211148/Vera/songs/4/images/rnn18lsknbrvqyh8zmqa.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211145/Vera/songs/4/images/ss6pz8rtm33js4niwepn.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211144/Vera/songs/4/images/p4tq9k4qvkmbhqnihv9q.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211127/Vera/songs/4/images/aekzv0wimqpodtpnvwr7.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211126/Vera/songs/4/images/u2ipqoia64ncvnutvrax.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Die With A Smile",
@@ -37,7 +129,30 @@
     "PublisherId": 5,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735212113/Vera/songs/5/audio/ofitwypmpitxotvqiktz.mp3",
     "Duration": "00:04:12",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212153/Vera/songs/5/lyrics/c69metk78r2m67breqc0.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212153/Vera/songs/5/lyrics/c69metk78r2m67breqc0.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211948/Vera/songs/5/images/o5sddrlsbgtui3fwjuvq.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211946/Vera/songs/5/images/iuey88ekosncageajvgq.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211937/Vera/songs/5/images/vfuvcnxho3vksmjnfyaz.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211933/Vera/songs/5/images/mngp2awmpuowane2zm2h.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735211931/Vera/songs/5/images/h5wckneyc1yukxt3nuig.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Girls Like You",
@@ -45,7 +160,30 @@
     "PublisherId": 5,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735212578/Vera/songs/6/audio/yujyhhqikqrnydwik5y5.mp3",
     "Duration": "00:04:30",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212583/Vera/songs/6/lyrics/lgkjwlusdl8bxppzvi2z.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212583/Vera/songs/6/lyrics/lgkjwlusdl8bxppzvi2z.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212366/Vera/songs/6/images/njsdg7qo6fdycmkmpaf4.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212362/Vera/songs/6/images/ds92bc90vwqzq2twlzdp.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212358/Vera/songs/6/images/bq80ly6aix2kurfp2m2z.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212355/Vera/songs/6/images/lbt3hnu0stlppp3uta1f.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212351/Vera/songs/6/images/hnauhrihdvzgassa6yi3.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Haru Haru",
@@ -53,7 +191,30 @@
     "PublisherId": 6,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735212730/Vera/songs/7/audio/xjfuwvzhvpyhapbruj7y.mp3",
     "Duration": "00:05:24",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212728/Vera/songs/7/lyrics/fnolz2rdkxurok2zsoq8.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735212728/Vera/songs/7/lyrics/fnolz2rdkxurok2zsoq8.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212728/Vera/songs/7/images/yc9u8ukzfmiy7i3jscmz.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212728/Vera/songs/7/images/qj7jyt7ndriehcxwpxl7.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212728/Vera/songs/7/images/qu1ioxpyrmtrercazmug.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212728/Vera/songs/7/images/omeavic8shujftltdixn.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735212727/Vera/songs/7/images/pqenfy16hv7qb0sso9rl.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Legend Never Die",
@@ -61,7 +222,30 @@
     "PublisherId": 6,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735213046/Vera/songs/8/audio/yaxgzqm6rvqnyapkp7ls.mp3",
     "Duration": "00:02:59",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213043/Vera/songs/8/lyrics/twlr4tjtmjsbecy99wwx.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213043/Vera/songs/8/lyrics/twlr4tjtmjsbecy99wwx.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213043/Vera/songs/8/images/kuvw7rvefpqqkv2kj4jm.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213044/Vera/songs/8/images/uowyoxpwp605ezfuuwer.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213043/Vera/songs/8/images/zez2mgodhyjiwyeu9udw.png",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213043/Vera/songs/8/images/euzt7fz2xufllbr2gyrp.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213043/Vera/songs/8/images/ltxkm7lksfdjsnfel4ul.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Old Town Road",
@@ -69,7 +253,30 @@
     "PublisherId": 7,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735213304/Vera/songs/9/audio/mvd7xdfwc5smkszkllcy.mp3",
     "Duration": "00:02:37",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213306/Vera/songs/9/lyrics/jnhbj3qcoprvy6pjh5yn.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213306/Vera/songs/9/lyrics/jnhbj3qcoprvy6pjh5yn.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213306/Vera/songs/9/images/ar7ym92lwiffyi2l9jft.png",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213306/Vera/songs/9/images/njktolmuvwadvfcyfdop.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213305/Vera/songs/9/images/v6o8nvjyezi0dcokjmro.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213304/Vera/songs/9/images/owa0yusfe1ujwto4tuti.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213303/Vera/songs/9/images/qmwydkimmvollfuwfwfe.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "See You Again",
@@ -77,7 +284,30 @@
     "PublisherId": 7,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735213886/Vera/songs/10/audio/bldvj9hguzlibgb9gxy7.mp3",
     "Duration": "00:03:57",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213883/Vera/songs/10/lyrics/xn92zlcbfv7kmsq7lfa9.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735213883/Vera/songs/10/lyrics/xn92zlcbfv7kmsq7lfa9.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213882/Vera/songs/10/images/qvqy6a2hczg3vdkrwcws.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213881/Vera/songs/10/images/ixgytbwlq82yf7lddb0o.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213881/Vera/songs/10/images/pz68sichv12amjltatue.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213880/Vera/songs/10/images/p3gyowdbud24n9rxsful.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735213879/Vera/songs/10/images/wy3hb9xrd3w7vx9g6jxz.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Shape of You",
@@ -85,7 +315,30 @@
     "PublisherId": 8,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735214043/Vera/songs/11/audio/vjozgoqd8lpymwlumdjh.mp3",
     "Duration": "00:04:23",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735214041/Vera/songs/11/lyrics/fezvezv6ufrrhabib4rb.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735214041/Vera/songs/11/lyrics/fezvezv6ufrrhabib4rb.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214039/Vera/songs/11/images/qrikqn3uwxbxhfqx9boz.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214040/Vera/songs/11/images/lpfr5xkcjemg9raqhhsd.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214037/Vera/songs/11/images/jqzquuwb4zvuy2wifllt.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214037/Vera/songs/11/images/gzaba5v5mact2fbggsqz.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214036/Vera/songs/11/images/s8ddayvdrmewrytnp7cx.jpg",
+        "IsMain": false
+      }
+    ]
   },
   {
     "SongName": "Wavin' Flag",
@@ -93,6 +346,29 @@
     "PublisherId": 8,
     "MusicUrl": "https://res.cloudinary.com/dauyd6npv/video/upload/v1735214219/Vera/songs/12/audio/s8f4upeay0pksd1uym1s.mp3",
     "Duration": "00:03:44",
-    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735214214/Vera/songs/12/lyrics/iblaloksffym13gxke9j.lrc"
+    "LyricUrl": "https://res.cloudinary.com/dauyd6npv/raw/upload/v1735214214/Vera/songs/12/lyrics/iblaloksffym13gxke9j.lrc",
+    "State": "Approved",
+    "Photos": [
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214216/Vera/songs/12/images/lekioh7ixhwi7qmwqnrr.jpg",
+        "IsMain": true
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214212/Vera/songs/12/images/hqlf5snmfbe8c7bbslpr.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214211/Vera/songs/12/images/jhpfh6ekkotqseuwvalt.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214210/Vera/songs/12/images/laqeejdchrjqlr7x3n5c.jpg",
+        "IsMain": false
+      },
+      {
+        "Url": "https://res.cloudinary.com/dauyd6npv/image/upload/v1735214209/Vera/songs/12/images/a0shou6zksrlokqwim07.jpg",
+        "IsMain": false
+      }
+    ]
   }
 ]

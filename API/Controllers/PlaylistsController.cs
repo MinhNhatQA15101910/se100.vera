@@ -12,12 +12,26 @@ public class PlaylistsController(
 ) : BaseApiController
 {
    [HttpGet("{id:int}")]
+   [Authorize]
    public async Task<ActionResult<PlaylistDto>> GetPlaylistById(int id)
    {
+      // Check playlist
       var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
       if (playlist == null)
       {
          return NotFound();
+      }
+
+      // Check user role
+      var userId = User.GetUserId();
+      var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+      if (user == null)
+      {
+         return Unauthorized("Invalid user.");
+      }
+      if (!User.IsInRole("Admin") && userId != playlist.PublisherId)
+      {
+         return Unauthorized("Unauthorized user.");
       }
 
       return mapper.Map<PlaylistDto>(playlist);
@@ -34,6 +48,19 @@ public class PlaylistsController(
       {
          return BadRequest("Invalid publisher id.");
       }
+
+      var userId = User.GetUserId();
+      var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+      if (user == null)
+      {
+         return Unauthorized("Invalid user.");
+      }
+
+      if (!User.IsInRole("Admin"))
+      {
+         playlistParams.PublisherId = User.GetUserId().ToString();
+      }
+
       var playlists = await unitOfWork.PlaylistRepository.GetPlaylistsAsync(playlistParams);
 
       Response.AddPaginationHeader(playlists);
@@ -42,7 +69,7 @@ public class PlaylistsController(
    }
 
    [HttpPost]
-   [Authorize(Roles = "Listener, Artist")]
+   [Authorize]
    public async Task<ActionResult<PlaylistDto>> CreatePlaylist([FromForm] NewPlaylistDto newPlaylistDto)
    {
       if (newPlaylistDto == null)
@@ -53,14 +80,27 @@ public class PlaylistsController(
       var userId = User.GetUserId();
       newPlaylistDto.PublisherId = userId;
 
-      var playlist = await unitOfWork.PlaylistRepository.CreatePlaylistAsync(newPlaylistDto);
+      var existingPlaylist = await unitOfWork.PlaylistRepository.GetPlaylistByNameAsync(userId, newPlaylistDto.PlaylistName);
+      if (existingPlaylist != null)
+      {
+         return BadRequest("Playlist name already exists.");
+      }
+
+      var playlist = mapper.Map<Playlist>(newPlaylistDto);
+
+      unitOfWork.PlaylistRepository.CreatePlaylist(playlist);
+
+      if (!await unitOfWork.Complete())
+      {
+         return BadRequest("Failed to create playlist.");
+      }
 
       return mapper.Map<PlaylistDto>(playlist);
    }
 
    [HttpPut("{id:int}")]
-   [Authorize(Roles = "Listener, Artist")]
-   public async Task<ActionResult<PlaylistDto>> UpdatePlaylist([FromForm] UpdatePlaylistDto updatePlaylistDto, int id)
+   [Authorize]
+   public async Task<ActionResult<PlaylistDto>> UpdatePlaylist(int id, UpdatePlaylistDto updatePlaylistDto)
    {
       if (updatePlaylistDto == null)
       {
@@ -74,24 +114,36 @@ public class PlaylistsController(
       }
 
       var userId = User.GetUserId();
-      if (playlist.PublisherId != userId)
+      if (playlist.PublisherId != userId && !User.IsInRole("Admin"))
       {
          return Unauthorized("The playlist does not belong to you.");
       }
 
+      if (updatePlaylistDto.PlaylistName != null)
+      {
+         var existingPlaylist = await unitOfWork.PlaylistRepository.GetPlaylistByNameAsync(playlist.PublisherId, updatePlaylistDto.PlaylistName);
+         if (existingPlaylist != null && existingPlaylist.Id != playlist.Id)
+         {
+            return BadRequest("Playlist name already exists.");
+         }
+      }
+
       mapper.Map(updatePlaylistDto, playlist);
+
+      // Update timestamp
+      playlist.UpdatedAt = DateTime.UtcNow;
 
       if (!await unitOfWork.Complete())
       {
          return BadRequest("Failed to update playlist.");
       }
 
-      return mapper.Map<PlaylistDto>(playlist);
+      return NoContent();
    }
 
    [HttpPut("add-song/{id:int}")]
-   [Authorize(Roles = "Listener, Artist")]
-   public async Task<ActionResult<PlaylistDto>> AddSongToPlaylist(int id, AddRemovePlaylistSongDto addRemovePlaylistSongDto)
+   [Authorize]
+   public async Task<ActionResult> AddSongToPlaylist(int id, AddRemovePlaylistSongDto addRemovePlaylistSongDto)
    {
       var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
       if (playlist == null)
@@ -100,7 +152,7 @@ public class PlaylistsController(
       }
 
       var userId = User.GetUserId();
-      if (playlist.PublisherId != userId)
+      if (!User.IsInRole("Admin") && playlist.PublisherId != userId)
       {
          return Unauthorized("The playlist does not belong to you.");
       }
@@ -111,28 +163,34 @@ public class PlaylistsController(
          return NotFound("Song not found.");
       }
 
-      var playlistSong = await unitOfWork.PlaylistSongRepository.GetPlaylistSongAsync(id, song.Id);
-      if (playlistSong != null)
+      var existingPlaylistSong = playlist.Songs.FirstOrDefault(ps => ps.SongId == song.Id);
+      if (existingPlaylistSong != null)
       {
          return BadRequest("Song already exists in the playlist.");
       }
 
-      unitOfWork.PlaylistSongRepository.AddPlaylistSong(new PlaylistSong
+      playlist.Songs.Add(new PlaylistSong
       {
          PlaylistId = playlist.Id,
          SongId = song.Id
       });
 
+      // Update total songs
+      playlist.TotalSongs++;
+
+      // Update timestamp
+      playlist.UpdatedAt = DateTime.UtcNow;
+
       if (await unitOfWork.Complete())
       {
-         return mapper.Map<PlaylistDto>(playlist);
+         return NoContent();
       }
 
       return BadRequest("Failed to add song to playlist.");
    }
 
    [HttpPut("remove-song/{id:int}")]
-   [Authorize(Roles = "Listener, Artist")]
+   [Authorize]
    public async Task<ActionResult<PlaylistDto>> RemoveSongFromPlaylist(int id, AddRemovePlaylistSongDto addRemovePlaylistSongDto)
    {
       var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
@@ -142,7 +200,7 @@ public class PlaylistsController(
       }
 
       var userId = User.GetUserId();
-      if (playlist.PublisherId != userId)
+      if (!User.IsInRole("Admin") && playlist.PublisherId != userId)
       {
          return Unauthorized("The playlist does not belong to you.");
       }
@@ -153,24 +211,30 @@ public class PlaylistsController(
          return NotFound("Song not found.");
       }
 
-      var playlistSong = await unitOfWork.PlaylistSongRepository.GetPlaylistSongAsync(id, song.Id);
-      if (playlistSong == null)
+      var existingPlaylistSong = playlist.Songs.FirstOrDefault(ps => ps.SongId == song.Id);
+      if (existingPlaylistSong == null)
       {
          return BadRequest("Song does not exist in the playlist.");
       }
 
-      unitOfWork.PlaylistSongRepository.RemovePlaylistSong(playlistSong);
+      playlist.Songs.Remove(existingPlaylistSong);
 
-      if (await unitOfWork.Complete())
+      // Update total songs
+      playlist.TotalSongs--;
+
+      // Update timestamp
+      playlist.UpdatedAt = DateTime.UtcNow;
+
+      if (!await unitOfWork.Complete())
       {
-         return mapper.Map<PlaylistDto>(playlist);
+         return BadRequest("Failed to remove song from playlist.");
       }
 
-      return BadRequest("Failed to remove song from playlist.");
+      return NoContent();
    }
 
    [HttpDelete("{id:int}")]
-   [Authorize(Roles = "Listener, Artist")]
+   [Authorize]
    public async Task<ActionResult> DeletePlaylist(int id)
    {
       var playlist = await unitOfWork.PlaylistRepository.GetPlaylistByIdAsync(id);
@@ -180,18 +244,18 @@ public class PlaylistsController(
       }
 
       var userId = User.GetUserId();
-      if (playlist.PublisherId != userId)
+      if (!User.IsInRole("Admin") && playlist.PublisherId != userId)
       {
          return Unauthorized("The playlist does not belong to you.");
       }
 
       unitOfWork.PlaylistRepository.RemovePlaylist(playlist);
 
-      if (await unitOfWork.Complete())
+      if (!await unitOfWork.Complete())
       {
-         return NoContent();
+         return BadRequest("Failed to delete playlist.");
       }
 
-      return BadRequest("Failed to delete playlist.");
+      return Ok();
    }
 }

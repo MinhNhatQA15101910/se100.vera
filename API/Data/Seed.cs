@@ -4,31 +4,7 @@ namespace API.Data;
 
 public class Seed
 {
-    public static async Task SeedPhotos(DataContext context)
-    {
-        if (await context.Photos.AnyAsync()) return;
-
-        var photoData = await File.ReadAllTextAsync("Data/PhotoSeedData.json");
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        var photos = JsonSerializer.Deserialize<List<Photo>>(photoData, options);
-
-        if (photos == null) return;
-
-        foreach (var photo in photos)
-        {
-            context.Photos.Add(photo);
-        }
-
-        await context.SaveChangesAsync();
-    }
-
     public static async Task SeedUsers(
-        DataContext context,
         UserManager<AppUser> userManager,
         RoleManager<AppRole> roleManager
     )
@@ -78,25 +54,26 @@ public class Seed
                 await userManager.AddToRoleAsync(user, "Listener");
             }
         }
-
-        await SeedUserPhotos(context);
     }
 
-    public static async Task SeedUserPhotos(DataContext context)
+    public static async Task SeedGenres(DataContext context)
     {
-        var users = await context.Users.ToListAsync();
-        var photoId = 1;
+        if (await context.Genres.AnyAsync()) return;
 
-        foreach (var user in users)
+        var genreData = await File.ReadAllTextAsync("Data/GenreSeedData.json");
+
+        var options = new JsonSerializerOptions
         {
-            var userPhoto = new UserPhoto
-            {
-                UserId = user.Id,
-                PhotoId = photoId++,
-                IsMain = true
-            };
+            PropertyNameCaseInsensitive = true
+        };
 
-            context.UserPhotos.Add(userPhoto);
+        var genres = JsonSerializer.Deserialize<List<Genre>>(genreData, options);
+
+        if (genres == null) return;
+
+        foreach (var genre in genres)
+        {
+            context.Genres.Add(genre);
         }
 
         await context.SaveChangesAsync();
@@ -119,42 +96,13 @@ public class Seed
 
         foreach (var song in songs)
         {
-            song.TotalListeningHours = Random.Shared.Next(10000, 1000000);
             context.Songs.Add(song);
         }
 
         await context.SaveChangesAsync();
 
         await SeedSongGenres(context);
-        await SeedSongPhotos(context);
         await SeedArtistSongs(context);
-    }
-
-    private static async Task SeedSongPhotos(DataContext context)
-    {
-        var songs = await context.Songs.ToListAsync();
-        var photoId = 10;
-
-        foreach (var song in songs)
-        {
-            var count = 5;
-            var isMain = true;
-            while (count-- > 0)
-            {
-                var songPhoto = new SongPhoto
-                {
-                    SongId = song.Id,
-                    PhotoId = photoId++,
-                    IsMain = isMain
-                };
-
-                context.SongPhotos.Add(songPhoto);
-
-                isMain = false;
-            }
-        }
-
-        await context.SaveChangesAsync();
     }
 
     public static async Task SeedSongGenres(DataContext context)
@@ -223,7 +171,6 @@ public class Seed
 
         await SeedAlbumSongs(context);
         await SeedAlbumGenres(context);
-        await SeedAlbumPhotos(context);
         await SeedArtistAlbums(context);
     }
 
@@ -253,6 +200,24 @@ public class Seed
         await context.SaveChangesAsync();
     }
 
+    private static async Task SeedAlbumGenres(DataContext context)
+    {
+        var albums = await context.Albums.ToListAsync();
+
+        foreach (var album in albums)
+        {
+            var albumGenre = new AlbumGenre
+            {
+                AlbumId = album.Id,
+                GenreId = Random.Shared.Next(1, 15)
+            };
+
+            context.AlbumGenres.Add(albumGenre);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
     private static async Task SeedArtistAlbums(DataContext context)
     {
         var albums = await context.Albums.ToListAsync();
@@ -272,119 +237,6 @@ public class Seed
             };
 
             context.ArtistAlbums.AddRange(artistAlbums);
-        }
-
-        await context.SaveChangesAsync();
-    }
-
-    private static async Task SeedAlbumGenres(DataContext context)
-    {
-        var albums = await context.Albums.ToListAsync();
-
-        foreach (var album in albums)
-        {
-            var albumGenre = new AlbumGenre
-            {
-                AlbumId = album.Id,
-                GenreId = Random.Shared.Next(1, 15)
-            };
-
-            context.AlbumGenres.Add(albumGenre);
-        }
-
-        await context.SaveChangesAsync();
-    }
-
-    private static async Task SeedAlbumPhotos(DataContext context)
-    {
-        var albums = await context.Albums.ToListAsync();
-        var photoId = 70;
-
-        foreach (var album in albums)
-        {
-            var albumPhoto = new AlbumPhoto
-            {
-                AlbumId = album.Id,
-                PhotoId = photoId++,
-                IsMain = true
-            };
-
-            context.AlbumPhotos.Add(albumPhoto);
-        }
-
-        await context.SaveChangesAsync();
-    }
-
-    public static async Task SeedPlaylists(DataContext context)
-    {
-        if (await context.Playlists.AnyAsync()) return;
-
-        var playlistData = await File.ReadAllTextAsync("Data/PlaylistSeedData.json");
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        var playlists = JsonSerializer.Deserialize<List<Playlist>>(playlistData, options);
-
-        if (playlists == null) return;
-
-        foreach (var playlist in playlists)
-        {
-            context.Playlists.Add(playlist);
-        }
-
-        await context.SaveChangesAsync();
-
-        await SeedPlaylistSongs(context);
-    }
-
-    private static async Task SeedPlaylistSongs(DataContext context)
-    {
-        var playlists = await context.Playlists.ToListAsync();
-        var songId = 1;
-
-        foreach (var playlist in playlists)
-        {
-            var playlistSongs = new List<PlaylistSong>
-            {
-                new() {
-                    PlaylistId = playlist.Id,
-                    SongId = ((songId - 1) % 12) + 1
-                },
-                new() {
-                    PlaylistId = playlist.Id,
-                    SongId = (songId % 12) + 1,
-                }
-            };
-
-            context.PlaylistSongs.AddRange(playlistSongs);
-
-            songId += 2;
-        }
-
-        await context.SaveChangesAsync();
-    }
-
-    public static async Task SeedGenres(DataContext context)
-    {
-        if (await context.Genres.AnyAsync()) return;
-
-        var genreData = await File.ReadAllTextAsync("Data/GenreSeedData.json");
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        var genres = JsonSerializer.Deserialize<List<Genre>>(genreData, options);
-
-        if (genres == null) return;
-
-        foreach (var genre in genres)
-        {
-            context.Genres.Add(genre);
         }
 
         await context.SaveChangesAsync();

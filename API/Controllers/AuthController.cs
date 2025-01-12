@@ -78,7 +78,7 @@ public class AuthController(
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
         var existingUser = await userManager.Users
-            .Include(u => u.Photos).ThenInclude(p => p.Photo)
+            .Include(u => u.Photos)
             .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
             .SingleOrDefaultAsync(x => x.NormalizedEmail == loginDto.Email.ToUpper());
         if (existingUser == null)
@@ -212,6 +212,8 @@ public class AuthController(
 
         // Reset password
         user.PasswordHash = userManager.PasswordHasher.HashPassword(user, resetPasswordDto.NewPassword);
+
+        user.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete())
         {

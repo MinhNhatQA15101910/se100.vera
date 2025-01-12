@@ -5,10 +5,10 @@ namespace API.Interfaces.IRepositories;
 
 public interface IPlaylistRepository
 {
-   Task<Playlist> CreatePlaylistAsync(NewPlaylistDto newPlaylistDto);
-   Task<Playlist?> GetPlaylistByIdAsync(int id);
-   Task<PagedList<PlaylistDto>> GetPlaylistsAsync(PlaylistParams playlistParams);
-   int GetTotalPlaylists();
-   void RemovePlaylist(Playlist playlist);
-
+    void CreatePlaylist(Playlist playlist);
+    Task<Playlist?> GetPlaylistByIdAsync(int id);
+    Task<Playlist?> GetPlaylistByNameAsync(int userId, string playlistName);
+    Task<PagedList<PlaylistDto>> GetPlaylistsAsync(PlaylistParams playlistParams);
+    Task<int> GetTotalPlaylistsAsync();
+    void RemovePlaylist(Playlist playlist);
 }
