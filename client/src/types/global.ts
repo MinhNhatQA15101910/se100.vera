@@ -81,6 +81,16 @@ export interface Comment {
   createdAt: string;
 }
 
+export interface Notification {
+  id: number;
+  title: string;
+  content: string;
+  type: string;
+  isRead: boolean;
+  notifyEntityId: number;
+  createdAt: string;
+}
+
 export interface PaginatedResponses<T> {
   data: T[];
   totalCount: number;

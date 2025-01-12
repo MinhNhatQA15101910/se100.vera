@@ -24,7 +24,7 @@ import { Comment } from '@/types/global';
 
 interface ICommentCardProps {
   comment: Comment;
-  handleDelete?: (commentId: string) => void;
+  handleDelete?: () => void;
   handleEdit?: (content: string) => void;
 }
 
@@ -57,7 +57,7 @@ const CommentCard: React.FC<ICommentCardProps> = ({
   const handleConfirmDelete = () => {
     setIsDialogOpen(false);
     if (handleDelete) {
-      handleDelete(comment.id.toString());
+      handleDelete();
     }
   };
 

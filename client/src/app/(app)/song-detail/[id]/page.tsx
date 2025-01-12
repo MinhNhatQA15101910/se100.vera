@@ -36,7 +36,7 @@ import * as commentActions from '@/actions/comment-actions';
 import CustomCommentInput from '@/components/CustomCommentInput';
 import CommentCard from '@/components/CommentCard';
 import { Comment } from '@/types/global';
-import { useAddCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from '../../(artitst)/upload-song/_hooks/useCommentMutation';
+import { useAddCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from '../../../../hooks/useCommentMutation';
 
 const Page: React.FC = () => {
   const params = useParams();
