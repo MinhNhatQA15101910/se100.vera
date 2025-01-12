@@ -8,7 +8,6 @@ public class Payment
     public required string PaymentMethod { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public List<PaymentDetail> SubscriptionPlans { get; set; } = [];
 
     // Navigation properties
     public int ListenerId { get; set; }
