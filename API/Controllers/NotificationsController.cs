@@ -62,7 +62,7 @@ public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper) : B
         );
     }
 
-    [HttpPatch("{id:int}/read")]
+    [HttpPatch("read/{id:int}")]
     [Authorize]
     public async Task<ActionResult> MarkNotificationAsRead(int id)
     {

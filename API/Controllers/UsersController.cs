@@ -167,6 +167,24 @@ public class UsersController(
         );
     }
 
+    [HttpPatch("toggle-lock/{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> LockUser(int id)
+    {
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(id);
+        if (user == null) return NotFound();
+
+        user.State = user.State == UserState.Inactive.ToString()
+            ? UserState.Active.ToString()
+            : UserState.Inactive.ToString();
+
+        user.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete()) return BadRequest("Could not toggle lock user");
+
+        return NoContent();
+    }
+
     [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers([FromQuery] UserParams userParams)

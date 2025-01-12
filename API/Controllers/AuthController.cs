@@ -89,6 +89,11 @@ public class AuthController(
         var result = await userManager.CheckPasswordAsync(existingUser, loginDto.Password);
         if (!result) return Unauthorized("Invalid password");
 
+        if (existingUser.State == UserState.Inactive.ToString())
+        {
+            return Unauthorized("User is inactive");
+        }
+
         var userDto = mapper.Map<UserDto>(existingUser);
         userDto.Token = await tokenService.CreateTokenAsync(existingUser);
 
