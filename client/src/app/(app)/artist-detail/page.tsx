@@ -15,12 +15,13 @@ import {
 import { Button } from '@/components/ui/button';
 import LikeButton from '@/components/music/LikeButton';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { getArtistSongsByArtistId } from '@/actions/song-actions';
 import { getArtistAlbums } from '@/actions/album-actions';
 import { useLoading } from '@/contexts/LoadingContext';
 import DynamicImage from '@/components/custom/DynamicImage';
 import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
+import { getUserById } from '@/actions/user-actions';
 
 export default function ArtistDetailPage() {
   const router = useRouter();
@@ -28,17 +29,22 @@ export default function ArtistDetailPage() {
   const userId = searchParams.get('userId');
   const { setLoadingState } = useLoading();
 
+  const { data: UserData } = useQuery({
+    queryKey: ['artists'],
+    queryFn: async () => await getUserById(Number(userId)),
+  });
+
   const [
     { data: theArtist, isLoading: artistLoading },
     { data: artistAlbums, isLoading: albumsLoading },
   ] = useQueries({
     queries: [
       {
-        queryKey: ['theArtist', userId],
+        queryKey: ['artists', userId],
         queryFn: async () => await getArtistSongsByArtistId(Number(userId)),
       },
       {
-        queryKey: ['artistAlbums', userId],
+        queryKey: ['albums', userId],
         queryFn: async () => await getArtistAlbums(Number(userId)),
       },
     ],
@@ -64,11 +70,8 @@ export default function ArtistDetailPage() {
               <div className="relative w-full">
                 <div className="flex w-full h-80 items-center justify-center relative">
                   <DynamicImage
-                    src={
-                      theArtist?.songs[0].publisherImageUrl ||
-                      '/placeholder-artist.jpg'
-                    }
-                    alt={theArtist?.songs[0].publisherName || 'Artist image'}
+                    src={UserData?.photoUrl || '/placeholder-artist.jpg'}
+                    alt={UserData?.artistName || 'Artist image'}
                     className="object-contain rounded-full"
                   />
                 </div>
@@ -77,7 +80,7 @@ export default function ArtistDetailPage() {
                   <IoArrowBack
                     className="text-white text-4xl hover:text-general-pink transition-colors cursor-pointer duration-200"
                     onClick={() => {
-                      router.back()
+                      router.back();
                     }}
                   />
                 </div>

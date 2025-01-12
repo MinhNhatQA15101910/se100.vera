@@ -5,7 +5,7 @@ import { getArtistAlbums } from '@/actions/album-actions';
 import { useUser } from '@/contexts/UserContext';
 import { useLoading } from '@/contexts/LoadingContext';
 import DynamicImage from './custom/DynamicImage';
-import { useAddSongToAlbumMutation } from '@/app/(app)/(artitst)/upload-song/_hooks/useAlbumMutation';
+import { useAddSongToAlbumMutation } from '@/hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
@@ -53,7 +53,9 @@ const AlbumToAddModal = ({ songId }: { songId: number }) => {
             />
 
             <span className="text-general-pink">{album.albumName}</span>
-            <span className="text-general-white text-nowrap truncate">{album.totalSongs} songs</span>
+            <span className="text-general-white text-nowrap truncate">
+              {album.totalSongs} songs
+            </span>
           </div>
         );
       })}

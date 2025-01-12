@@ -71,8 +71,8 @@ export default function MetaData() {
         </h2>
         <div className="flex flex-row items-center">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 w-full">
-            {artists
-              ?.slice(0, 6)
+            {(artists || [])
+              .slice(0, 6)
               .map((artist: User, idx: number) => (
                 <ArtistCard key={idx} artist={artist} />
               ))}
@@ -90,8 +90,8 @@ export default function MetaData() {
         </h2>
         <div className="flex flex-row items-center">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
-            {albums
-              ?.slice(0, 5)
+            {(albums || [])
+              .slice(0, 5)
               .map((album: Album, idx: number) => (
                 <AlbumCard key={idx} albumCard={album} />
               ))}
@@ -111,8 +111,8 @@ export default function MetaData() {
           <div
             className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full`}
           >
-            {playlists
-              ?.slice(0, 5)
+            {(playlists || [])
+              .slice(0, 5)
               .map((playlist: Playlist, idx: number) => (
                 <PlaylistCard key={idx} playlist={playlist} />
               ))}
