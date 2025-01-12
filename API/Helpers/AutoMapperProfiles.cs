@@ -2,6 +2,7 @@ using API.DTOs.Albums;
 using API.DTOs.Artists;
 using API.DTOs.Files;
 using API.DTOs.Genres;
+using API.DTOs.Playlists;
 using API.DTOs.Songs;
 using API.DTOs.Users;
 using API.Entities;
@@ -108,6 +109,18 @@ public class AutoMapperProfiles : Profile
         CreateMap<NewAlbumDto, Album>();
 
         CreateMap<UpdateAlbumDto, Album>();
+
+        CreateMap<NewPlaylistDto, Playlist>();
+
+        CreateMap<Playlist, PlaylistDto>()
+            .ForMember(
+                p => p.Songs,
+                o => o.MapFrom(
+                    s => s.Songs.Select(x => x.Song)
+                )
+            );
+
+        CreateMap<UpdatePlaylistDto, Playlist>();
         // CreateMap<ArtistSong, UserDto>()
         //     .ForMember(
         //         d => d.Id,
@@ -236,7 +249,7 @@ public class AutoMapperProfiles : Profile
     static string RemoveDiacritics(string text)
     {
         text = text.Replace("đ", "d").Replace("Đ", "D");
-        
+
         var normalizedString = text.Normalize(NormalizationForm.FormD);
         var stringBuilder = new StringBuilder();
 

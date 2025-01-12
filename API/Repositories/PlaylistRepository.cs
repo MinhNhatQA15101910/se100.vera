@@ -8,6 +8,11 @@ namespace API.Repositories;
 
 public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylistRepository
 {
+   public void CreatePlaylist(Playlist playlist)
+   {
+      context.Playlists.Add(playlist);
+   }
+
    public async Task<Playlist> CreatePlaylistAsync(NewPlaylistDto newPlaylistDto)
    {
       var playlist = mapper.Map<Playlist>(newPlaylistDto);
@@ -21,18 +26,34 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
    public Task<Playlist?> GetPlaylistByIdAsync(int id)
    {
       return context.Playlists
-         .Include(p => p.Publisher)
-         .Include(p => p.Songs).ThenInclude(ps => ps.Song).ThenInclude(s => s.Photos)
+         // Include publisher
+         .Include(p => p.Publisher).ThenInclude(p => p.Photos)
+         // Include song photos
+         .Include(p => p.Songs).ThenInclude(ps => ps.Song)
+         .ThenInclude(s => s.Photos)
+         // Include song genres
+         .Include(p => p.Songs).ThenInclude(ps => ps.Song)
+         .ThenInclude(s => s.Genres).ThenInclude(sg => sg.Genre)
+         // Include song artists
+         .Include(p => p.Songs).ThenInclude(ps => ps.Song)
+         .ThenInclude(s => s.Artists).ThenInclude(sa => sa.Artist)
+         // Execute query
          .FirstOrDefaultAsync(p => p.Id == id);
+   }
+
+   public Task<Playlist?> GetPlaylistByNameAsync(int userId, string playlistName)
+   {
+      return context.Playlists
+         .FirstOrDefaultAsync(p => p.PlaylistName == playlistName && p.PublisherId == userId);
    }
 
    public async Task<PagedList<PlaylistDto>> GetPlaylistsAsync(PlaylistParams playlistParams)
    {
       var query = context.Playlists.AsQueryable();
 
-      if (playlistParams.PlaylistName != null)
+      if (playlistParams.Keyword != null)
       {
-         query = query.Where(p => p.PlaylistName.Contains(playlistParams.PlaylistName));
+         query = query.Where(p => p.PlaylistName.ToLower().Contains(playlistParams.Keyword.ToLower()));
       }
 
       if (playlistParams.PublisherId != null)
@@ -42,8 +63,13 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
 
       query = playlistParams.OrderBy switch
       {
-         "playlistName" => playlistParams.SortBy == "asc" ? query.OrderBy(p => p.PlaylistName) : query.OrderByDescending(p => p.PlaylistName),
-         _ => query.OrderBy(p => p.PlaylistName)
+         "playlistName" => playlistParams.SortBy == "asc"
+            ? query.OrderBy(p => p.PlaylistName)
+            : query.OrderByDescending(p => p.PlaylistName),
+         "createdAt" => playlistParams.SortBy == "asc"
+            ? query.OrderBy(p => p.CreatedAt)
+            : query.OrderByDescending(p => p.CreatedAt),
+         _ => query.OrderByDescending(p => p.CreatedAt)
       };
 
       return await PagedList<PlaylistDto>.CreateAsync(

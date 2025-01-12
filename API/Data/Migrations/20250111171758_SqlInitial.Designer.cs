@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20250110035214_SqlInitial")]
+[Migration("20250111171758_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -513,9 +513,6 @@ partial class SqlInitial
                     .HasColumnType("integer");
 
                 b.Property<DateTime>("UpdatedAt")
-                    .HasColumnType("timestamp with time zone");
-
-                b.Property<DateTime>("UploadDate")
                     .HasColumnType("timestamp with time zone");
 
                 b.HasKey("Id");

@@ -268,7 +268,6 @@ public partial class SqlInitial : Migration
                 TotalSongs = table.Column<int>(type: "integer", nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                UploadDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 PublisherId = table.Column<int>(type: "integer", nullable: false)
             },
             constraints: table =>
