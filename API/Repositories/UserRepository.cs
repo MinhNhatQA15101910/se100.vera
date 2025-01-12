@@ -84,6 +84,7 @@ public class UserRepository(
         return await userManager.Users
             .Include(u => u.Photos)
             .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+            .Include(u => u.Plans).ThenInclude(p => p.Plan)
             .SingleOrDefaultAsync(u => u.Id == id);
     }
 

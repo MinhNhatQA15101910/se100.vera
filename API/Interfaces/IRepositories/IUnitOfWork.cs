@@ -9,6 +9,7 @@ public interface IUnitOfWork
     IUserRepository UserRepository { get; }
     ICommentRepository CommentRepository { get; }
     INotificationRepository NotificationRepository { get; }
+    ISubscriptionPlanRepository SubscriptionPlanRepository { get; }
     Task<bool> Complete();
     bool HasChanges();
 }
