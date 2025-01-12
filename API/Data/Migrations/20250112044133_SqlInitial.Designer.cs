@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20250112022720_SqlInitial")]
+[Migration("20250112044133_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -51,6 +51,9 @@ partial class SqlInitial
                     .HasColumnType("integer");
 
                 b.Property<int>("TotalSongs")
+                    .HasColumnType("integer");
+
+                b.Property<int>("TotalViews")
                     .HasColumnType("integer");
 
                 b.Property<DateTime>("UpdatedAt")
@@ -240,6 +243,10 @@ partial class SqlInitial
                 b.Property<string>("SecurityStamp")
                     .HasColumnType("text");
 
+                b.Property<string>("State")
+                    .IsRequired()
+                    .HasColumnType("text");
+
                 b.Property<bool>("TwoFactorEnabled")
                     .HasColumnType("boolean");
 
@@ -384,14 +391,7 @@ partial class SqlInitial
                 b.Property<string>("NotifyEntityId")
                     .HasColumnType("text");
 
-                b.Property<string>("PhotoPublicId")
-                    .HasColumnType("text");
-
-                b.Property<string>("PhotoUrl")
-                    .HasColumnType("text");
-
                 b.Property<string>("Title")
-                    .IsRequired()
                     .HasColumnType("text");
 
                 b.Property<string>("Type")
@@ -554,6 +554,9 @@ partial class SqlInitial
                     .HasColumnType("text");
 
                 b.Property<int>("TotalListeningHours")
+                    .HasColumnType("integer");
+
+                b.Property<int>("TotalViews")
                     .HasColumnType("integer");
 
                 b.Property<DateTime>("UpdatedAt")

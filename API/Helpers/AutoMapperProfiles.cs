@@ -3,6 +3,7 @@ using API.DTOs.Artists;
 using API.DTOs.Comments;
 using API.DTOs.Files;
 using API.DTOs.Genres;
+using API.DTOs.Notifications;
 using API.DTOs.Playlists;
 using API.DTOs.Songs;
 using API.DTOs.Users;
@@ -144,6 +145,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<NewCommentDto, Comment>();
 
         CreateMap<UpdateCommentDto, Comment>();
+
+        CreateMap<Notification, NotificationDto>();
+
+        CreateMap<NewNotificationDto, Notification>();
     }
 
     static string RemoveDiacritics(string text)

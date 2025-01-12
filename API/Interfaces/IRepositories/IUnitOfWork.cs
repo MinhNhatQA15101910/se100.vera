@@ -8,6 +8,7 @@ public interface IUnitOfWork
     ISongRepository SongRepository { get; }
     IUserRepository UserRepository { get; }
     ICommentRepository CommentRepository { get; }
+    INotificationRepository NotificationRepository { get; }
     Task<bool> Complete();
     bool HasChanges();
 }

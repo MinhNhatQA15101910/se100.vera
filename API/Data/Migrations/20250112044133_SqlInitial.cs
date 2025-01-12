@@ -35,6 +35,7 @@ public partial class SqlInitial : Migration
                 Gender = table.Column<string>(type: "text", nullable: false),
                 DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                 About = table.Column<string>(type: "text", nullable: true),
+                State = table.Column<string>(type: "text", nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -102,6 +103,7 @@ public partial class SqlInitial : Migration
                 AlbumName = table.Column<string>(type: "text", nullable: false),
                 Description = table.Column<string>(type: "text", nullable: false),
                 TotalListeningHours = table.Column<int>(type: "integer", nullable: false),
+                TotalViews = table.Column<int>(type: "integer", nullable: false),
                 TotalSongs = table.Column<int>(type: "integer", nullable: false),
                 TotalDuration = table.Column<string>(type: "text", nullable: false),
                 State = table.Column<string>(type: "text", nullable: false),
@@ -211,12 +213,10 @@ public partial class SqlInitial : Migration
             {
                 Id = table.Column<int>(type: "integer", nullable: false)
                     .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                Title = table.Column<string>(type: "text", nullable: false),
+                Title = table.Column<string>(type: "text", nullable: true),
                 Content = table.Column<string>(type: "text", nullable: false),
                 Type = table.Column<string>(type: "text", nullable: false),
                 NotifyEntityId = table.Column<string>(type: "text", nullable: true),
-                PhotoUrl = table.Column<string>(type: "text", nullable: true),
-                PhotoPublicId = table.Column<string>(type: "text", nullable: true),
                 IsRead = table.Column<bool>(type: "boolean", nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UserId = table.Column<int>(type: "integer", nullable: false)
@@ -290,6 +290,7 @@ public partial class SqlInitial : Migration
                 SongName = table.Column<string>(type: "text", nullable: false),
                 Description = table.Column<string>(type: "text", nullable: false),
                 TotalListeningHours = table.Column<int>(type: "integer", nullable: false),
+                TotalViews = table.Column<int>(type: "integer", nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 MusicUrl = table.Column<string>(type: "text", nullable: false),

@@ -6,6 +6,7 @@ public class Song
     public required string SongName { get; set; }
     public required string Description { get; set; }
     public int TotalListeningHours { get; set; } = 0;
+    public int TotalViews { get; set; } = 0;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public required string MusicUrl { get; set; } = "";

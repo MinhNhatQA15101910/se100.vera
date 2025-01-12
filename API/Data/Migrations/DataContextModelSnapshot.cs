@@ -51,6 +51,9 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Property<int>("TotalSongs")
                     .HasColumnType("integer");
 
+                b.Property<int>("TotalViews")
+                    .HasColumnType("integer");
+
                 b.Property<DateTime>("UpdatedAt")
                     .HasColumnType("timestamp with time zone");
 
@@ -238,6 +241,10 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Property<string>("SecurityStamp")
                     .HasColumnType("text");
 
+                b.Property<string>("State")
+                    .IsRequired()
+                    .HasColumnType("text");
+
                 b.Property<bool>("TwoFactorEnabled")
                     .HasColumnType("boolean");
 
@@ -382,14 +389,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Property<string>("NotifyEntityId")
                     .HasColumnType("text");
 
-                b.Property<string>("PhotoPublicId")
-                    .HasColumnType("text");
-
-                b.Property<string>("PhotoUrl")
-                    .HasColumnType("text");
-
                 b.Property<string>("Title")
-                    .IsRequired()
                     .HasColumnType("text");
 
                 b.Property<string>("Type")
@@ -552,6 +552,9 @@ partial class DataContextModelSnapshot : ModelSnapshot
                     .HasColumnType("text");
 
                 b.Property<int>("TotalListeningHours")
+                    .HasColumnType("integer");
+
+                b.Property<int>("TotalViews")
                     .HasColumnType("integer");
 
                 b.Property<DateTime>("UpdatedAt")
