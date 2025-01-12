@@ -19,16 +19,6 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             .SingleOrDefaultAsync(s => s.Id == id);
     }
 
-    public async Task<Song> AddSongAsync(NewSongDto newSongDto)
-    {
-        var song = mapper.Map<Song>(newSongDto);
-
-        await context.Songs.AddAsync(song);
-        await context.SaveChangesAsync();
-
-        return song;
-    }
-
     public void RemoveSong(Song song)
     {
         context.Songs.Remove(song);
@@ -91,22 +81,6 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
         return await context.Songs.CountAsync();
     }
 
-    public void AddFavoriteUser(SongFavorite songFavorite)
-    {
-        context.FavoriteSongs.Add(songFavorite);
-    }
-
-    public void RemoveFavoriteUser(SongFavorite songFavorite)
-    {
-        context.FavoriteSongs.Remove(songFavorite);
-    }
-
-    public async Task<SongFavorite?> GetSongFavoriteAsync(int songId, int userId)
-    {
-        return await context.FavoriteSongs
-            .SingleOrDefaultAsync(sf => sf.SongId == songId && sf.UserId == userId);
-    }
-
     public async Task<PagedList<SongDto>> GetFavoriteSongsAsync(int userId, SongParams songParams)
     {
         var query = context.Songs.AsQueryable();
@@ -156,15 +130,5 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     public void AddSong(Song song)
     {
         context.Songs.Add(song);
-    }
-
-    public void AddSongGenre(SongGenre songGenre)
-    {
-        context.SongGenres.Add(songGenre);
-    }
-
-    public void AddArtistSong(ArtistSong artistSong)
-    {
-        context.ArtistSongs.Add(artistSong);
     }
 }

@@ -13,16 +13,6 @@ public class PlaylistRepository(DataContext context, IMapper mapper) : IPlaylist
       context.Playlists.Add(playlist);
    }
 
-   public async Task<Playlist> CreatePlaylistAsync(NewPlaylistDto newPlaylistDto)
-   {
-      var playlist = mapper.Map<Playlist>(newPlaylistDto);
-
-      await context.Playlists.AddAsync(playlist);
-      await context.SaveChangesAsync();
-
-      return playlist;
-   }
-
    public Task<Playlist?> GetPlaylistByIdAsync(int id)
    {
       return context.Playlists

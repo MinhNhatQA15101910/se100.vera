@@ -12,40 +12,6 @@ public class UserRepository(
     IMapper mapper
 ) : IUserRepository
 {
-    public void AddArtistAlbum(ArtistAlbum artistAlbum)
-    {
-        context.ArtistAlbums.Add(artistAlbum);
-    }
-
-    public async Task<IdentityResult> ChangePasswordAsync(
-        AppUser user,
-        ChangePasswordDto changePasswordDto
-    )
-    {
-        var result = await userManager.ChangePasswordAsync(
-            user,
-            changePasswordDto.CurrentPassword,
-            changePasswordDto.NewPassword
-        );
-
-        return result;
-    }
-
-    public Task<bool> CheckPasswordAsync(AppUser user, string password)
-    {
-        return userManager.CheckPasswordAsync(user, password);
-    }
-
-    public async Task<IdentityResult> CreateUserAsync(RegisterDto registerDto)
-    {
-        var password = registerDto.Password;
-        var registerUser = mapper.Map<AppUser>(registerDto);
-
-        var result = await userManager.CreateAsync(registerUser, password);
-
-        return result;
-    }
-
     public async Task<PagedList<UserDto>> GetArtistsAsync(UserParams userParams)
     {
         var query = context.Users.AsQueryable();
@@ -111,14 +77,6 @@ public class UserRepository(
             userParams.PageNumber,
             userParams.PageSize
         );
-    }
-
-    public async Task<AppUser?> GetUserByEmailAsync(string email)
-    {
-        return await userManager.Users
-            .Include(u => u.Photos)
-            .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
-            .SingleOrDefaultAsync(x => x.NormalizedEmail == email.ToUpper());
     }
 
     public async Task<AppUser?> GetUserByIdAsync(int id)
@@ -192,11 +150,6 @@ public class UserRepository(
             userParams.PageNumber,
             userParams.PageSize
         );
-    }
-
-    public void RemoveArtistAlbum(ArtistAlbum artistAlbum)
-    {
-        context.ArtistAlbums.Remove(artistAlbum);
     }
 
     public async Task<int> GetTotalUsersAsync()

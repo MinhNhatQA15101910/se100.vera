@@ -1,4 +1,5 @@
 using API.DTOs.Albums;
+using API.DTOs.Files;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
@@ -314,6 +315,53 @@ public class AlbumsController(
         return NoContent();
     }
 
+    [HttpPut("update-photo/{id:int}")]
+    public async Task<ActionResult<FileDto>> AddPhoto(int id, IFormFile file)
+    {
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
+        if (album == null) return BadRequest("Cannot update album");
+
+        // Check user role
+        var userId = User.GetUserId();
+        if (userId != album.PublisherId && !User.IsInRole("Admin"))
+        {
+            return Unauthorized("You are not authorized to update this album.");
+        }
+
+        // Delete old photo
+        foreach (var ap in album.Photos)
+        {
+            if (ap.PublicId != null)
+            {
+                var deleteResult = await fileService.DeleteFileAsync(ap.PublicId, ResourceType.Image);
+                if (deleteResult.Error != null) return BadRequest(deleteResult.Error.Message);
+            }
+        }
+        album.Photos.Clear();
+
+        // Upload new photo
+        var result = await fileService.UploadImageAsync("/albums/" + album.Id, file);
+        if (result.Error != null) return BadRequest(result.Error.Message);
+
+        var albumPhoto = new AlbumPhoto
+        {
+            Url = result.SecureUrl.AbsoluteUri,
+            PublicId = result.PublicId,
+            IsMain = true
+        };
+        album.Photos.Add(albumPhoto);
+
+        album.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete()) return BadRequest("Problem adding photo");
+
+        return CreatedAtAction(
+            nameof(GetAlbumById),
+            new { id = album.Id },
+            mapper.Map<FileDto>(albumPhoto)
+        );
+    }
+
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin, Artist")]
     public async Task<ActionResult> DeleteAlbum(int id)
@@ -576,7 +624,7 @@ public class AlbumsController(
         {
             return NotFound("Album not found.");
         }
-        
+
         return album.UserFavorites.Any(fa => fa.UserId == userId);
     }
 }

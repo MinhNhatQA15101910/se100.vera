@@ -13,14 +13,6 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
       context.Genres.Add(genre);
    }
 
-   public async Task<Genre> AddGenreAsync(Genre genre)
-   {
-      await context.Genres.AddAsync(genre);
-      await context.SaveChangesAsync();
-
-      return genre;
-   }
-
    public void RemoveGenre(Genre genre)
    {
       context.Genres.Remove(genre);

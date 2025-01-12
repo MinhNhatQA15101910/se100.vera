@@ -8,21 +8,6 @@ namespace API.Repositories;
 
 public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumRepository
 {
-    public void AddFavoriteUser(AlbumFavorite favoriteAlbum)
-    {
-        context.FavoriteAlbums.Add(favoriteAlbum);
-    }
-
-    public async Task<Album> CreateAlbumAsync(NewAlbumDto newAlbumDto)
-    {
-        var album = mapper.Map<Album>(newAlbumDto);
-
-        await context.Albums.AddAsync(album);
-        await context.SaveChangesAsync();
-
-        return album;
-    }
-
     public void DeleteAlbum(Album album)
     {
         context.Albums.Remove(album);
@@ -52,12 +37,6 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             .Include(a => a.Genres).ThenInclude(ag => ag.Genre)
             // Execute query
             .FirstOrDefaultAsync(a => a.Id == id);
-    }
-
-    public Task<AlbumFavorite?> GetAlbumFavoriteAsync(int albumId, int userId)
-    {
-        return context.FavoriteAlbums
-            .FirstOrDefaultAsync(f => f.AlbumId == albumId && f.UserId == userId);
     }
 
     public async Task<PagedList<AlbumDto>> GetAlbumsAsync(AlbumParams albumParams)
@@ -105,14 +84,6 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
         );
     }
 
-    public async Task<List<AlbumSong>> GetAlbumsSongsAsync(int albumId)
-    {
-        return await context.AlbumSongs
-            .Where(s => s.AlbumId == albumId)
-            .OrderBy(s => s.Order)
-            .ToListAsync();
-    }
-
     public async Task<PagedList<AlbumDto>> GetFavoriteAlbumsAsync(int userId, AlbumParams albumParams)
     {
         var query = context.Albums.AsQueryable();
@@ -153,18 +124,6 @@ public class AlbumRepository(DataContext context, IMapper mapper) : IAlbumReposi
             albumParams.PageNumber,
             albumParams.PageSize
         );
-    }
-
-    public async Task<int> GetMaxOrder(int albumId)
-    {
-        return await context.AlbumSongs
-            .Where(s => s.AlbumId == albumId)
-            .CountAsync();
-    }
-
-    public void RemoveFavoriteUser(AlbumFavorite favoriteAlbum)
-    {
-        context.FavoriteAlbums.Remove(favoriteAlbum);
     }
 
     public async Task<int> GetTotalAlbumsAsync()

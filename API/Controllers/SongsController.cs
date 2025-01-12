@@ -1,3 +1,4 @@
+using API.DTOs.Files;
 using API.DTOs.Songs;
 using API.Entities;
 using API.Extensions;
@@ -312,6 +313,53 @@ public class SongsController(
         }
 
         return NoContent();
+    }
+
+    [HttpPut("update-photo/{id:int}")]
+    public async Task<ActionResult<FileDto>> AddPhoto(int id, IFormFile file)
+    {
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(id);
+        if (song == null) return BadRequest("Cannot update song");
+
+        // Check user role
+        var userId = User.GetUserId();
+        if (userId != song.PublisherId && !User.IsInRole("Admin"))
+        {
+            return Unauthorized("You are not authorized to update this song.");
+        }
+
+        // Delete old photo
+        foreach (var sp in song.Photos)
+        {
+            if (sp.PublicId != null)
+            {
+                var deleteResult = await fileService.DeleteFileAsync(sp.PublicId, ResourceType.Image);
+                if (deleteResult.Error != null) return BadRequest(deleteResult.Error.Message);
+            }
+        }
+        song.Photos.Clear();
+
+        // Upload new photo
+        var result = await fileService.UploadImageAsync("/songs/" + song.Id + "/images", file);
+        if (result.Error != null) return BadRequest(result.Error.Message);
+
+        var songPhoto = new SongPhoto
+        {
+            Url = result.SecureUrl.AbsoluteUri,
+            PublicId = result.PublicId,
+            IsMain = true
+        };
+        song.Photos.Add(songPhoto);
+
+        song.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete()) return BadRequest("Problem adding photo");
+
+        return CreatedAtAction(
+            nameof(GetSongById),
+            new { id = song.Id },
+            mapper.Map<FileDto>(songPhoto)
+        );
     }
 
     [HttpGet]
