@@ -4,8 +4,6 @@ import React, { useEffect } from 'react';
 import AlbumCard from '@/components/ui/AlbumCard';
 import { useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
-import { FiMoreHorizontal } from 'react-icons/fi';
-import Image from 'next/image';
 import {
   Table,
   TableBody,
@@ -16,7 +14,7 @@ import {
 } from '@/components/ui/tableV2';
 import { Button } from '@/components/ui/button';
 import LikeButton from '@/components/music/LikeButton';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueries } from '@tanstack/react-query';
 import { getArtistSongsByArtistId } from '@/actions/song-actions';
 import { getArtistAlbums } from '@/actions/album-actions';
@@ -25,6 +23,7 @@ import DynamicImage from '@/components/custom/DynamicImage';
 import AddToPlaylistButton from '@/components/ui/addToPlaylistButton';
 
 export default function ArtistDetailPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const userId = searchParams.get('userId');
   const { setLoadingState } = useLoading();
@@ -58,27 +57,29 @@ export default function ArtistDetailPage() {
   return (
     <div className="flex min-h-screen w-full overflow-hidden">
       <div className="flex flex-col w-full overflow-hidden">
-        <div className="bg-[#181818] min-h-screen text-white overflow-y-auto">
+        <div className="bg-transparent min-h-screen text-white overflow-y-auto">
           <div className="max-w-6xl mx-auto py-8 px-4">
             {/* Artist Header */}
             <div className="flex-col items-center gap-8 mb-8 relative">
               <div className="relative w-full">
-                <Image
-                  src={
-                    theArtist?.songs[0]?.publisherImageUrl ||
-                    'https://picsum.photos/400/400?random=99'
-                  }
-                  alt="Eminem"
-                  width={1000} // Provide the width explicitly
-                  height={400} // Provide the height explicitly
-                  className="w-full h-80 object-cover rounded-md shadow-lg"
-                />
+                <div className="flex w-full h-80 items-center justify-center relative">
+                  <DynamicImage
+                    src={
+                      theArtist?.songs[0].publisherImageUrl ||
+                      '/placeholder-artist.jpg'
+                    }
+                    alt={theArtist?.songs[0].publisherName || 'Artist image'}
+                    className="object-contain rounded-full"
+                  />
+                </div>
 
-                <div className="flex absolute top-4 left-0 right-0 w-full justify-between px-4">
-                  <a href="/artists">
-                    <IoArrowBack className="text-white text-4xl" />
-                  </a>
-                  <FiMoreHorizontal className="text-white text-4xl" />
+                <div className="flex absolute top-4 left-0 right-0 w-full justify-between px-4 ">
+                  <IoArrowBack
+                    className="text-white text-4xl hover:text-general-pink transition-colors cursor-pointer duration-200"
+                    onClick={() => {
+                      router.back()
+                    }}
+                  />
                 </div>
               </div>
               <div className="-mt-16 ml-4">
@@ -163,7 +164,7 @@ export default function ArtistDetailPage() {
                             <DynamicImage
                               alt="Artist Image"
                               src={
-                                song.songPhotoUrl ||
+                                song.photoUrl ||
                                 'https://picsum.photos/400/400?random=42'
                               }
                               className="w-14 h-14 "

@@ -26,12 +26,12 @@ export interface AddSongPayload {
 }
 
 export interface UpdateSongPayload {
-  songName?: string;
-  description?: string;
-  lyricFile?: File;
-  musicFile?: File;
-  photoFiles?: File[];
-  genreIds?: number[];
+  songName: string;
+  description: string;
+  lyricFile: File;
+  musicFile: File;
+  photoFiles: File[];
+  genreIds: number[];
 }
 
 export interface AddSongResponse {
@@ -189,19 +189,18 @@ export async function getArtistSongsByArtistId(artistId: number) {
   }
 }
 
-export async function getFavoriteSongs(
-  userId: number,
-  pageNumber = 1,
-  pageSize = 1
-) {
+export async function getFavoriteSongs({
+  pageNumber,
+  pageSize,
+}: {
+  pageNumber: number;
+  pageSize: number;
+}) {
   const token = await getAuthTokenFromCookies();
 
   try {
     const response = await client<Song[]>(
-      !pageNumber || !pageSize
-        ? `/api/songs`
-        : `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-
+      `api/users/me/favorite-songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
       {
         method: 'GET',
         headers: {
@@ -242,14 +241,13 @@ export async function isFavoriteSong(songId: number): Promise<boolean> {
       },
     });
 
-    console.log('the fav: ', response.data);
-
     return response.data;
   } catch (error) {
     console.error('Error in checking Favourite song:', error);
     throw error;
   }
 }
+
 export async function toggleFavoriteSongById(songId: number): Promise<void> {
   const token = await getAuthTokenFromCookies();
 

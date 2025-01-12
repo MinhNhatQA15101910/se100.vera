@@ -20,11 +20,11 @@ import { Music, FileText, X } from 'lucide-react';
 import { AppButton } from '@/components/ui/AppButton';
 import { useQuery } from '@tanstack/react-query';
 import { getAllGenres } from '@/actions/genre-actions';
-import GenreSelect from './GenreSelect';
-import ArtistSelect from './ArtistSelect';
+import GenreSelect from '../../upload-album/_components/GenreSelect';
+import ArtistSelect from '../../upload-album/_components/ArtistSelect';
 import DynamicImage from '@/components/custom/DynamicImage';
 import { getAllArtists } from '@/actions/user-actions';
-import { useAddSongMutation } from '../_hooks/useSongMutation';
+import { useAddSongMutation } from '@/hooks/useSongMutation';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
@@ -63,7 +63,7 @@ const formSchema = z.object({
       'File size must be less than 5MB'
     ),
   genreIds: z.array(z.number()).min(1, 'At least one genre is required'),
-  coAritstIds: z.array(z.number()).optional(),
+  artistIds: z.array(z.number()).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -71,7 +71,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function UploadForm() {
   const router = useRouter();
   const { data: genresData } = useQuery({
-    queryKey: ['genres', 'upload_song'],
+    queryKey: ['genres'],
     queryFn: async () => {
       return await getAllGenres();
     },
@@ -88,7 +88,7 @@ export default function UploadForm() {
     defaultValues: {
       songName: '',
       genreIds: [],
-      coAritstIds: [],
+      artistIds: [],
     },
   });
 
@@ -135,7 +135,7 @@ export default function UploadForm() {
         musicFile: data.musicFile,
         photoFiles: [data.photoFiles],
         genreIds: data.genreIds,
-        artistIds: data.coAritstIds || [],
+        artistIds: data.artistIds || [],
       },
       {
         onSuccess: () => {
@@ -335,7 +335,7 @@ export default function UploadForm() {
                 {/*Specify Added Artists*/}
                 <FormField
                   control={form.control}
-                  name="coAritstIds"
+                  name="artistIds"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">

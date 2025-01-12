@@ -4,7 +4,7 @@ import { Input } from './ui/Input';
 import {
   useAddGenreMutation,
   useUpdateGenreMutation,
-} from '@/app/(app)/(artitst)/upload-song/_hooks/useGenreMutation';
+} from '@/hooks/useGenreMutation';
 import { toast } from 'react-toastify';
 
 interface AddUpdateGenresCardProps {

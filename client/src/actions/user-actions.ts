@@ -22,6 +22,16 @@ export interface ChangePasswordPayload {
   newPassword: string;
 }
 
+export interface UpdateUserPayload {
+  firstName: string;
+  lastName: string;
+  artistName: string;
+  gender: 'male' | 'female';
+  about: string;
+  photoFile: File;
+  dateOfBirth: Date;
+}
+
 export async function getAllArtists(): Promise<User[]> {
   const token = await getAuthTokenFromCookies();
 
@@ -95,6 +105,23 @@ export async function changePassword(data: ChangePasswordPayload) {
     });
   } catch (error) {
     console.error('Error changing a user password: ', error);
+    throw error;
+  }
+}
+
+export async function updateUser(data: FormData) {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/users`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    });
+  } catch (error) {
+    console.error('Error update user: ', error);
     throw error;
   }
 }

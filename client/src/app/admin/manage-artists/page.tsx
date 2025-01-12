@@ -31,7 +31,6 @@ export default function ManageArtists() {
 
   React.useEffect(() => {
     setLoadingState(isLoading);
-    console.log(data);
   }, [isLoading]);
 
   return (

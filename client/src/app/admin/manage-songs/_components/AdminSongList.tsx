@@ -80,7 +80,7 @@ const AdminSongList = () => {
                   <DynamicImage
                     alt="Artist Image"
                     src={
-                      song.songPhotoUrl ||
+                      song.photoUrl ||
                       'https://picsum.photos/400/400?random=42'
                     }
                     className="w-14 h-14 flex items-center"

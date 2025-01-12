@@ -11,9 +11,11 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'react-toastify';
 
+import { showPlanModal } from '@/components/PlanModal';
+
 export default function ActivateArtistForm() {
   const router = useRouter();
-  const {logout} = useUser()
+  const { logout } = useUser();
   const activateArtistAccountMutation = useActivateArtistAccountMutation();
 
   const [formData, setFormData] = useState({
@@ -77,8 +79,8 @@ export default function ActivateArtistForm() {
             toast.success(
               'Congrats, You are now available to contribute your Songs and Albums!'
             );
-            logout()
-            router.push('/login')
+            logout();
+            router.push('/login');
           },
           onError: () => {
             toast.error('Failed to Compile, Building in Progress.');
@@ -127,7 +129,8 @@ export default function ActivateArtistForm() {
           </div>
 
           <Button
-            type="submit"
+            type={false ? `submit` : `button`}
+            onClick={true ? showPlanModal : () => {}}
             className="w-full bg-[#E325B6] hover:bg-[#C920A0] text-white rounded-full py-6 text-lg font-medium"
           >
             ACTIVATE

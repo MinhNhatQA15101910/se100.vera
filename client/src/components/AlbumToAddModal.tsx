@@ -14,7 +14,7 @@ const AlbumToAddModal = ({ songId }: { songId: number }) => {
   const { userDetails } = useUser();
   const { setLoadingState } = useLoading();
   const { data: albums, isLoading } = useQuery({
-    queryKey: ['all_albums'],
+    queryKey: ['albums'],
     queryFn: async () => await getArtistAlbums(userDetails?.id || -1),
   });
   const addSongToAlbumMutation = useAddSongToAlbumMutation();

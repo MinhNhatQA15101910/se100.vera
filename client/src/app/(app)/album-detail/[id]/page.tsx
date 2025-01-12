@@ -32,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Delete, Edit } from 'lucide-react';
-import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useAlbumMutation';
+import { useDeleteAlbumMutation } from '@/hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
 
@@ -233,7 +233,7 @@ const Page: React.FC = () => {
                           <DynamicImage
                             alt="Artist Image"
                             src={
-                              song.song.songPhotoUrl ||
+                              song.song.photoUrl ||
                               'https://picsum.photos/400/400?random=42'
                             }
                             className="w-14 h-14 flex items-center"

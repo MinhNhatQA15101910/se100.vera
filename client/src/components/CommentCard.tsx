@@ -39,7 +39,6 @@ const CommentCard: React.FC<ICommentCardProps> = ({
   };
 
   const confirmDelete = () => {
-    console.log('Comment deleted');
     setIsDialogOpen(false);
   };
 

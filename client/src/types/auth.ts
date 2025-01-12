@@ -1,4 +1,5 @@
 import { Role } from './declaration';
+import { Gender } from './global';
 
 export interface LoginCredentials {
   email: string;
@@ -27,7 +28,7 @@ export interface UserDto {
   roles: Role[];
   artistName: string | null;
   photoUrl: string | null;
-  gender: string;
+  gender: Gender;
   dateOfBirth: string;
   about: string | null;
   created: string;

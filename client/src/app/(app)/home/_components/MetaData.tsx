@@ -44,7 +44,7 @@ export default function MetaData() {
   ] = useQueries({
     queries: [
       {
-        queryKey: ['all_albums'],
+        queryKey: ['albums'],
         queryFn: async () => await getAllAlbums(),
       },
       {
@@ -71,7 +71,8 @@ export default function MetaData() {
         </h2>
         <div className="flex flex-row items-center">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 w-full">
-            {artists?.slice(0, 6)
+            {artists
+              ?.slice(0, 6)
               .map((artist: User, idx: number) => (
                 <ArtistCard key={idx} artist={artist} />
               ))}
@@ -117,9 +118,9 @@ export default function MetaData() {
               ))}
           </div>
           {playlists?.length || 0 >= 5 ? (
+            <ViewAllFeature link="/playlists" />
+          ) : (
             <div className="flex w-[10%]" />
-            ) : (
-              <ViewAllFeature link="/playlists" />
           )}
         </div>
       </section>

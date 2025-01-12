@@ -25,7 +25,7 @@ import DynamicImage from '@/components/custom/DynamicImage';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { useAddAlbumMutation } from '../_hooks/useAlbumMutation';
+import { useAddAlbumMutation } from '@/hooks/useAlbumMutation';
 import ArtistSelect from './ArtistSelect';
 import { toast } from 'react-toastify';
 

@@ -1,4 +1,13 @@
-import { Role } from './declaration';
+export enum Role {
+  Admin = 'Admin',
+  Artist = 'Artist',
+  Listener = 'Listener',
+}
+
+export enum Gender {
+  male = "male",
+  female = "female"
+}
 
 export interface Song {
   id: number;
@@ -12,7 +21,7 @@ export interface Song {
   musicPublicId: string | null;
   lyricUrl: string | null;
   lyricPublicId: string | null;
-  songPhotoUrl: string;
+  photoUrl: string;
   songPhotoPublicId: string | null;
   artists: User[];
   createdAt: string;
@@ -23,7 +32,6 @@ export interface Genre {
   id: number;
   genreName: string;
   createdAt: string;
-
 }
 
 export interface Album {
