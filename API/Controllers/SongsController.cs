@@ -588,6 +588,26 @@ public class SongsController(
         return Ok();
     }
 
+    [HttpPut("increase-views/{id:int}")]
+    public async Task<ActionResult> IncreaseViews(int id)
+    {
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(id);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        song.TotalViews++;
+        song.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to increase views.");
+        }
+
+        return NoContent();
+    }
+
     private static string GetSongDuration(IFormFile audioFile)
     {
         if (audioFile == null)
