@@ -5,6 +5,7 @@ import { useLoading } from '@/contexts/LoadingContext';
 import {
   addGenre,
   AddGenrePayload,
+  deleteGenre,
   updateGenre,
 } from '@/actions/genre-actions';
 
@@ -40,6 +41,30 @@ export function useUpdateGenreMutation() {
       void queryClient.invalidateQueries({
         queryKey: ['genres'],
       });
+    },
+  });
+
+  return mutation;
+}
+
+export function useDeleteGenreMutation() {
+  const queryClient = useQueryClient();
+  const { setLoadingState } = useLoading();
+
+  const mutation = useMutation({
+    mutationFn: async (genreId: number) => {
+      setLoadingState(true);
+      await deleteGenre(genreId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['genres'],
+      });
+      setLoadingState(false);
+    },
+    onError: (error) => {
+      console.error('Error deleting genre:', error);
+      setLoadingState(false);
     },
   });
 

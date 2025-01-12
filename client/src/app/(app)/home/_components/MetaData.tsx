@@ -71,13 +71,13 @@ export default function MetaData() {
         </h2>
         <div className="flex flex-row items-center">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 w-full">
-            {(artists || [])
+            {(artists?.artists || [])
               .slice(0, 6)
               .map((artist: User, idx: number) => (
                 <ArtistCard key={idx} artist={artist} />
               ))}
           </div>
-          {(artists?.length || 0) > 6 ? (
+          {(artists?.artists?.length || 0) > 6 ? (
             <ViewAllFeature link="/artists" />
           ) : (
             <div className="flex w-[10%]" />
@@ -90,13 +90,13 @@ export default function MetaData() {
         </h2>
         <div className="flex flex-row items-center">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
-            {(albums || [])
+            {(albums?.albums || [])
               .slice(0, 5)
               .map((album: Album, idx: number) => (
                 <AlbumCard key={idx} albumCard={album} />
               ))}
           </div>
-          {albums?.length || 0 > 5 ? (
+          {(albums?.albums?.length || 0) > 5 ? (
             <ViewAllFeature link={'/discover/top-albums'} />
           ) : (
             <div className="flex w-[10%]" />
@@ -117,7 +117,7 @@ export default function MetaData() {
                 <PlaylistCard key={idx} playlist={playlist} />
               ))}
           </div>
-          {playlists?.length || 0 >= 5 ? (
+          {(playlists?.length || 0) >= 5 ? (
             <ViewAllFeature link="/playlists" />
           ) : (
             <div className="flex w-[10%]" />

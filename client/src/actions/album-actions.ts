@@ -18,23 +18,97 @@ export interface EditAlbumPayload {
   artistIds: number[]
 }
 
-export async function getAllAlbums(): Promise<Album[]> {
-  const token = getAuthTokenFromCookies();
+export interface AlbumResponse {
+  albums: Album[];
+  pagination: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
+}
+
+export async function getAllAlbums(
+  currentPage?: number,
+  pageSize?: number,
+  searchKeyword?: string
+): Promise<AlbumResponse> {
+  const token = await getAuthTokenFromCookies();
 
   try {
-    const response = await client<Album[]>('/api/albums', {
+    // Xây dựng URL với query parameters
+    let url = `/api/albums`;
+    const params: string[] = [];
+
+    if (currentPage) params.push(`pageNumber=${currentPage}`);
+    if (pageSize) params.push(`pageSize=${pageSize}`);
+    if (searchKeyword) params.push(`keyword=${encodeURIComponent(searchKeyword)}`);
+
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+
+    const response = await client<Album[]>(url, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    const paginationHeader = response.headers.get('Pagination');
 
-    return response.data;
+    if (!paginationHeader) {
+      throw new Error('Pagination data not found in headers');
+    }
+
+    const pagination = JSON.parse(paginationHeader);
+
+    if (!response.headers.get('Content-Type')?.includes('application/json')) {
+      throw new Error('Response does not contain valid JSON data');
+    }
+
+    return {
+      albums: response.data,
+      pagination,
+    };  
   } catch (error) {
     console.error('get all albums error: ', error);
     throw error;
   }
 }
+
+export async function approveAlbum(albumId: number): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/albums/approve/${albumId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('Error approving the album: ', error);
+    throw error;
+  }
+}
+
+export async function rejectAlbum(albumId: number): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/albums/reject/${albumId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('Error rejecting the album: ', error);
+    throw error;
+  }
+}
+
+
 
 export async function getAlbumById({
   albumId,

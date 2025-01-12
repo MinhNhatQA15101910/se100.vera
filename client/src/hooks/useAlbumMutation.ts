@@ -8,6 +8,7 @@ import {
   editAlbum,
   EditAlbumPayload,
 } from '@/actions/album-actions';
+import { approveAlbum, rejectAlbum } from '@/actions/album-actions';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useUser } from '@/contexts/UserContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -45,9 +46,13 @@ export function useDeleteAlbumMutation() {
       return response;
     },
     onSuccess: () => {
+      console.log('Album deleted successfully!');
       void queryClient.invalidateQueries({
         queryKey: ['albums'],
       });
+    },
+    onError: (error) => {
+      console.error('Error deleting album:', error);
     },
   });
 
@@ -136,6 +141,46 @@ export function useEditAlbumMutation() {
       void queryClient.invalidateQueries({
         queryKey: ['albums'],
       });
+    },
+  });
+
+  return mutation;
+}
+
+export function useApproveAlbumMutation() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (id: number) => {
+      await approveAlbum(id); // Gọi API để phê duyệt album
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['albums'], // Làm mới danh sách album sau khi phê duyệt
+      });
+    },
+    onError: (error) => {
+      console.error('Error approving the album:', error);
+    },
+  });
+
+  return mutation;
+}
+
+export function useRejectAlbumMutation() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (id: number) => {
+      await rejectAlbum(id); // Gọi API để từ chối album
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['albums'], // Làm mới danh sách album sau khi từ chối
+      });
+    },
+    onError: (error) => {
+      console.error('Error rejecting the album:', error);
     },
   });
 

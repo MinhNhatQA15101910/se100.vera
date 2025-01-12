@@ -199,7 +199,7 @@ export default function UploadForm() {
                       {/* Display selected artists */}
                       <div className="flex flex-wrap gap-2 mb-2">
                         {field.value?.map((artistId) => {
-                          const artistName = artistsData?.find(
+                          const artistName = artistsData?.artists?.find(
                             (artist) => artist.id === artistId
                           )?.artistName;
                           return (
@@ -224,7 +224,7 @@ export default function UploadForm() {
                         })}
                       </div>
                       <ArtistSelect
-                        artistsData={artistsData || []}
+                        artistsData={artistsData?.artists || []}
                         field={field}
                       />
                     </FormItem>

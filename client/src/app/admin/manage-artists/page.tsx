@@ -14,20 +14,31 @@ import { useLoading } from '@/contexts/LoadingContext';
 import React from 'react';
 import { getAllArtists } from '@/actions/user-actions';
 import DynamicImage from '@/components/custom/DynamicImage';
-import StatusToggleButton from '@/components/StatusToggleButton';
+import ArtistStatusToggleButton from '@/components/ArtistStatusToggleButton';
+import PaginationButtons from '@/components/PaginatedButtons';
+import AdminSearchSongBar from '@/components/AdminSearchBar';
 
 export default function ManageArtists() {
   const { setLoadingState } = useLoading();
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchKeyword, setSearchKeyword] = useState<string>(''); // State cho từ khóa tìm kiếm
   const pageSize = 10;
 
   const { data, isLoading } = useQuery({
-    queryKey: ['artists', currentPage, pageSize],
+    queryKey: ['artists', currentPage, pageSize, searchKeyword],
     queryFn: async () => {
-      const response = await getAllArtists();
+      const response = await getAllArtists(
+        currentPage,
+        pageSize,
+        searchKeyword
+      );
       return response;
     },
   });
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   React.useEffect(() => {
     setLoadingState(isLoading);
@@ -35,7 +46,18 @@ export default function ManageArtists() {
 
   return (
     <div className="flex-col min-h-screen w-full overflow-hidden">
-      <div className="w-full flex flex-col bg-transparent text-general-white items-center custom1-table p-12 ">
+      {/* Search Bar */}
+      <div className="flex justify-center my-4">
+        <AdminSearchSongBar
+          onSearchChange={(value) => {
+            setSearchKeyword(value);
+            setCurrentPage(1);
+          }}
+        />
+      </div>
+
+      {/* Table */}
+      <div className="w-full flex flex-col bg-transparent text-general-white items-center custom1-table p-12">
         <div className="flex justify-between w-full">
           <div>
             <h2 className="text-2xl font-bold mb-4">
@@ -74,17 +96,19 @@ export default function ManageArtists() {
             </TableHead>
           </TableHeader>
           <TableBody>
-            {data?.slice(0, 10).map((artist, index) => (
+            {data?.artists?.map((artist, index) => (
               <TableRow
                 key={artist.id}
                 className="border-none cursor-pointer hover:bg-transparent group"
               >
-                <TableCell className="font-bold text-lg">{index + 1}</TableCell>
+                <TableCell className="font-bold text-lg">
+                  {index + 1 + (currentPage - 1) * pageSize}
+                </TableCell>
                 <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
                   <div className="flex items-center space-x-4">
                     <DynamicImage
                       src={artist.photoUrl || ''}
-                      alt={`X`}
+                      alt="Artist Avatar"
                       className="w-14 h-14 rounded-md"
                     />
                     <div>
@@ -108,10 +132,9 @@ export default function ManageArtists() {
                   {artist.email || 'N/A'}
                 </TableCell>
                 <TableCell className="text-center bg-[#2E2E2E] group-hover:bg-[#595959]">
-                  <StatusToggleButton
-                    id={artist.id}
-                    type="artist"
-                    isActivated={true}
+                  <ArtistStatusToggleButton
+                    artistId={artist.id}
+                    initialState={artist.state}
                   />
                 </TableCell>
               </TableRow>
@@ -119,6 +142,14 @@ export default function ManageArtists() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      <PaginationButtons
+        pageSize={pageSize}
+        currentPage={currentPage}
+        totalCount={data?.pagination?.totalItems || 0}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

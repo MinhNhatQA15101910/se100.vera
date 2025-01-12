@@ -40,7 +40,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
   };
 
   return (
-    <button onClick={handleLike} className="z-10 relative">
+    <button onClick={handleLike} className="relative">
       {data ? (
         <MdFavorite
           size={size}

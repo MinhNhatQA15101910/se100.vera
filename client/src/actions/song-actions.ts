@@ -41,23 +41,30 @@ export interface AddSongResponse {
 
 export async function getAllSongs(
   pageNumber?: number,
-  pageSize?: number
+  pageSize?: number,
+  keyword?: string,
+  sortBy?: string,
+  sortOrder?: string
 ): Promise<SongsResponse> {
   const token = await getAuthTokenFromCookies();
 
   try {
-    const response = await client<Song[]>(
-      !pageNumber || !pageSize
-        ? `/api/songs`
-        : `/api/songs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    // Construct the query string with the sorting parameters
+    const queryParams: string[] = [];
+    if (pageNumber) queryParams.push(`pageNumber=${pageNumber}`);
+    if (pageSize) queryParams.push(`pageSize=${pageSize}`);
+    if (keyword) queryParams.push(`keyword=${keyword}`);
+    if (sortBy) queryParams.push(`orderBy=${sortBy}`);
+    if (sortOrder) queryParams.push(`sortBy=${sortOrder}`);
 
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+
+    const response = await client<Song[]>(`/api/songs${queryString}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     const paginationHeader = response.headers.get('Pagination');
     if (!paginationHeader) {
@@ -79,6 +86,7 @@ export async function getAllSongs(
     throw error;
   }
 }
+
 
 export async function getSongById(songId: number): Promise<Song> {
   try {
@@ -136,6 +144,39 @@ export async function updateSong(
     throw error;
   }
 }
+
+export async function approveSong(songId: number): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/songs/approve/${songId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('Error approving the song: ', error);
+    throw error;
+  }
+}
+
+export async function rejectSong(songId: number): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/songs/reject/${songId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('Error rejecting the song: ', error);
+    throw error;
+  }
+}
+
 
 // Only Artist can delete a song
 export async function deleteSong(songId: number): Promise<void> {
