@@ -10,6 +10,8 @@ public interface ISongRepository
     Task<PagedList<SongDto>> GetFavoriteSongsAsync(int userId, SongParams songParams);
     Task<Song?> GetSongByIdAsync(int id);
     Task<PagedList<SongDto>> GetSongsAsync(SongParams songParams);
+    Task<int> GetTotalDownloadsAsync();
     Task<int> GetTotalSongsAsync();
+    Task<int> GetTotalViewsAsync();
     void RemoveSong(Song song);
 }

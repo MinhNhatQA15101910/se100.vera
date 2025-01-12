@@ -16,8 +16,6 @@ public class UserRepository(
     {
         var query = context.Users.AsQueryable();
 
-        query = query.Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Artist"));
-
         // Remove current user
         query = query.Where(u => u.NormalizedEmail != userParams.CurrentEmail!.ToUpper());
 
@@ -30,13 +28,13 @@ public class UserRepository(
         // Filter by first name
         if (userParams.FirstName != null)
         {
-            query = query.Where(u => u.FirstName.Contains(userParams.FirstName));
+            query = query.Where(u => u.FirstName.ToLower().Contains(userParams.FirstName.ToLower()));
         }
 
         // Filter by last name
         if (userParams.LastName != null)
         {
-            query = query.Where(u => u.LastName.Contains(userParams.LastName));
+            query = query.Where(u => u.LastName.ToLower().Contains(userParams.LastName.ToLower()));
         }
 
         // Filter by artist name
@@ -44,7 +42,7 @@ public class UserRepository(
         {
             query = query.Where(
                 u => u.ArtistName != null &&
-                u.ArtistName.Contains(userParams.ArtistName)
+                u.ArtistName.ToLower().Contains(userParams.ArtistName.ToLower())
             );
         }
 
@@ -52,6 +50,17 @@ public class UserRepository(
         if (userParams.Email != null)
         {
             query = query.Where(u => u.NormalizedEmail == userParams.Email.ToUpper());
+        }
+
+        // Filter by keyword
+        if (userParams.Keyword != null)
+        {
+            query = query.Where(
+                u => u.FirstName.ToLower().Contains(userParams.Keyword.ToLower()) ||
+                u.LastName.ToLower().Contains(userParams.Keyword.ToLower()) ||
+                u.ArtistName != null &&
+                u.ArtistName.ToLower().Contains(userParams.Keyword.ToLower())
+            );
         }
 
         // Order
@@ -69,6 +78,9 @@ public class UserRepository(
             "artistName" => userParams.SortBy == "asc"
                         ? query.OrderBy(u => u.ArtistName)
                         : query.OrderByDescending(u => u.ArtistName),
+            "createdAt" => userParams.SortBy == "asc"
+                        ? query.OrderBy(u => u.CreatedAt)
+                        : query.OrderByDescending(u => u.CreatedAt),
             _ => query.OrderBy(u => u.Email)
         };
 
@@ -84,6 +96,7 @@ public class UserRepository(
         return await userManager.Users
             .Include(u => u.Photos)
             .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+            .Include(u => u.Plans).ThenInclude(p => p.Plan)
             .SingleOrDefaultAsync(u => u.Id == id);
     }
 
@@ -103,13 +116,13 @@ public class UserRepository(
         // Filter by first name
         if (userParams.FirstName != null)
         {
-            query = query.Where(u => u.FirstName.Contains(userParams.FirstName));
+            query = query.Where(u => u.FirstName.ToLower().Contains(userParams.FirstName.ToLower()));
         }
 
         // Filter by last name
         if (userParams.LastName != null)
         {
-            query = query.Where(u => u.LastName.Contains(userParams.LastName));
+            query = query.Where(u => u.LastName.ToLower().Contains(userParams.LastName.ToLower()));
         }
 
         // Filter by artist name
@@ -117,7 +130,7 @@ public class UserRepository(
         {
             query = query.Where(
                 u => u.ArtistName != null &&
-                u.ArtistName.Contains(userParams.ArtistName)
+                u.ArtistName.ToLower().Contains(userParams.ArtistName.ToLower())
             );
         }
 
@@ -125,6 +138,17 @@ public class UserRepository(
         if (userParams.Email != null)
         {
             query = query.Where(u => u.NormalizedEmail == userParams.Email.ToUpper());
+        }
+
+        // Filter by keyword
+        if (userParams.Keyword != null)
+        {
+            query = query.Where(
+                u => u.FirstName.ToLower().Contains(userParams.Keyword.ToLower()) ||
+                u.LastName.ToLower().Contains(userParams.Keyword.ToLower()) ||
+                u.ArtistName != null &&
+                u.ArtistName.ToLower().Contains(userParams.Keyword.ToLower())
+            );
         }
 
         // Order
@@ -142,6 +166,9 @@ public class UserRepository(
             "artistName" => userParams.SortBy == "asc"
                         ? query.OrderBy(u => u.ArtistName)
                         : query.OrderByDescending(u => u.ArtistName),
+            "createdAt" => userParams.SortBy == "asc"
+                        ? query.OrderBy(u => u.CreatedAt)
+                        : query.OrderByDescending(u => u.CreatedAt),
             _ => query.OrderBy(u => u.Email)
         };
 

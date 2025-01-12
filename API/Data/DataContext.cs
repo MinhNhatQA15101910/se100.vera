@@ -27,10 +27,11 @@ IdentityDbContext<
     public required DbSet<ArtistSong> ArtistSongs { get; set; }
     public required DbSet<ArtistAlbum> ArtistAlbums { get; set; }
     public required DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
-    public required DbSet<Payment> Payments { get; set; }
-    public required DbSet<PaymentDetail> PaymentDetails { get; set; }
+    // public required DbSet<Payment> Payments { get; set; }
+    // public required DbSet<PaymentDetail> PaymentDetails { get; set; }
     public required DbSet<Comment> Comments { get; set; }
     public required DbSet<Notification> Notifications { get; set; }
+    public required DbSet<Download> Downloads { get; set; }
 
     override protected void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -118,6 +119,23 @@ IdentityDbContext<
             .HasForeignKey(x => x.AlbumId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
+
+        #region User-Plan
+        modelBuilder.Entity<UserPlan>()
+            .HasKey(x => new { x.UserId, x.PlanId });
+
+        modelBuilder.Entity<UserPlan>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Plans)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserPlan>()
+            .HasOne(x => x.Plan)
+            .WithMany(x => x.Users)
+            .HasForeignKey(x => x.PlanId)
+            .OnDelete(DeleteBehavior.Cascade);
+        #endregion
         #endregion
 
         #region Song relationships
@@ -136,6 +154,23 @@ IdentityDbContext<
             .WithMany(x => x.Songs)
             .HasForeignKey(x => x.GenreId)
             .OnDelete(DeleteBehavior.Cascade);
+        #endregion
+
+        #region Download
+        modelBuilder.Entity<Download>()
+            .HasKey(x => new { x.UserId, x.SongId });
+
+        modelBuilder.Entity<Download>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Downloads)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Download>()
+            .HasOne(x => x.Song)
+            .WithMany(x => x.Downloads)
+            .HasForeignKey(x => x.SongId)
+            .OnDelete(DeleteBehavior.NoAction);
         #endregion
         #endregion
 
@@ -192,23 +227,6 @@ IdentityDbContext<
             .HasForeignKey(x => x.SongId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
-        #endregion
-
-        #region Payment-SubscriptionPlan
-        modelBuilder.Entity<PaymentDetail>()
-            .HasKey(x => new { x.PaymentId, x.SubscriptionPlanId });
-
-        modelBuilder.Entity<PaymentDetail>()
-            .HasOne(x => x.Payment)
-            .WithMany(x => x.SubscriptionPlans)
-            .HasForeignKey(x => x.PaymentId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<PaymentDetail>()
-            .HasOne(x => x.SubscriptionPlan)
-            .WithMany(x => x.Payments)
-            .HasForeignKey(x => x.SubscriptionPlanId)
-            .OnDelete(DeleteBehavior.Cascade);
         #endregion
     }
 }

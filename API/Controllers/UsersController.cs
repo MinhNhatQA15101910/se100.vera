@@ -13,7 +13,8 @@ public class UsersController(
     IUnitOfWork unitOfWork,
     UserManager<AppUser> userManager,
     IMapper mapper,
-    IFileService fileService
+    IFileService fileService,
+    IEmailService emailService
 ) : BaseApiController
 {
     [HttpPost("validate-token")]
@@ -181,6 +182,36 @@ public class UsersController(
         user.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete()) return BadRequest("Could not toggle lock user");
+
+        // Send email to user
+        if (user.State == UserState.Inactive.ToString())
+        {
+            var fullname = user.FirstName + " " + user.LastName;
+            var message = await System.IO.File.ReadAllTextAsync("./Assets/AccountLockedEmail.html");
+            message = message.Replace("{{fullname}}", fullname);
+            await emailService.SendEmailAsync(
+                new EmailMessage(
+                    fullname,
+                    user.Email!,
+                    "VERA ACCOUNT LOCKED",
+                    message
+                )
+            );
+        }
+        else
+        {
+            var fullname = user.FirstName + " " + user.LastName;
+            var message = await System.IO.File.ReadAllTextAsync("./Assets/AccountUnlockedEmail.html");
+            message = message.Replace("{{fullname}}", fullname);
+            await emailService.SendEmailAsync(
+                new EmailMessage(
+                    fullname,
+                    user.Email!,
+                    "VERA ACCOUNT UNLOCKED",
+                    message
+                )
+            );
+        }
 
         return NoContent();
     }

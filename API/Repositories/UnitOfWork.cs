@@ -11,7 +11,8 @@ public class UnitOfWork(
     ISongRepository songRepository,
     IUserRepository userRepository,
     ICommentRepository commentRepository,
-    INotificationRepository notificationRepository
+    INotificationRepository notificationRepository,
+    ISubscriptionPlanRepository subscriptionPlanRepository
 ) : IUnitOfWork
 {
     public IAlbumRepository AlbumRepository => albumRepository;
@@ -21,6 +22,7 @@ public class UnitOfWork(
     public IUserRepository UserRepository => userRepository;
     public ICommentRepository CommentRepository => commentRepository;
     public INotificationRepository NotificationRepository => notificationRepository;
+    public ISubscriptionPlanRepository SubscriptionPlanRepository => subscriptionPlanRepository;
 
     public async Task<bool> Complete()
     {

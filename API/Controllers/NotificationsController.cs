@@ -42,26 +42,6 @@ public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper) : B
         return notifications;
     }
 
-    [HttpPost]
-    [Authorize]
-    public async Task<ActionResult<NotificationDto>> CreateNotification(NewNotificationDto newNotificationDto)
-    {
-        var notification = mapper.Map<Notification>(newNotificationDto);
-
-        unitOfWork.NotificationRepository.AddNotification(notification);
-
-        if (!await unitOfWork.Complete())
-        {
-            return BadRequest("Failed to create notification");
-        }
-
-        return CreatedAtAction(
-            nameof(GetNotificationById),
-            new { id = notification.Id },
-            mapper.Map<NotificationDto>(notification)
-        );
-    }
-
     [HttpPatch("read/{id:int}")]
     [Authorize]
     public async Task<ActionResult> MarkNotificationAsRead(int id)
