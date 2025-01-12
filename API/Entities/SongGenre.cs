@@ -1,6 +1,5 @@
 namespace API.Entities;
 
-[Table("SongGenres")]
 public class SongGenre
 {
     public int SongId { get; set; }

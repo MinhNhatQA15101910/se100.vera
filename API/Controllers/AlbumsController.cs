@@ -1,4 +1,5 @@
 using API.DTOs.Albums;
+using API.DTOs.Files;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
@@ -22,13 +23,58 @@ public class AlbumsController(
             return NotFound();
         }
 
-        return mapper.Map<AlbumDto>(album);
+        var albumDto = mapper.Map<AlbumDto>(album);
+
+        var userId = User.GetUserId();
+        if (userId == -1)
+        {
+            albumDto.State = null;
+            return albumDto;
+        }
+
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        if (!User.IsInRole("Admin") && album.PublisherId != userId)
+        {
+            albumDto.State = null;
+        }
+
+        return albumDto;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AlbumDto>>> GetAlbums([FromQuery] AlbumParams albumParams)
     {
         var albums = await unitOfWork.AlbumRepository.GetAlbumsAsync(albumParams);
+
+        var userId = User.GetUserId();
+        if (userId == -1)
+        {
+            foreach (var album in albums)
+            {
+                album.State = null;
+            }
+        }
+        else
+        {
+            var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest("Invalid user id.");
+            }
+
+            if (!User.IsInRole("Admin"))
+            {
+                foreach (var album in albums)
+                {
+                    album.State = null;
+                }
+            }
+        }
 
         Response.AddPaginationHeader(albums);
 
@@ -47,37 +93,23 @@ public class AlbumsController(
         var userId = User.GetUserId();
         newAlbumDto.PublisherId = userId;
 
+        var album = mapper.Map<Album>(newAlbumDto);
+
         // Add album to database
-        var album = await unitOfWork.AlbumRepository.CreateAlbumAsync(newAlbumDto);
+        unitOfWork.AlbumRepository.CreateAlbum(album);
 
-        // Upload images and add to database
-        bool isMain = true;
-        if (newAlbumDto.PhotoFiles != null)
+        if (!await unitOfWork.Complete())
         {
-            foreach (var photo in newAlbumDto.PhotoFiles)
-            {
-                var uploadResult = await fileService.UploadImageAsync("/albums/" + album.Id, photo);
-
-                if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
-
-                var newPhoto = new Photo
-                {
-                    Url = uploadResult.SecureUrl.ToString(),
-                    PublicId = uploadResult.PublicId,
-                };
-                newPhoto = await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
-
-                var albumPhoto = new AlbumPhoto
-                {
-                    PhotoId = newPhoto.Id,
-                    AlbumId = album.Id,
-                    IsMain = isMain
-                };
-                unitOfWork.AlbumPhotoRepository.AddAlbumPhoto(albumPhoto);
-
-                isMain = false;
-            }
+            return BadRequest("Failed to create album.");
         }
+
+        // Add current user as album publisher
+        var publisher = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (publisher == null)
+        {
+            return BadRequest("User not found.");
+        }
+        album.Publisher = publisher;
 
         // Add current user to artistIds
         if (newAlbumDto.ArtistIds != null)
@@ -92,24 +124,61 @@ public class AlbumsController(
             newAlbumDto.ArtistIds = [userId];
         }
 
-        // Check if any artistId is not valid
+        // Add album artists
         foreach (var artistId in newAlbumDto.ArtistIds)
         {
+            // Check if artistId is not valid
             var artist = await unitOfWork.UserRepository.GetUserByIdAsync(artistId);
             if (artist == null || !artist.UserRoles.Any(ur => ur.Role.Name == "Artist"))
             {
                 return BadRequest("Artist not found.");
             }
-        }
 
-        // Add album artists to database
-        foreach (var artistId in newAlbumDto.ArtistIds)
-        {
-            unitOfWork.UserRepository.AddArtistAlbum(new ArtistAlbum
+            // Add artist to album
+            var artistAlbum = new ArtistAlbum
             {
                 AlbumId = album.Id,
                 ArtistId = artistId
-            });
+            };
+            album.Artists.Add(artistAlbum);
+        }
+
+        // Add album genres
+        if (newAlbumDto.GenreIds == null || newAlbumDto.GenreIds.Count == 0)
+        {
+            return BadRequest("Album must have at least one genre.");
+        }
+
+        foreach (var genreId in newAlbumDto.GenreIds)
+        {
+            var genre = await unitOfWork.GenreRepository.GetGenreByIdAsync(genreId);
+            if (genre == null)
+            {
+                return BadRequest("Genre not found.");
+            }
+
+            var albumGenre = new AlbumGenre
+            {
+                AlbumId = album.Id,
+                GenreId = genreId
+            };
+            album.Genres.Add(albumGenre);
+        }
+
+        // Upload images and add to database
+        if (newAlbumDto.PhotoFile != null)
+        {
+            var uploadResult = await fileService.UploadImageAsync("/albums/" + album.Id, newAlbumDto.PhotoFile);
+            if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
+
+            var albumPhoto = new AlbumPhoto
+            {
+                Url = uploadResult.SecureUrl.ToString(),
+                PublicId = uploadResult.PublicId,
+                IsMain = true
+            };
+
+            album.Photos.Add(albumPhoto);
         }
 
         if (!await unitOfWork.Complete())
@@ -146,54 +215,9 @@ public class AlbumsController(
 
         mapper.Map(updateAlbumDto, album);
 
-        if (updateAlbumDto.PhotoFiles != null)
-        {
-            // Delete old image
-            var oldPhotos = album.Photos;
-            foreach (var oldPhoto in oldPhotos)
-            {
-                if (oldPhoto.Photo.PublicId != null)
-                {
-                    var result = await fileService.DeleteFileAsync(oldPhoto.Photo.PublicId!, ResourceType.Image);
-                    if (result.Error != null) return BadRequest("Delete album file from cloudinary failed: " + result.Error.Message);
-                }
-                unitOfWork.PhotoRepository.RemovePhoto(oldPhoto.Photo);
-            }
-
-            // Upload new images and add to database
-            bool isMain = true;
-            foreach (var photo in updateAlbumDto.PhotoFiles)
-            {
-                var uploadResult = await fileService.UploadImageAsync("/albums/" + album.Id, photo);
-                if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
-
-                var newPhoto = new Photo
-                {
-                    Url = uploadResult.SecureUrl.ToString(),
-                    PublicId = uploadResult.PublicId,
-                };
-                newPhoto = await unitOfWork.PhotoRepository.AddPhotoAsync(newPhoto);
-
-                var albumPhoto = new AlbumPhoto
-                {
-                    PhotoId = newPhoto.Id,
-                    AlbumId = album.Id,
-                    IsMain = isMain
-                };
-                unitOfWork.AlbumPhotoRepository.AddAlbumPhoto(albumPhoto);
-
-                isMain = false;
-            }
-        }
-
         // Update artists
-        if (updateAlbumDto.ArtistIds != null)
+        if (updateAlbumDto.ArtistIds != null && updateAlbumDto.ArtistIds.Count > 0)
         {
-            if (!updateAlbumDto.ArtistIds.Contains(userId))
-            {
-                updateAlbumDto.ArtistIds.Add(userId);
-            }
-
             // Check if any artistId is not valid
             foreach (var artistId in updateAlbumDto.ArtistIds)
             {
@@ -205,24 +229,83 @@ public class AlbumsController(
             }
 
             // Remove old artists
-            var oldArtists = album.Artists;
-            foreach (var oldArtist in oldArtists)
+            album.Artists.Clear();
+
+            // Add current user to artistIds
+            if (!updateAlbumDto.ArtistIds.Contains(userId))
             {
-                unitOfWork.UserRepository.RemoveArtistAlbum(oldArtist);
+                updateAlbumDto.ArtistIds.Add(userId);
             }
 
             // Add new artists
             foreach (var artistId in updateAlbumDto.ArtistIds)
             {
-                unitOfWork.UserRepository.AddArtistAlbum(new ArtistAlbum
+                var artistAlbum = new ArtistAlbum
                 {
                     AlbumId = album.Id,
                     ArtistId = artistId
-                });
+                };
+                album.Artists.Add(artistAlbum);
             }
         }
 
+        // Update genres
+        if (updateAlbumDto.GenreIds != null && updateAlbumDto.GenreIds.Count > 0)
+        {
+            // Check if any genreId is not valid
+            foreach (var genreId in updateAlbumDto.GenreIds)
+            {
+                var genre = await unitOfWork.GenreRepository.GetGenreByIdAsync(genreId);
+                if (genre == null)
+                {
+                    return BadRequest("Genre not found.");
+                }
+            }
+
+            // Remove old genres
+            album.Genres.Clear();
+
+            // Add new genres
+            foreach (var genreId in updateAlbumDto.GenreIds)
+            {
+                var albumGenre = new AlbumGenre
+                {
+                    AlbumId = album.Id,
+                    GenreId = genreId
+                };
+                album.Genres.Add(albumGenre);
+            }
+        }
+
+        // Update album image
+        if (updateAlbumDto.PhotoFile != null)
+        {
+            // Delete old image
+            foreach (var oldPhoto in album.Photos)
+            {
+                if (oldPhoto.PublicId != null)
+                {
+                    var result = await fileService.DeleteFileAsync(oldPhoto.PublicId!, ResourceType.Image);
+                    if (result.Error != null) return BadRequest("Delete album file from cloudinary failed: " + result.Error.Message);
+                }
+            }
+            album.Photos.Clear();
+
+            // Upload new images and add to database
+            var uploadResult = await fileService.UploadImageAsync("/albums/" + album.Id, updateAlbumDto.PhotoFile);
+            if (uploadResult.Error != null) return BadRequest("Upload photo files to cloudinary failed: " + uploadResult.Error.Message);
+
+            var albumPhoto = new AlbumPhoto
+            {
+                Url = uploadResult.SecureUrl.ToString(),
+                PublicId = uploadResult.PublicId,
+                IsMain = true
+            };
+            album.Photos.Add(albumPhoto);
+        }
+
         // Update album's updated date
+        album.State = ArtworkState.Pending.ToString();
         album.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete())
@@ -231,6 +314,54 @@ public class AlbumsController(
         }
 
         return NoContent();
+    }
+
+    [HttpPut("update-photo/{id:int}")]
+    public async Task<ActionResult<FileDto>> UpdatePhoto(int id, IFormFile file)
+    {
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
+        if (album == null) return BadRequest("Cannot update album");
+
+        // Check user role
+        var userId = User.GetUserId();
+        if (userId != album.PublisherId && !User.IsInRole("Admin"))
+        {
+            return Unauthorized("You are not authorized to update this album.");
+        }
+
+        // Delete old photo
+        foreach (var ap in album.Photos)
+        {
+            if (ap.PublicId != null)
+            {
+                var deleteResult = await fileService.DeleteFileAsync(ap.PublicId, ResourceType.Image);
+                if (deleteResult.Error != null) return BadRequest(deleteResult.Error.Message);
+            }
+        }
+        album.Photos.Clear();
+
+        // Upload new photo
+        var result = await fileService.UploadImageAsync("/albums/" + album.Id, file);
+        if (result.Error != null) return BadRequest(result.Error.Message);
+
+        var albumPhoto = new AlbumPhoto
+        {
+            Url = result.SecureUrl.AbsoluteUri,
+            PublicId = result.PublicId,
+            IsMain = true
+        };
+        album.Photos.Add(albumPhoto);
+
+        album.State = ArtworkState.Pending.ToString();
+        album.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete()) return BadRequest("Problem adding photo");
+
+        return CreatedAtAction(
+            nameof(GetAlbumById),
+            new { id = album.Id },
+            mapper.Map<FileDto>(albumPhoto)
+        );
     }
 
     [HttpDelete("{id:int}")]
@@ -254,15 +385,13 @@ public class AlbumsController(
         }
 
         // Delete album photos
-        var photos = album.Photos;
-        foreach (var photo in photos)
+        foreach (var photo in album.Photos)
         {
-            if (photo.Photo.PublicId != null)
+            if (photo.PublicId != null)
             {
-                var result = await fileService.DeleteFileAsync(photo.Photo.PublicId!, ResourceType.Image);
+                var result = await fileService.DeleteFileAsync(photo.PublicId!, ResourceType.Image);
                 if (result.Error != null) return BadRequest("Delete album file from cloudinary failed: " + result.Error.Message);
             }
-            unitOfWork.PhotoRepository.RemovePhoto(photo.Photo);
         }
 
         unitOfWork.AlbumRepository.DeleteAlbum(album);
@@ -276,7 +405,7 @@ public class AlbumsController(
     }
 
     [HttpPut("add-song/{id:int}")]
-    [Authorize(Roles = "Artist")]
+    [Authorize(Roles = "Artist, Admin")]
     public async Task<ActionResult> AddSongToAlbum(int id, AddRemoveSongDto addSongDto)
     {
         var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
@@ -285,11 +414,16 @@ public class AlbumsController(
             return NotFound("Album not found.");
         }
 
-        // Validate if the album belongs to the artist
+        // Validate if the user is authorized to add song to the album
         var userId = User.GetUserId();
-        if (album.PublisherId != userId)
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (user == null)
         {
-            return Unauthorized("The album does not belong to you.");
+            return BadRequest("Invalid user id.");
+        }
+        if (!User.IsInRole("Admin") && album.PublisherId != userId)
+        {
+            return Unauthorized("You are not authorized to add song to this album.");
         }
 
         var song = await unitOfWork.SongRepository.GetSongByIdAsync(addSongDto.SongId);
@@ -299,13 +433,13 @@ public class AlbumsController(
         }
 
         // Validate if the song belongs to the artist
-        if (song.PublisherId != userId)
+        if (!User.IsInRole("Admin") && song.PublisherId != userId)
         {
-            return Unauthorized("The song does not belong to you.");
+            return Unauthorized("You are not authorized to add song to this album.");
         }
 
         // Check if the song is already in the album
-        var albumSong = await unitOfWork.AlbumSongRepository.GetAlbumSongAsync(album.Id, song.Id);
+        var albumSong = album.Songs.Where(s => s.SongId == song.Id).FirstOrDefault();
         if (albumSong != null)
         {
             return BadRequest("Song already in album.");
@@ -319,11 +453,10 @@ public class AlbumsController(
                 return BadRequest("Invalid order.");
             }
 
-            var maxOrder = await unitOfWork.AlbumRepository.GetMaxOrder(album.Id);
+            var maxOrder = album.Songs.Count;
             if (addSongDto.Order <= maxOrder)
             {
-                var albumSongs = await unitOfWork.AlbumRepository.GetAlbumsSongsAsync(album.Id);
-                foreach (var albSong in albumSongs)
+                foreach (var albSong in album.Songs)
                 {
                     if (albSong.Order >= addSongDto.Order)
                     {
@@ -332,7 +465,7 @@ public class AlbumsController(
                 }
             }
 
-            unitOfWork.AlbumSongRepository.AddAlbumSong(new AlbumSong
+            album.Songs.Add(new AlbumSong
             {
                 AlbumId = album.Id,
                 SongId = song.Id,
@@ -341,9 +474,9 @@ public class AlbumsController(
         }
         else
         {
-            var maxOrder = await unitOfWork.AlbumRepository.GetMaxOrder(album.Id);
+            var maxOrder = album.Songs.Count;
 
-            unitOfWork.AlbumSongRepository.AddAlbumSong(new AlbumSong
+            album.Songs.Add(new AlbumSong
             {
                 AlbumId = album.Id,
                 SongId = song.Id,
@@ -367,6 +500,7 @@ public class AlbumsController(
             album.TotalDuration = albumTotalDuration.ToString(@"hh\:mm\:ss");
         }
 
+        // Update timestamp
         album.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete())
@@ -387,11 +521,16 @@ public class AlbumsController(
             return NotFound("Album not found.");
         }
 
-        // Validate if the album belongs to the artist
+        // Validate if the user is authorized to remove song from the album
         var userId = User.GetUserId();
-        if (album.PublisherId != userId)
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (user == null)
         {
-            return Unauthorized("The album does not belong to you.");
+            return BadRequest("Invalid user id.");
+        }
+        if (!User.IsInRole("Admin") && album.PublisherId != userId)
+        {
+            return Unauthorized("You are not authorized to remove song from this album.");
         }
 
         var song = await unitOfWork.SongRepository.GetSongByIdAsync(removeSongDto.SongId);
@@ -400,25 +539,24 @@ public class AlbumsController(
             return NotFound("Song not found.");
         }
 
-        // Validate if the song belongs to the artist
-        if (song.PublisherId != userId)
+        // Validate if the user is authorized to remove song from the album
+        if (!User.IsInRole("Admin") && song.PublisherId != userId)
         {
-            return Unauthorized("The song does not belong to you.");
+            return Unauthorized("You are not authorized to remove song from this album.");
         }
 
         // Validate if the song is in the album
-        var albumSong = await unitOfWork.AlbumSongRepository.GetAlbumSongAsync(album.Id, song.Id);
+        var albumSong = album.Songs.Where(s => s.SongId == song.Id).FirstOrDefault();
         if (albumSong == null)
         {
-            return NotFound("Song not found in album.");
+            return BadRequest("Song not in album.");
         }
 
         // Remove song from album
-        unitOfWork.AlbumSongRepository.RemoveAlbumSong(albumSong);
+        album.Songs.Remove(albumSong);
 
         // Update songAlbums order.
-        var albumSongs = await unitOfWork.AlbumRepository.GetAlbumsSongsAsync(album.Id);
-        foreach (var albSong in albumSongs)
+        foreach (var albSong in album.Songs)
         {
             if (albSong.Order > albumSong.Order)
             {
@@ -457,7 +595,7 @@ public class AlbumsController(
             return NotFound("Album not found.");
         }
 
-        var existingFavoriteAlbum = await unitOfWork.AlbumRepository.GetAlbumFavoriteAsync(albumId, userId);
+        var existingFavoriteAlbum = album.UserFavorites.Where(fa => fa.UserId == userId).FirstOrDefault();
         if (existingFavoriteAlbum == null)
         {
             var favoriteAlbum = new AlbumFavorite
@@ -465,12 +603,11 @@ public class AlbumsController(
                 AlbumId = albumId,
                 UserId = userId
             };
-
-            unitOfWork.AlbumRepository.AddFavoriteUser(favoriteAlbum);
+            album.UserFavorites.Add(favoriteAlbum);
         }
         else
         {
-            unitOfWork.AlbumRepository.RemoveFavoriteUser(existingFavoriteAlbum);
+            album.UserFavorites.Remove(existingFavoriteAlbum);
         }
 
         if (await unitOfWork.Complete()) return Ok();
@@ -484,8 +621,54 @@ public class AlbumsController(
     {
         int userId = User.GetUserId();
 
-        var favoriteAlbum = await unitOfWork.AlbumRepository.GetAlbumFavoriteAsync(albumId, userId);
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(albumId);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
 
-        return favoriteAlbum != null;
+        return album.UserFavorites.Any(fa => fa.UserId == userId);
+    }
+
+    [HttpPatch("approve/{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> ApproveAlbum(int id)
+    {
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
+
+        album.State = ArtworkState.Approved.ToString();
+        album.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to approve album.");
+        }
+
+        return NoContent();
+    }
+
+    [HttpPatch("reject/{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> RejectAlbum(int id)
+    {
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
+
+        album.State = ArtworkState.Rejected.ToString();
+        album.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to reject album.");
+        }
+
+        return NoContent();
     }
 }

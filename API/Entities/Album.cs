@@ -6,8 +6,10 @@ public class Album
     public required string AlbumName { get; set; }
     public required string Description { get; set; }
     public int TotalListeningHours { get; set; } = 0;
+    public int TotalViews { get; set; } = 0;
     public int TotalSongs { get; set; } = 0;
     public required string TotalDuration { get; set; } = "";
+    public required string State { get; set; } = ArtworkState.Pending.ToString();
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public List<AlbumPhoto> Photos { get; set; } = [];

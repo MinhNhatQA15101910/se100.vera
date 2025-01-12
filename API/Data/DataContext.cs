@@ -14,27 +14,24 @@ IdentityDbContext<
     IdentityUserToken<int>
 >(options)
 {
-    public required DbSet<UserFollow> Follows { get; set; }
-    public required DbSet<Photo> Photos { get; set; }
     public required DbSet<Genre> Genres { get; set; }
-    public required DbSet<UserPhoto> UserPhotos { get; set; }
     public required DbSet<SongFavorite> FavoriteSongs { get; set; }
     public required DbSet<AlbumFavorite> FavoriteAlbums { get; set; }
     public required DbSet<Song> Songs { get; set; }
-    public required DbSet<SongPhoto> SongPhotos { get; set; }
     public required DbSet<SongGenre> SongGenres { get; set; }
     public required DbSet<Album> Albums { get; set; }
-    public required DbSet<AlbumPhoto> AlbumPhotos { get; set; }
     public required DbSet<AlbumSong> AlbumSongs { get; set; }
     public required DbSet<AlbumGenre> AlbumGenres { get; set; }
     public required DbSet<Playlist> Playlists { get; set; }
     public required DbSet<PlaylistSong> PlaylistSongs { get; set; }
-    public required DbSet<ArtistGenre> ArtistGenres { get; set; }
     public required DbSet<ArtistSong> ArtistSongs { get; set; }
     public required DbSet<ArtistAlbum> ArtistAlbums { get; set; }
     public required DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
-    public required DbSet<Payment> Payments { get; set; }
-    public required DbSet<PaymentDetail> PaymentDetails { get; set; }
+    // public required DbSet<Payment> Payments { get; set; }
+    // public required DbSet<PaymentDetail> PaymentDetails { get; set; }
+    public required DbSet<Comment> Comments { get; set; }
+    public required DbSet<Notification> Notifications { get; set; }
+    public required DbSet<Download> Downloads { get; set; }
 
     override protected void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -53,23 +50,6 @@ IdentityDbContext<
             .WithOne(x => x.Role)
             .HasForeignKey(x => x.RoleId)
             .IsRequired();
-        #endregion
-
-        #region User-Photo
-        modelBuilder.Entity<UserPhoto>()
-            .HasKey(x => new { x.UserId, x.PhotoId });
-
-        modelBuilder.Entity<UserPhoto>()
-            .HasOne(x => x.User)
-            .WithMany(x => x.Photos)
-            .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<UserPhoto>()
-            .HasOne(x => x.Photo)
-            .WithMany(x => x.Users)
-            .HasForeignKey(x => x.PhotoId)
-            .OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Artist-Song
@@ -106,23 +86,6 @@ IdentityDbContext<
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
 
-        #region Artist-Genre
-        modelBuilder.Entity<ArtistGenre>()
-            .HasKey(x => new { x.ArtistId, x.GenreId });
-
-        modelBuilder.Entity<ArtistGenre>()
-            .HasOne(x => x.Artist)
-            .WithMany(x => x.Genres)
-            .HasForeignKey(x => x.ArtistId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ArtistGenre>()
-            .HasOne(x => x.Genre)
-            .WithMany(x => x.Artists)
-            .HasForeignKey(x => x.GenreId)
-            .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-        
         #region User-FavoriteSong
         modelBuilder.Entity<SongFavorite>()
             .HasKey(x => new { x.UserId, x.SongId });
@@ -139,7 +102,7 @@ IdentityDbContext<
             .HasForeignKey(x => x.SongId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
-        
+
         #region User-FavoriteAlbum
         modelBuilder.Entity<AlbumFavorite>()
             .HasKey(x => new { x.UserId, x.AlbumId });
@@ -156,26 +119,26 @@ IdentityDbContext<
             .HasForeignKey(x => x.AlbumId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
+
+        #region User-Plan
+        modelBuilder.Entity<UserPlan>()
+            .HasKey(x => new { x.UserId, x.PlanId });
+
+        modelBuilder.Entity<UserPlan>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Plans)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserPlan>()
+            .HasOne(x => x.Plan)
+            .WithMany(x => x.Users)
+            .HasForeignKey(x => x.PlanId)
+            .OnDelete(DeleteBehavior.Cascade);
+        #endregion
         #endregion
 
         #region Song relationships
-        #region Song-Photo
-        modelBuilder.Entity<SongPhoto>()
-            .HasKey(x => new { x.SongId, x.PhotoId });
-
-        modelBuilder.Entity<SongPhoto>()
-            .HasOne(x => x.Song)
-            .WithMany(x => x.Photos)
-            .HasForeignKey(x => x.SongId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<SongPhoto>()
-            .HasOne(x => x.Photo)
-            .WithMany(x => x.Songs)
-            .HasForeignKey(x => x.PhotoId)
-            .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-
         #region Song-Genre
         modelBuilder.Entity<SongGenre>()
             .HasKey(x => new { x.SongId, x.GenreId });
@@ -192,26 +155,26 @@ IdentityDbContext<
             .HasForeignKey(x => x.GenreId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
+
+        #region Download
+        modelBuilder.Entity<Download>()
+            .HasKey(x => new { x.UserId, x.SongId });
+
+        modelBuilder.Entity<Download>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Downloads)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Download>()
+            .HasOne(x => x.Song)
+            .WithMany(x => x.Downloads)
+            .HasForeignKey(x => x.SongId)
+            .OnDelete(DeleteBehavior.NoAction);
+        #endregion
         #endregion
 
         #region Album relationships
-        #region Album-Photo
-        modelBuilder.Entity<AlbumPhoto>()
-            .HasKey(x => new { x.AlbumId, x.PhotoId });
-
-        modelBuilder.Entity<AlbumPhoto>()
-            .HasOne(x => x.Album)
-            .WithMany(x => x.Photos)
-            .HasForeignKey(x => x.AlbumId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<AlbumPhoto>()
-            .HasOne(x => x.Photo)
-            .WithMany(x => x.Albums)
-            .HasForeignKey(x => x.PhotoId)
-            .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-
         #region Album-Song
         modelBuilder.Entity<AlbumSong>()
             .HasKey(x => new { x.AlbumId, x.SongId });
@@ -264,40 +227,6 @@ IdentityDbContext<
             .HasForeignKey(x => x.SongId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
-        #endregion
-
-        #region Payment-SubscriptionPlan
-        modelBuilder.Entity<PaymentDetail>()
-            .HasKey(x => new { x.PaymentId, x.SubscriptionPlanId });
-
-        modelBuilder.Entity<PaymentDetail>()
-            .HasOne(x => x.Payment)
-            .WithMany(x => x.SubscriptionPlans)
-            .HasForeignKey(x => x.PaymentId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<PaymentDetail>()
-            .HasOne(x => x.SubscriptionPlan)
-            .WithMany(x => x.Payments)
-            .HasForeignKey(x => x.SubscriptionPlanId)
-            .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-
-        #region User Follow
-        modelBuilder.Entity<UserFollow>()
-            .HasKey(f => new { f.SourceUserId, f.TargetUserId });
-
-        modelBuilder.Entity<UserFollow>()
-            .HasOne(s => s.SourceUser)
-            .WithMany(l => l.Followings)
-            .HasForeignKey(s => s.SourceUserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<UserFollow>()
-            .HasOne(s => s.TargetUser)
-            .WithMany(l => l.Followers)
-            .HasForeignKey(s => s.TargetUserId)
-            .OnDelete(DeleteBehavior.Cascade);
         #endregion
     }
 }
