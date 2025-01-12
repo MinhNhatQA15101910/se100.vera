@@ -1,6 +1,7 @@
 using API.DTOs.Notifications;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces.IRepositories;
 
 namespace API.Controllers;
@@ -27,23 +28,44 @@ public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper) : B
         return mapper.Map<NotificationDto>(notification);
     }
 
-    [HttpPost]
+    [HttpGet]
     [Authorize]
-    public async Task<ActionResult<NotificationDto>> CreateNotification(NewNotificationDto newNotificationDto)
+    public async Task<ActionResult<IEnumerable<NotificationDto>>> GetNotifications([FromQuery] NotificationParams notificationParams)
     {
-        var notification = mapper.Map<Notification>(newNotificationDto);
+        var userId = User.GetUserId();
+        notificationParams.UserId = userId.ToString();
 
-        unitOfWork.NotificationRepository.AddNotification(notification);
+        var notifications = await unitOfWork.NotificationRepository.GetNotificationsAsync(notificationParams);
+
+        Response.AddPaginationHeader(notifications);
+
+        return notifications;
+    }
+
+    [HttpPatch("read/{id:int}")]
+    [Authorize]
+    public async Task<ActionResult> MarkNotificationAsRead(int id)
+    {
+        var notification = await unitOfWork.NotificationRepository.GetNotificationById(id);
+        if (notification == null)
+        {
+            return NotFound();
+        }
+
+        // Check user role
+        var userId = User.GetUserId();
+        if (!User.IsInRole("Admin") && userId != notification.UserId)
+        {
+            return Unauthorized("You are not authorized to mark this notification as read.");
+        }
+
+        notification.IsRead = true;
 
         if (!await unitOfWork.Complete())
         {
-            return BadRequest("Failed to create notification");
+            return BadRequest("Failed to mark notification as read");
         }
 
-        return CreatedAtAction(
-            nameof(GetNotificationById),
-            new { id = notification.Id },
-            mapper.Map<NotificationDto>(notification)
-        );
+        return NoContent();
     }
 }

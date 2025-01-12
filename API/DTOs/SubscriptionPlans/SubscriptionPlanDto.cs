@@ -1,12 +1,10 @@
-namespace API.Entities;
+namespace API.DTOs.SubscriptionPlans;
 
-public class SubscriptionPlan
+public class SubscriptionPlanDto
 {
     public int Id { get; set; }
     public required string PlanName { get; set; }
     public required string Description { get; set; }
     public decimal PricePerMonth { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public List<UserPlan> Users { get; set; } = [];
 }

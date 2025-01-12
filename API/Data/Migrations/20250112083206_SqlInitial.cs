@@ -74,6 +74,23 @@ public partial class SqlInitial : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "SubscriptionPlans",
+            columns: table => new
+            {
+                Id = table.Column<int>(type: "integer", nullable: false)
+                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                PlanName = table.Column<string>(type: "text", nullable: false),
+                Description = table.Column<string>(type: "text", nullable: false),
+                PricePerMonth = table.Column<decimal>(type: "numeric", nullable: false),
+                CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_SubscriptionPlans", x => x.Id);
+            });
+
+        migrationBuilder.CreateTable(
             name: "AspNetRoleClaims",
             columns: table => new
             {
@@ -216,7 +233,7 @@ public partial class SqlInitial : Migration
                 Title = table.Column<string>(type: "text", nullable: true),
                 Content = table.Column<string>(type: "text", nullable: false),
                 Type = table.Column<string>(type: "text", nullable: false),
-                NotifyEntityId = table.Column<string>(type: "text", nullable: true),
+                NotifyEntityId = table.Column<int>(type: "integer", nullable: true),
                 IsRead = table.Column<bool>(type: "boolean", nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UserId = table.Column<int>(type: "integer", nullable: false)
@@ -233,7 +250,7 @@ public partial class SqlInitial : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "Payments",
+            name: "Payment",
             columns: table => new
             {
                 Id = table.Column<int>(type: "integer", nullable: false)
@@ -247,9 +264,9 @@ public partial class SqlInitial : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Payments", x => x.Id);
+                table.PrimaryKey("PK_Payment", x => x.Id);
                 table.ForeignKey(
-                    name: "FK_Payments_AspNetUsers_ListenerId",
+                    name: "FK_Payment_AspNetUsers_ListenerId",
                     column: x => x.ListenerId,
                     principalTable: "AspNetUsers",
                     principalColumn: "Id",
@@ -313,30 +330,6 @@ public partial class SqlInitial : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "SubscriptionPlans",
-            columns: table => new
-            {
-                Id = table.Column<int>(type: "integer", nullable: false)
-                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                PlanName = table.Column<string>(type: "text", nullable: false),
-                Description = table.Column<string>(type: "text", nullable: false),
-                Price = table.Column<decimal>(type: "numeric", nullable: false),
-                CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                ListenerId = table.Column<int>(type: "integer", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_SubscriptionPlans", x => x.Id);
-                table.ForeignKey(
-                    name: "FK_SubscriptionPlans_AspNetUsers_ListenerId",
-                    column: x => x.ListenerId,
-                    principalTable: "AspNetUsers",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
             name: "UserPhotos",
             columns: table => new
             {
@@ -354,6 +347,30 @@ public partial class SqlInitial : Migration
                     name: "FK_UserPhotos_AspNetUsers_UserId",
                     column: x => x.UserId,
                     principalTable: "AspNetUsers",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "UserPlan",
+            columns: table => new
+            {
+                UserId = table.Column<int>(type: "integer", nullable: false),
+                PlanId = table.Column<int>(type: "integer", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_UserPlan", x => new { x.UserId, x.PlanId });
+                table.ForeignKey(
+                    name: "FK_UserPlan_AspNetUsers_UserId",
+                    column: x => x.UserId,
+                    principalTable: "AspNetUsers",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "FK_UserPlan_SubscriptionPlans_PlanId",
+                    column: x => x.PlanId,
+                    principalTable: "SubscriptionPlans",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
             });
@@ -531,6 +548,29 @@ public partial class SqlInitial : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "Downloads",
+            columns: table => new
+            {
+                UserId = table.Column<int>(type: "integer", nullable: false),
+                SongId = table.Column<int>(type: "integer", nullable: false),
+                Count = table.Column<int>(type: "integer", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_Downloads", x => new { x.UserId, x.SongId });
+                table.ForeignKey(
+                    name: "FK_Downloads_AspNetUsers_UserId",
+                    column: x => x.UserId,
+                    principalTable: "AspNetUsers",
+                    principalColumn: "Id");
+                table.ForeignKey(
+                    name: "FK_Downloads_Songs_SongId",
+                    column: x => x.SongId,
+                    principalTable: "Songs",
+                    principalColumn: "Id");
+            });
+
+        migrationBuilder.CreateTable(
             name: "FavoriteSongs",
             columns: table => new
             {
@@ -624,30 +664,6 @@ public partial class SqlInitial : Migration
                     onDelete: ReferentialAction.Cascade);
             });
 
-        migrationBuilder.CreateTable(
-            name: "PaymentDetails",
-            columns: table => new
-            {
-                PaymentId = table.Column<int>(type: "integer", nullable: false),
-                SubscriptionPlanId = table.Column<int>(type: "integer", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_PaymentDetails", x => new { x.PaymentId, x.SubscriptionPlanId });
-                table.ForeignKey(
-                    name: "FK_PaymentDetails_Payments_PaymentId",
-                    column: x => x.PaymentId,
-                    principalTable: "Payments",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-                table.ForeignKey(
-                    name: "FK_PaymentDetails_SubscriptionPlans_SubscriptionPlanId",
-                    column: x => x.SubscriptionPlanId,
-                    principalTable: "SubscriptionPlans",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
         migrationBuilder.CreateIndex(
             name: "IX_AlbumGenres_GenreId",
             table: "AlbumGenres",
@@ -726,6 +742,11 @@ public partial class SqlInitial : Migration
             column: "SongId");
 
         migrationBuilder.CreateIndex(
+            name: "IX_Downloads_SongId",
+            table: "Downloads",
+            column: "SongId");
+
+        migrationBuilder.CreateIndex(
             name: "IX_FavoriteAlbums_AlbumId",
             table: "FavoriteAlbums",
             column: "AlbumId");
@@ -741,13 +762,8 @@ public partial class SqlInitial : Migration
             column: "UserId");
 
         migrationBuilder.CreateIndex(
-            name: "IX_PaymentDetails_SubscriptionPlanId",
-            table: "PaymentDetails",
-            column: "SubscriptionPlanId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_Payments_ListenerId",
-            table: "Payments",
+            name: "IX_Payment_ListenerId",
+            table: "Payment",
             column: "ListenerId");
 
         migrationBuilder.CreateIndex(
@@ -776,14 +792,14 @@ public partial class SqlInitial : Migration
             column: "PublisherId");
 
         migrationBuilder.CreateIndex(
-            name: "IX_SubscriptionPlans_ListenerId",
-            table: "SubscriptionPlans",
-            column: "ListenerId");
-
-        migrationBuilder.CreateIndex(
             name: "IX_UserPhotos_UserId",
             table: "UserPhotos",
             column: "UserId");
+
+        migrationBuilder.CreateIndex(
+            name: "IX_UserPlan_PlanId",
+            table: "UserPlan",
+            column: "PlanId");
     }
 
     /// <inheritdoc />
@@ -823,6 +839,9 @@ public partial class SqlInitial : Migration
             name: "Comments");
 
         migrationBuilder.DropTable(
+            name: "Downloads");
+
+        migrationBuilder.DropTable(
             name: "FavoriteAlbums");
 
         migrationBuilder.DropTable(
@@ -832,7 +851,7 @@ public partial class SqlInitial : Migration
             name: "Notifications");
 
         migrationBuilder.DropTable(
-            name: "PaymentDetails");
+            name: "Payment");
 
         migrationBuilder.DropTable(
             name: "PlaylistSongs");
@@ -847,16 +866,13 @@ public partial class SqlInitial : Migration
             name: "UserPhotos");
 
         migrationBuilder.DropTable(
+            name: "UserPlan");
+
+        migrationBuilder.DropTable(
             name: "AspNetRoles");
 
         migrationBuilder.DropTable(
             name: "Albums");
-
-        migrationBuilder.DropTable(
-            name: "Payments");
-
-        migrationBuilder.DropTable(
-            name: "SubscriptionPlans");
 
         migrationBuilder.DropTable(
             name: "Playlists");
@@ -866,6 +882,9 @@ public partial class SqlInitial : Migration
 
         migrationBuilder.DropTable(
             name: "Songs");
+
+        migrationBuilder.DropTable(
+            name: "SubscriptionPlans");
 
         migrationBuilder.DropTable(
             name: "AspNetUsers");

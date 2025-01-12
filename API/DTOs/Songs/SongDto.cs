@@ -1,5 +1,5 @@
 using API.DTOs.Artists;
-using API.DTOs.Files;
+
 namespace API.DTOs.Songs;
 
 public class SongDto
@@ -11,6 +11,7 @@ public class SongDto
     public required string PublisherName { get; set; }
     public string? PublisherImageUrl { get; set; }
     public int TotalListeningHours { get; set; }
+    public int TotalViews { get; set; }
     public required string MusicUrl { get; set; }
     public string? MusicPublicId { get; set; }
     public string? LyricUrl { get; set; }
