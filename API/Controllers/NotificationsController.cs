@@ -61,4 +61,31 @@ public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper) : B
             mapper.Map<NotificationDto>(notification)
         );
     }
+
+    [HttpPatch("{id:int}/read")]
+    [Authorize]
+    public async Task<ActionResult> MarkNotificationAsRead(int id)
+    {
+        var notification = await unitOfWork.NotificationRepository.GetNotificationById(id);
+        if (notification == null)
+        {
+            return NotFound();
+        }
+
+        // Check user role
+        var userId = User.GetUserId();
+        if (!User.IsInRole("Admin") && userId != notification.UserId)
+        {
+            return Unauthorized("You are not authorized to mark this notification as read.");
+        }
+
+        notification.IsRead = true;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to mark notification as read");
+        }
+
+        return NoContent();
+    }
 }
