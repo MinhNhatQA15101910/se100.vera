@@ -81,6 +81,24 @@ export interface User {
   token: string | null;
 }
 
+export interface Comment {
+  id: number;
+  content: string;
+  publisherName: string;
+  publisherPhotoUrl: string;
+  createdAt: string;
+}
+
+export interface Notification {
+  id: number;
+  title: string;
+  content: string;
+  type: string;
+  isRead: boolean;
+  notifyEntityId: number;
+  createdAt: string;
+}
+
 export interface PaginatedResponses<T> {
   data: T[];
   totalCount: number;

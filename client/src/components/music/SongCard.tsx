@@ -30,7 +30,7 @@ const SongCard = ({ song }: { song: Song }) => {
             <h3 className="font-semibold text-sm text-white truncate">
               {song.songName || 'Unknown Song'}
             </h3>
-            <p className="text-xs text-gray-400 truncate">By {song.artists[0].artistName || 'Unknown Artist'}</p>
+            <p className="text-xs text-gray-400 truncate">By {song.publisherName || 'Unknown Artist'}</p>
           </div>
           <PlayButton
             onClick={handlePlayMusic}

@@ -84,6 +84,8 @@ module.exports = {
           'linear-gradient(90deg, #1171E2, rgba(83, 174, 214, 0.1) 98%)',
         'dark-blue-gradient':
           'linear-gradient(90deg, #0A417A, rgba(23, 74, 102, 0.1) 98%)',
+        'dark-gradient':
+          'linear-gradient(90deg, #0f172a 25%, #18181b 75%)',
 
       },
       borderRadius: {

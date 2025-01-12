@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { GoPlay } from 'react-icons/go';
-import { IoArrowBack } from 'react-icons/io5';
+import { useEffect, useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import Image from 'next/image';
 import {
@@ -14,7 +12,6 @@ import {
   TableRow,
 } from '@/components/ui/tableV2';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import LikeButton from '@/components/music/LikeButton';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -30,19 +27,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Delete, Edit } from 'lucide-react';
+import { ArrowLeftIcon, Delete, Edit, PlayIcon } from 'lucide-react';
 import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
 import { getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
-import CustomCommentInput from '@/components/CustumCommentInput';
+import * as commentActions from '@/actions/comment-actions';
+import CustomCommentInput from '@/components/CustomCommentInput';
 import CommentCard from '@/components/CommentCard';
+import { Comment } from '@/types/global';
+import { useAddCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from '../../../../hooks/useCommentMutation';
 
 const Page: React.FC = () => {
   const params = useParams();
   const router = useRouter();
   const { id } = params;
   const { userDetails } = useUser();
+  const [comments, setComments] = useState<Comment[]>([]);
   const { setActiveTrack, setPlaylist } = usePlayerStore();
   const { setLoadingState } = useLoading();
   const { data: songDetailData, isLoading: isSongDetailLoading } = useQuery({
@@ -64,7 +65,49 @@ const Page: React.FC = () => {
     enabled: !!songDetailData,
   });
 
+  useQuery({
+    queryKey: ['comments', id],
+    queryFn: async () => {
+      const comments = await commentActions.getComments(Number(id));
+      setComments(comments);
+      return comments;
+    },
+  });
+
   const isLoading = isSongDetailLoading || isArtistSongLoading;
+
+  const addCommentMutation = useAddCommentMutation();
+  const deleteCommentMutation = useDeleteCommentMutation();
+  const updateCommentMutation = useUpdateCommentMutation();
+
+  const handleAddComment = async (content: string) => {
+    addCommentMutation.mutate({
+      songId: Number(id),
+      content,
+    });
+  }
+
+  const handleDeleteComment = (commentId: number) => {
+    deleteCommentMutation.mutate(commentId);
+  }
+
+  const handleUpdateComment = (commentId: number, content: string) => {
+    console.log('commentId', commentId, 'content', content);
+    updateCommentMutation.mutate(
+      {
+        commentId: commentId,
+        content: content,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Update Comment Successfully!');
+        },
+        onError: () => {
+          toast.error('Server went wrong, update is not working!');
+        }
+      }
+    );
+  }
 
   const deleteAlbumMutation = useDeleteAlbumMutation();
 
@@ -94,45 +137,44 @@ const Page: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="bg-dark-blue-gradient rounded-lg">
             <div className="w-full bg-blue-gradient rounded-lg">
-              <div className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <button
-                      onClick={() => router.back()}
-                      className="focus:outline-none"
-                      aria-label="Go back"
-                    >
-                      <IoArrowBack className="text-4xl text-white" />
-                    </button>
-                  </div>
-                  {userDetails?.roles[0] === 'Artist' && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <FiMoreHorizontal className="text-4xl text-white hover:text-general-pink-hover" />
-                      </DropdownMenuTrigger>
+              <div className="flex justify-between items-center p-4">
+                <Button
+                  onClick={() => router.back()}
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-transparent rounded-full w-fit [&_svg]:size-[40px]"
+                  aria-label="Go back"
+                >
+                  <ArrowLeftIcon className="text-white stroke-[3px]" />
+                </Button>
 
-                      <DropdownMenuContent
-                        align="end"
-                        className="w-56 bg-general-pink border-general-pink-border"
+                {userDetails?.roles[0] === 'Artist' && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <FiMoreHorizontal className="text-4xl text-white hover:text-general-pink-hover" />
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 bg-general-pink border-general-pink-border"
+                    >
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-general-pink-border" />
+                      <DropdownMenuItem
+                        className="hover:bg-general-pink-hover"
+                        onClick={() => { }}
                       >
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-general-pink-border" />
-                        <DropdownMenuItem
-                          className="hover:bg-general-pink-hover"
-                          onClick={() => {}}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-general-pink-border" />
-                        <DropdownMenuItem onClick={handleDeleteAlbum}>
-                          <Delete className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
-                </div>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-general-pink-border" />
+                      <DropdownMenuItem onClick={handleDeleteAlbum}>
+                        <Delete className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
 
               <div className="p-4">
@@ -184,7 +226,9 @@ const Page: React.FC = () => {
                     </button>
                   </div>
                 </div>
+
               </div>
+
             </div>
             <div className="w-full flex flex-col bg-transparent text-general-white items-start custom1-table p-4">
               <h1 className="text-3xl font-bold mb-4 mt-4">
@@ -202,49 +246,49 @@ const Page: React.FC = () => {
                   <TableHead style={{ width: '35%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex items-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Title</span>
+                      Title
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex items-center justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Release</span>
+                      Release
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Genre</span>
+                      Genre
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Total Listening Hours</span>
+                      Total Listening Hours
                     </Button>
                   </TableHead>
                   <TableHead style={{ width: '15%' }}>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Time</span>
+                      Time
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      className="flex items-center space-x-1 text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
+                      className="flex justify-self-center text-white text-lg font-bold hover:text-white hover:bg-black hover:bg-opacity-30"
                     >
-                      <span>Actions</span>
+                      Actions
                     </Button>
                   </TableHead>
                 </TableHeader>
@@ -257,7 +301,7 @@ const Page: React.FC = () => {
                         setActiveTrack(song);
                       }}
                     >
-                      <TableCell className="font-bold text-lg">
+                      <TableCell className="font-bold text-lg w-1/20">
                         {index + 1}
                       </TableCell>
                       <TableCell className="bg-[#2E2E2E] group-hover:bg-[#595959] p-0">
@@ -280,21 +324,19 @@ const Page: React.FC = () => {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                         {song.createdAt.slice(0, 10)}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                         {song.genres}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
                         {song.totalListeningHours}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
-                        <div className="flex items-center">
-                          <span>{song.duration.slice(-5)}</span>
-                        </div>
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] group-hover:bg-[#595959]">
+                        {song.duration.slice(-5)}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] md:flex-row group-hover:bg-[#595959]">
+                      <TableCell className="hidden md:table-cell text-center text-gray-400 bg-[#2E2E2E] md:flex-row group-hover:bg-[#595959]">
                         <div className="flex flex-row h-full items-center justify-around">
                           <LikeButton songId={3} />
                         </div>
@@ -305,49 +347,21 @@ const Page: React.FC = () => {
               </Table>
               <h1 className="text-3xl font-bold mb-4 mt-12">Comment</h1>
               <div className="w-full">
-                <CustomCommentInput />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
+                <CustomCommentInput onCommentSubmit={handleAddComment} />
+                {comments?.map((comment) => (
+                  <CommentCard
+                    key={comment.id}
+                    comment={comment}
+                    handleDelete={() => handleDeleteComment(comment.id)}
+                    handleEdit={(content) => handleUpdateComment(comment.id, content)}
+                  />
+                ))}
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

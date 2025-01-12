@@ -1,57 +1,75 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { IoMdMore } from 'react-icons/io';
+import { Textarea } from './ui/textarea';
+import { Button } from './ui/button';
+import { EllipsisVertical } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { AlertDialogTrigger } from '@radix-ui/react-alert-dialog';
+import { Comment } from '@/types/global';
 
 interface ICommentCardProps {
-  avatar: string;
-  username: string;
-  time: string;
-  content: string;
+  comment: Comment;
+  handleDelete?: () => void;
+  handleEdit?: (content: string) => void;
 }
 
+
 const CommentCard: React.FC<ICommentCardProps> = ({
-  avatar,
-  username,
-  time,
-  content,
+  comment,
+  handleDelete,
+  handleEdit,
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(content);
+  const [editedContent, setEditedContent] = useState(comment.content);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
-  };
 
-  const handleEdit = () => {
+  const onEdit = () => {
     setIsEditing(true);
-    setIsMenuOpen(false);
   };
 
-  const handleSave = () => {
+  const onSave = () => {
     setIsEditing(false);
+    if (handleEdit) {
+      handleEdit(editedContent);
+    }
   };
 
-  const handleDelete = () => {
+  const onDelete = () => {
     setIsDialogOpen(true);
-    setIsMenuOpen(false);
   };
 
-  const confirmDelete = () => {
+  const handleConfirmDelete = () => {
+    setIsDialogOpen(false);
+    if (handleDelete) {
+      handleDelete();
+    }
+  };
+
+  const handleCancelDelete = () => {
     setIsDialogOpen(false);
   };
-
-  const cancelDelete = () => {
-    setIsDialogOpen(false);
-  };
-
   return (
-    <div className="flex items-start text-white p-4 w-full mt-4 relative">
+    <div className="flex items-start rounded-xl bg-slate-900 text-white p-4 w-full mt-4">
       <div className="mr-3">
         <Image
-          src={avatar}
-          alt={`${username}'s avatar`}
+          src={comment.publisherPhotoUrl}
+          alt={`${comment.publisherName}'s avatar`}
           width={48}
           height={48}
           className="rounded-full"
@@ -60,23 +78,23 @@ const CommentCard: React.FC<ICommentCardProps> = ({
 
       {/* Content */}
       <div className="flex-1">
-        <div className="flex justify-start items-center">
-          <h4 className="text-lg font-bold">{username}</h4>
-          <h4 className="text-sm text-gray-400 ml-4">{time}</h4>
+        <div className="flex flex-row justify-start items-baseline">
+          <h4 className="text-lg font-bold">{comment.publisherName}</h4>
+          <h4 className="text-sm text-gray-400 ml-4">{comment.createdAt}</h4>
         </div>
         {isEditing ? (
           <div className="flex-col mt-2 items-end">
-            <textarea
-              className="w-full bg-zinc-700 text-white rounded-md p-2"
+            <Textarea
+              className="w-full bg-zinc-800 text-white text-md rounded-md p-2"
               value={editedContent}
               onChange={(e) => setEditedContent(e.target.value)}
             />
-            <button
-              className="mt-2 px-4 py-1 bg-blue-600 text-white text-md font-medium rounded-lg hover:bg-blue-700 "
-              onClick={handleSave}
+            <Button
+              className="mt-2 px-4 bg-blue-600 text-white text-md font-medium rounded-lg hover:bg-blue-700 "
+              onClick={onSave}
             >
               Save
-            </button>
+            </Button>
           </div>
         ) : (
           <p className="text-md mt-2">{editedContent}</p>
@@ -84,48 +102,63 @@ const CommentCard: React.FC<ICommentCardProps> = ({
       </div>
 
       {/* More options */}
-      <div className="ml-3 text-gray-400 cursor-pointer hover:text-gray-200 relative">
-        <IoMdMore size={32} onClick={toggleMenu} />
-        {isMenuOpen && (
-          <div className="absolute right-0 mt-2 bg-zinc-800 text-white shadow-lg rounded-md p-2 w-40">
-            <button
-              className="w-full text-left px-2 py-1 hover:bg-zinc-700 rounded-md"
-              onClick={handleEdit}
+      <div className="ml-3 text-gray-400 cursor-pointer self-center hover:text-gray-200 relative ">
+
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-auto w-auto p-0 rounded-full [&_svg]:size-[30px]
+                  hover:text-general-blue-hover hover:bg-transparent"
             >
-              Edit Comment
-            </button>
-            <button
-              className="w-full text-left px-2 py-1 hover:bg-zinc-700 rounded-md mt-1"
-              onClick={handleDelete}
+              <EllipsisVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="border-none bg-zinc-800 font-semibold text-general-blue p-2 rounded-lg shadow-lg">
+            <DropdownMenuItem
+              className="focus:bg-general-blue-hover text-md"
+              onClick={onEdit}
             >
-              Delete Comment
-            </button>
-          </div>
-        )}
+              Edit comment
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="focus:bg-general-blue-hover text-md"
+              onClick={onDelete}
+            >
+              Delete comment
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
-      {/* Delete confirmation dialog */}
-      {isDialogOpen && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-[#181818] text-white p-6 rounded-lg shadow-lg">
-            <p>Do you want to delete this comment?</p>
-            <div className="flex justify-end mt-4">
-              <button
-                className="mr-4 px-4 py-2 bg-pink-500 rounded-lg hover:bg-pink-600"
-                onClick={cancelDelete}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-pink-500 rounded-lg hover:bg-pink-600"
-                onClick={confirmDelete}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <AlertDialogTrigger />
+        <AlertDialogContent className="bg-general-theme border-none">
+          <AlertDialogHeader>
+            <AlertDialogTitle
+              className='text-general-pink-hover'
+            >
+              Are you absolutely sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. Do you really want to delete this comment?.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="mr-4 px-4 py-2 rounded-lg bg-transparent border-general-pink-border text-general-pink 
+                  hover:text-general-white hover:border-transparent hover:bg-general-pink-hover"
+              onClick={handleCancelDelete}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="px-4 py-2 bg-general-pink rounded-lg hover:bg-general-pink-hover"
+              onClick={handleConfirmDelete}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
