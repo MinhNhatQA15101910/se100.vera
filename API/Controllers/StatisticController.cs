@@ -17,15 +17,19 @@ public class StatisticController(
       var totalAlbums = await unitOfWork.AlbumRepository.GetTotalAlbumsAsync();
       var totalPlaylists = await unitOfWork.PlaylistRepository.GetTotalPlaylistsAsync();
       var totalGenres = await unitOfWork.GenreRepository.GetTotalGenresAsync();
+      var totalViews = await unitOfWork.SongRepository.GetTotalViewsAsync();
+      var totalDownloads = await unitOfWork.SongRepository.GetTotalDownloadsAsync();
 
       return new StatisticDto
       {
-         totalSongs = totalSongs,
-         totalUsers = totalUsers,
-         totalArtists = totalArtists,
-         totalAlbums = totalAlbums,
-         totalPlaylists = totalPlaylists,
-         totalGenres = totalGenres
+         TotalSongs = totalSongs,
+         TotalUsers = totalUsers,
+         TotalArtists = totalArtists,
+         TotalAlbums = totalAlbums,
+         TotalPlaylists = totalPlaylists,
+         TotalGenres = totalGenres,
+         TotalViews = totalDownloads,
+         TotalDownloads = totalViews,
       };
    }
 }

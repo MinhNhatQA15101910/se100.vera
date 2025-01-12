@@ -132,4 +132,14 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     {
         context.Songs.Add(song);
     }
+
+    public Task<int> GetTotalViewsAsync()
+    {
+        return context.Songs.SumAsync(s => s.TotalViews);
+    }
+
+    public Task<int> GetTotalDownloadsAsync()
+    {
+        return context.Downloads.SumAsync(d => d.Count);
+    }
 }
