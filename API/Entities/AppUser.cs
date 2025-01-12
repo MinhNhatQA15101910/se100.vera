@@ -17,7 +17,6 @@ public class AppUser : IdentityUser<int>
     public List<Album> PublishedAlbums { get; set; } = [];
     public List<ArtistAlbum> Albums { get; set; } = [];
     public List<Playlist> PublishedPlaylists { get; set; } = [];
-    public List<SubscriptionPlan> SubscriptionPlans { get; set; } = [];
     public List<Payment> Payments { get; set; } = [];
     public List<SongFavorite> FavoriteSongs { get; set; } = [];
     public List<AlbumFavorite> FavoriteAlbums { get; set; } = [];

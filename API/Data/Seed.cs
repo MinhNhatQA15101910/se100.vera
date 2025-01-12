@@ -241,4 +241,27 @@ public class Seed
 
         await context.SaveChangesAsync();
     }
+
+    public static async Task SeedSubscriptionPlans(DataContext context)
+    {
+        if (await context.SubscriptionPlans.AnyAsync()) return;
+
+        var subscriptionPlanData = await File.ReadAllTextAsync("Data/SubscriptionPlanSeedData.json");
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var subscriptionPlans = JsonSerializer.Deserialize<List<SubscriptionPlan>>(subscriptionPlanData, options);
+
+        if (subscriptionPlans == null) return;
+
+        foreach (var plan in subscriptionPlans)
+        {
+            context.SubscriptionPlans.Add(plan);
+        }
+
+        await context.SaveChangesAsync();
+    }
 }

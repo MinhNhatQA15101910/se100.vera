@@ -34,6 +34,7 @@ try
     await Seed.SeedGenres(context);
     await Seed.SeedSongs(context);
     await Seed.SeedAlbums(context);
+    await Seed.SeedSubscriptionPlans(context);
 }
 catch (Exception ex)
 {
