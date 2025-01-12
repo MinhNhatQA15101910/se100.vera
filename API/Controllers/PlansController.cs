@@ -1,5 +1,7 @@
 using System;
 using API.DTOs.SubscriptionPlans;
+using API.Extensions;
+using API.Helpers;
 using API.Interfaces.IRepositories;
 
 namespace API.Controllers;
@@ -16,5 +18,15 @@ public class PlansController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiCo
         }
 
         return mapper.Map<SubscriptionPlanDto>(plan);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<SubscriptionPlanDto>>> GetPlans([FromQuery] PlanParams planParams)
+    {
+        var plans = await unitOfWork.SubscriptionPlanRepository.GetPlansAsync(planParams);
+
+        Response.AddPaginationHeader(plans);
+
+        return plans;
     }
 }

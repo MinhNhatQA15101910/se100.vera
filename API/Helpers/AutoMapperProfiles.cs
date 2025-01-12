@@ -34,6 +34,12 @@ public class AutoMapperProfiles : Profile
                 o => o.MapFrom(
                     s => s.UserRoles.Select(x => x.Role.Name)
                 )
+            )
+            .ForMember(
+                d => d.Plans,
+                o => o.MapFrom(
+                    s => s.Plans.Select(p => p.Plan)
+                )
             );
 
         CreateMap<RegisterDto, AppUser>()
