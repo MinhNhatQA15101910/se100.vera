@@ -386,8 +386,8 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Property<bool>("IsRead")
                     .HasColumnType("boolean");
 
-                b.Property<string>("NotifyEntityId")
-                    .HasColumnType("text");
+                b.Property<int?>("NotifyEntityId")
+                    .HasColumnType("integer");
 
                 b.Property<string>("Title")
                     .HasColumnType("text");

@@ -6,7 +6,7 @@ public class Notification
     public string? Title { get; set; }
     public required string Content { get; set; }
     public required string Type { get; set; }
-    public string? NotifyEntityId { get; set; }
+    public int? NotifyEntityId { get; set; }
     public bool IsRead { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

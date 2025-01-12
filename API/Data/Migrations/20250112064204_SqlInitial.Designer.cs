@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20250112044133_SqlInitial")]
+[Migration("20250112064204_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -388,8 +388,8 @@ partial class SqlInitial
                 b.Property<bool>("IsRead")
                     .HasColumnType("boolean");
 
-                b.Property<string>("NotifyEntityId")
-                    .HasColumnType("text");
+                b.Property<int?>("NotifyEntityId")
+                    .HasColumnType("integer");
 
                 b.Property<string>("Title")
                     .HasColumnType("text");

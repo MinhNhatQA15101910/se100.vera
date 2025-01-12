@@ -1,6 +1,7 @@
 using API.DTOs.Notifications;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces.IRepositories;
 
 namespace API.Controllers;
@@ -25,6 +26,20 @@ public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper) : B
         }
 
         return mapper.Map<NotificationDto>(notification);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<NotificationDto>>> GetNotifications([FromQuery] NotificationParams notificationParams)
+    {
+        var userId = User.GetUserId();
+        notificationParams.UserId = userId.ToString();
+
+        var notifications = await unitOfWork.NotificationRepository.GetNotificationsAsync(notificationParams);
+
+        Response.AddPaginationHeader(notifications);
+
+        return notifications;
     }
 
     [HttpPost]

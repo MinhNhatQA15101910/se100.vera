@@ -216,7 +216,7 @@ public partial class SqlInitial : Migration
                 Title = table.Column<string>(type: "text", nullable: true),
                 Content = table.Column<string>(type: "text", nullable: false),
                 Type = table.Column<string>(type: "text", nullable: false),
-                NotifyEntityId = table.Column<string>(type: "text", nullable: true),
+                NotifyEntityId = table.Column<int>(type: "integer", nullable: true),
                 IsRead = table.Column<bool>(type: "boolean", nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UserId = table.Column<int>(type: "integer", nullable: false)
