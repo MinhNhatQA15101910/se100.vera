@@ -3,10 +3,12 @@ namespace API.DTOs.Statistic;
 
 public class StatisticDto
 {
-   public int totalUsers { get; set; }
-   public int totalSongs { get; set; }
-   public int totalArtists { get; set; }
-   public int totalAlbums { get; set; }
-   public int totalPlaylists { get; set; }
-   public int totalGenres { get; set; }
+   public int TotalUsers { get; set; }
+   public int TotalSongs { get; set; }
+   public int TotalArtists { get; set; }
+   public int TotalAlbums { get; set; }
+   public int TotalPlaylists { get; set; }
+   public int TotalGenres { get; set; }
+   public int TotalViews { get; set; }
+   public int TotalDownloads { get; set; }
 }

@@ -13,14 +13,6 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
       context.Genres.Add(genre);
    }
 
-   public async Task<Genre> AddGenreAsync(Genre genre)
-   {
-      await context.Genres.AddAsync(genre);
-      await context.SaveChangesAsync();
-
-      return genre;
-   }
-
    public void RemoveGenre(Genre genre)
    {
       context.Genres.Remove(genre);
@@ -35,7 +27,10 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
 
    public async Task<Genre?> GetGenreByIdAsync(int id)
    {
-      return await context.Genres.FindAsync(id);
+      return await context.Genres
+         .Include(g => g.Songs)
+         .Include(g => g.Albums)
+         .FirstOrDefaultAsync(g => g.Id == id);
    }
 
    public async Task<Genre?> GetGenreByNameAsync(string name)
@@ -56,8 +51,9 @@ public class GenreRepository(DataContext context, IMapper mapper) : IGenreReposi
          paginationParams.PageSize
       );
    }
-   public int GetTotalGenres()
+
+   public async Task<int> GetTotalGenresAsync()
    {
-      return context.Genres.Count();
+      return await context.Genres.CountAsync();
    }
 }

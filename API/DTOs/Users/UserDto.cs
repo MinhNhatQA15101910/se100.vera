@@ -1,4 +1,4 @@
-using API.DTOs.Files;
+using API.DTOs.SubscriptionPlans;
 
 namespace API.DTOs.Users;
 
@@ -13,8 +13,9 @@ public class UserDto
     public required string Gender { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public string? About { get; set; }
+    public required string State { get; set; }
     public DateTime CreatedAt { get; set; }
-    public List<FileDto>? Photos { get; set; }
     public List<string>? Roles { get; set; }
+    public List<SubscriptionPlanDto>? Plans { get; set; }
     public string? Token { get; set; }
 }

@@ -30,12 +30,11 @@ try
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
     await context.Database.MigrateAsync();
-    await Seed.SeedPhotos(context);
-    await Seed.SeedUsers(context, userManager, roleManager);
+    await Seed.SeedUsers(userManager, roleManager);
     await Seed.SeedGenres(context);
     await Seed.SeedSongs(context);
     await Seed.SeedAlbums(context);
-    await Seed.SeedPlaylists(context);
+    await Seed.SeedSubscriptionPlans(context);
 }
 catch (Exception ex)
 {

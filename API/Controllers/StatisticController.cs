@@ -11,23 +11,25 @@ public class StatisticController(
    [Authorize(Roles = "Admin")]
    public async Task<ActionResult<StatisticDto>> GetAllStatistics()
    {
-      var totalSongs = unitOfWork.SongRepository.GetTotalSongs();
-      var totalUsers = unitOfWork.UserRepository.GetTotalUsers();
-      var totalArtists = unitOfWork.UserRepository.GetTotalArtists();
-      var totalAlbums = unitOfWork.AlbumRepository.GetTotalAlbums();
-      var totalPlaylists = unitOfWork.PlaylistRepository.GetTotalPlaylists();
-      var totalGenres = unitOfWork.GenreRepository.GetTotalGenres();
+      var totalSongs = await unitOfWork.SongRepository.GetTotalSongsAsync();
+      var totalUsers = await unitOfWork.UserRepository.GetTotalUsersAsync();
+      var totalArtists = await unitOfWork.UserRepository.GetTotalArtistsAsync();
+      var totalAlbums = await unitOfWork.AlbumRepository.GetTotalAlbumsAsync();
+      var totalPlaylists = await unitOfWork.PlaylistRepository.GetTotalPlaylistsAsync();
+      var totalGenres = await unitOfWork.GenreRepository.GetTotalGenresAsync();
+      var totalViews = await unitOfWork.SongRepository.GetTotalViewsAsync();
+      var totalDownloads = await unitOfWork.SongRepository.GetTotalDownloadsAsync();
 
-      var statistics = new StatisticDto
+      return new StatisticDto
       {
-         totalSongs = totalSongs,
-         totalUsers = totalUsers,
-         totalArtists = totalArtists,
-         totalAlbums = totalAlbums,
-         totalPlaylists = totalPlaylists,
-         totalGenres = totalGenres
+         TotalSongs = totalSongs,
+         TotalUsers = totalUsers,
+         TotalArtists = totalArtists,
+         TotalAlbums = totalAlbums,
+         TotalPlaylists = totalPlaylists,
+         TotalGenres = totalGenres,
+         TotalViews = totalDownloads,
+         TotalDownloads = totalViews,
       };
-
-      return await Task.FromResult(Ok(statistics));
    }
 }

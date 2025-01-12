@@ -17,6 +17,7 @@ global using NAudio.Wave;
 global using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
+global using System.Globalization;
 global using System.IdentityModel.Tokens.Jwt;
 global using System.Net;
 global using System.Security.Claims;
