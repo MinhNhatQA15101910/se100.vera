@@ -22,6 +22,7 @@ public class Song
     public List<SongGenre> Genres { get; set; } = [];
     public List<SongFavorite> UserFavorites { get; set; } = [];
     public List<Comment> Comments { get; set; } = [];
+    public List<Download> Downloads { get; set; } = [];
 
     // Navigation properties
     public int PublisherId { get; set; }

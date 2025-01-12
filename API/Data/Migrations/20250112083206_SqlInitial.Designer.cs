@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20250112064204_SqlInitial")]
+[Migration("20250112083206_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -347,6 +347,24 @@ partial class SqlInitial
                 b.ToTable("Comments");
             });
 
+        modelBuilder.Entity("API.Entities.Download", b =>
+            {
+                b.Property<int>("UserId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("SongId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("Count")
+                    .HasColumnType("integer");
+
+                b.HasKey("UserId", "SongId");
+
+                b.HasIndex("SongId");
+
+                b.ToTable("Downloads");
+            });
+
         modelBuilder.Entity("API.Entities.Genre", b =>
             {
                 b.Property<int>("Id")
@@ -439,22 +457,7 @@ partial class SqlInitial
 
                 b.HasIndex("ListenerId");
 
-                b.ToTable("Payments");
-            });
-
-        modelBuilder.Entity("API.Entities.PaymentDetail", b =>
-            {
-                b.Property<int>("PaymentId")
-                    .HasColumnType("integer");
-
-                b.Property<int>("SubscriptionPlanId")
-                    .HasColumnType("integer");
-
-                b.HasKey("PaymentId", "SubscriptionPlanId");
-
-                b.HasIndex("SubscriptionPlanId");
-
-                b.ToTable("PaymentDetails");
+                b.ToTable("Payment");
             });
 
         modelBuilder.Entity("API.Entities.Playlist", b =>
@@ -642,22 +645,17 @@ partial class SqlInitial
                     .IsRequired()
                     .HasColumnType("text");
 
-                b.Property<int>("ListenerId")
-                    .HasColumnType("integer");
-
                 b.Property<string>("PlanName")
                     .IsRequired()
                     .HasColumnType("text");
 
-                b.Property<decimal>("Price")
+                b.Property<decimal>("PricePerMonth")
                     .HasColumnType("numeric");
 
                 b.Property<DateTime>("UpdatedAt")
                     .HasColumnType("timestamp with time zone");
 
                 b.HasKey("Id");
-
-                b.HasIndex("ListenerId");
 
                 b.ToTable("SubscriptionPlans");
             });
@@ -688,6 +686,21 @@ partial class SqlInitial
                 b.HasIndex("UserId");
 
                 b.ToTable("UserPhotos");
+            });
+
+        modelBuilder.Entity("API.Entities.UserPlan", b =>
+            {
+                b.Property<int>("UserId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("PlanId")
+                    .HasColumnType("integer");
+
+                b.HasKey("UserId", "PlanId");
+
+                b.HasIndex("PlanId");
+
+                b.ToTable("UserPlan");
             });
 
         modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -933,6 +946,25 @@ partial class SqlInitial
                 b.Navigation("Song");
             });
 
+        modelBuilder.Entity("API.Entities.Download", b =>
+            {
+                b.HasOne("API.Entities.Song", "Song")
+                    .WithMany("Downloads")
+                    .HasForeignKey("SongId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.AppUser", "User")
+                    .WithMany("Downloads")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.Navigation("Song");
+
+                b.Navigation("User");
+            });
+
         modelBuilder.Entity("API.Entities.Notification", b =>
             {
                 b.HasOne("API.Entities.AppUser", "User")
@@ -953,25 +985,6 @@ partial class SqlInitial
                     .IsRequired();
 
                 b.Navigation("Listener");
-            });
-
-        modelBuilder.Entity("API.Entities.PaymentDetail", b =>
-            {
-                b.HasOne("API.Entities.Payment", "Payment")
-                    .WithMany("SubscriptionPlans")
-                    .HasForeignKey("PaymentId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.HasOne("API.Entities.SubscriptionPlan", "SubscriptionPlan")
-                    .WithMany("Payments")
-                    .HasForeignKey("SubscriptionPlanId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Payment");
-
-                b.Navigation("SubscriptionPlan");
             });
 
         modelBuilder.Entity("API.Entities.Playlist", b =>
@@ -1064,17 +1077,6 @@ partial class SqlInitial
                 b.Navigation("Song");
             });
 
-        modelBuilder.Entity("API.Entities.SubscriptionPlan", b =>
-            {
-                b.HasOne("API.Entities.AppUser", "Listener")
-                    .WithMany("SubscriptionPlans")
-                    .HasForeignKey("ListenerId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Listener");
-            });
-
         modelBuilder.Entity("API.Entities.UserPhoto", b =>
             {
                 b.HasOne("API.Entities.AppUser", "User")
@@ -1082,6 +1084,25 @@ partial class SqlInitial
                     .HasForeignKey("UserId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
+
+                b.Navigation("User");
+            });
+
+        modelBuilder.Entity("API.Entities.UserPlan", b =>
+            {
+                b.HasOne("API.Entities.SubscriptionPlan", "Plan")
+                    .WithMany("Users")
+                    .HasForeignKey("PlanId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.AppUser", "User")
+                    .WithMany("Plans")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Plan");
 
                 b.Navigation("User");
             });
@@ -1146,6 +1167,8 @@ partial class SqlInitial
 
                 b.Navigation("Comments");
 
+                b.Navigation("Downloads");
+
                 b.Navigation("FavoriteAlbums");
 
                 b.Navigation("FavoriteSongs");
@@ -1153,6 +1176,8 @@ partial class SqlInitial
                 b.Navigation("Payments");
 
                 b.Navigation("Photos");
+
+                b.Navigation("Plans");
 
                 b.Navigation("PublishedAlbums");
 
@@ -1162,8 +1187,6 @@ partial class SqlInitial
 
                 b.Navigation("Songs");
 
-                b.Navigation("SubscriptionPlans");
-
                 b.Navigation("UserRoles");
             });
 
@@ -1172,11 +1195,6 @@ partial class SqlInitial
                 b.Navigation("Albums");
 
                 b.Navigation("Songs");
-            });
-
-        modelBuilder.Entity("API.Entities.Payment", b =>
-            {
-                b.Navigation("SubscriptionPlans");
             });
 
         modelBuilder.Entity("API.Entities.Playlist", b =>
@@ -1192,6 +1210,8 @@ partial class SqlInitial
 
                 b.Navigation("Comments");
 
+                b.Navigation("Downloads");
+
                 b.Navigation("Genres");
 
                 b.Navigation("Photos");
@@ -1203,7 +1223,7 @@ partial class SqlInitial
 
         modelBuilder.Entity("API.Entities.SubscriptionPlan", b =>
             {
-                b.Navigation("Payments");
+                b.Navigation("Users");
             });
 #pragma warning restore 612, 618
     }

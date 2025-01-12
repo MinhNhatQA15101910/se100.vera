@@ -38,7 +38,7 @@ public class AlbumsController(
             return NotFound("User not found.");
         }
 
-        if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin") || album.PublisherId != userId)
+        if (!User.IsInRole("Admin") && album.PublisherId != userId)
         {
             albumDto.State = null;
         }
@@ -67,7 +67,7 @@ public class AlbumsController(
                 return BadRequest("Invalid user id.");
             }
 
-            if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+            if (!User.IsInRole("Admin"))
             {
                 foreach (var album in albums)
                 {
@@ -305,6 +305,7 @@ public class AlbumsController(
         }
 
         // Update album's updated date
+        album.State = ArtworkState.Pending.ToString();
         album.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete())
@@ -316,7 +317,7 @@ public class AlbumsController(
     }
 
     [HttpPut("update-photo/{id:int}")]
-    public async Task<ActionResult<FileDto>> AddPhoto(int id, IFormFile file)
+    public async Task<ActionResult<FileDto>> UpdatePhoto(int id, IFormFile file)
     {
         var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
         if (album == null) return BadRequest("Cannot update album");
@@ -351,6 +352,7 @@ public class AlbumsController(
         };
         album.Photos.Add(albumPhoto);
 
+        album.State = ArtworkState.Pending.ToString();
         album.UpdatedAt = DateTime.UtcNow;
 
         if (!await unitOfWork.Complete()) return BadRequest("Problem adding photo");
@@ -419,7 +421,7 @@ public class AlbumsController(
         {
             return BadRequest("Invalid user id.");
         }
-        if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin") && album.PublisherId != userId)
+        if (!User.IsInRole("Admin") && album.PublisherId != userId)
         {
             return Unauthorized("You are not authorized to add song to this album.");
         }
@@ -431,7 +433,7 @@ public class AlbumsController(
         }
 
         // Validate if the song belongs to the artist
-        if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin") && song.PublisherId != userId)
+        if (!User.IsInRole("Admin") && song.PublisherId != userId)
         {
             return Unauthorized("You are not authorized to add song to this album.");
         }
@@ -526,7 +528,7 @@ public class AlbumsController(
         {
             return BadRequest("Invalid user id.");
         }
-        if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin") && album.PublisherId != userId)
+        if (!User.IsInRole("Admin") && album.PublisherId != userId)
         {
             return Unauthorized("You are not authorized to remove song from this album.");
         }
@@ -538,7 +540,7 @@ public class AlbumsController(
         }
 
         // Validate if the user is authorized to remove song from the album
-        if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin") && song.PublisherId != userId)
+        if (!User.IsInRole("Admin") && song.PublisherId != userId)
         {
             return Unauthorized("You are not authorized to remove song from this album.");
         }
@@ -626,5 +628,47 @@ public class AlbumsController(
         }
 
         return album.UserFavorites.Any(fa => fa.UserId == userId);
+    }
+
+    [HttpPatch("approve/{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> ApproveAlbum(int id)
+    {
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
+
+        album.State = ArtworkState.Approved.ToString();
+        album.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to approve album.");
+        }
+
+        return NoContent();
+    }
+
+    [HttpPatch("reject/{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> RejectAlbum(int id)
+    {
+        var album = await unitOfWork.AlbumRepository.GetAlbumByIdAsync(id);
+        if (album == null)
+        {
+            return NotFound("Album not found.");
+        }
+
+        album.State = ArtworkState.Rejected.ToString();
+        album.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to reject album.");
+        }
+
+        return NoContent();
     }
 }

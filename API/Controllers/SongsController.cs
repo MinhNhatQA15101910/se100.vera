@@ -38,7 +38,7 @@ public class SongsController(
                 return BadRequest("Invalid user id.");
             }
 
-            if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin") || userId != song.PublisherId)
+            if (!User.IsInRole("Admin") && userId != song.PublisherId)
             {
                 songDto.State = null;
             }
@@ -306,6 +306,7 @@ public class SongsController(
 
         // Update timestamp
         song.UpdatedAt = DateTime.UtcNow;
+        song.State = ArtworkState.Pending.ToString();
 
         if (!await unitOfWork.Complete())
         {
@@ -316,7 +317,7 @@ public class SongsController(
     }
 
     [HttpPut("update-photo/{id:int}")]
-    public async Task<ActionResult<FileDto>> AddPhoto(int id, IFormFile file)
+    public async Task<ActionResult<FileDto>> UpdatePhoto(int id, IFormFile file)
     {
         var song = await unitOfWork.SongRepository.GetSongByIdAsync(id);
         if (song == null) return BadRequest("Cannot update song");
@@ -352,6 +353,7 @@ public class SongsController(
         song.Photos.Add(songPhoto);
 
         song.UpdatedAt = DateTime.UtcNow;
+        song.State = ArtworkState.Pending.ToString();
 
         if (!await unitOfWork.Complete()) return BadRequest("Problem adding photo");
 
@@ -393,7 +395,7 @@ public class SongsController(
                 return BadRequest("Invalid user id.");
             }
 
-            if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+            if (!User.IsInRole("Admin"))
             {
                 foreach (var song in songs)
                 {
@@ -423,7 +425,7 @@ public class SongsController(
         {
             return Unauthorized("User not found.");
         }
-        if (userId != song.PublisherId && !user.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+        if (userId != song.PublisherId && !User.IsInRole("Admin"))
         {
             return Unauthorized("You are not authorized to delete this song.");
         }
@@ -507,6 +509,103 @@ public class SongsController(
         }
 
         return song.UserFavorites.Any(sf => sf.UserId == User.GetUserId());
+    }
+
+    [HttpPatch("approve/{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> ApproveSong(int id)
+    {
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(id);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        song.State = ArtworkState.Approved.ToString();
+        song.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to approve song.");
+        }
+
+        return NoContent();
+    }
+
+    [HttpPatch("reject/{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> RejectSong(int id)
+    {
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(id);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        song.State = ArtworkState.Rejected.ToString();
+        song.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to reject song.");
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost("download/{id:int}")]
+    [Authorize]
+    public async Task<ActionResult> DownloadSong(int id)
+    {
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(id);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        var userId = User.GetUserId();
+        var download = song.Downloads.FirstOrDefault(d => d.UserId == userId);
+        if (download == null)
+        {
+            download = new Download
+            {
+                UserId = userId,
+                SongId = id,
+                Count = 1
+            };
+            song.Downloads.Add(download);
+        }
+        else
+        {
+            download.Count++;
+        }
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to download song.");
+        }
+
+        return Ok();
+    }
+
+    [HttpPut("increase-views/{id:int}")]
+    public async Task<ActionResult> IncreaseViews(int id)
+    {
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(id);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        song.TotalViews++;
+        song.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to increase views.");
+        }
+
+        return NoContent();
     }
 
     private static string GetSongDuration(IFormFile audioFile)

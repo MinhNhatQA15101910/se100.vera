@@ -16,6 +16,7 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
             .Include(s => s.Publisher).ThenInclude(p => p.Photos)
             .Include(s => s.Artists).ThenInclude(sa => sa.Artist)
             .Include(s => s.UserFavorites).ThenInclude(sf => sf.User)
+            .Include(s => s.Downloads)
             .SingleOrDefaultAsync(s => s.Id == id);
     }
 
@@ -130,5 +131,15 @@ public class SongRepository(DataContext context, IMapper mapper) : ISongReposito
     public void AddSong(Song song)
     {
         context.Songs.Add(song);
+    }
+
+    public Task<int> GetTotalViewsAsync()
+    {
+        return context.Songs.SumAsync(s => s.TotalViews);
+    }
+
+    public Task<int> GetTotalDownloadsAsync()
+    {
+        return context.Downloads.SumAsync(d => d.Count);
     }
 }
