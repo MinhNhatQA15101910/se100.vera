@@ -1,6 +1,7 @@
 using API.DTOs.Comments;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces.IRepositories;
 
 namespace API.Controllers;
@@ -18,6 +19,16 @@ public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseAp
         }
 
         return mapper.Map<CommentDto>(comment);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CommentDto>>> GetComments([FromQuery] CommentParams commentParams)
+    {
+        var comments = await unitOfWork.CommentRepository.GetCommentsAsync(commentParams);
+
+        Response.AddPaginationHeader(comments);
+
+        return comments;
     }
 
     [HttpPost]
