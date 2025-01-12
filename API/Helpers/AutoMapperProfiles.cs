@@ -43,6 +43,8 @@ public class AutoMapperProfiles : Profile
                 )
             );
 
+        CreateMap<UpdateUserDto, AppUser>();
+
         CreateMap<Song, SongDto>()
             .ForMember(
                 d => d.PublisherName,

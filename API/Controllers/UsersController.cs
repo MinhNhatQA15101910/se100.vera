@@ -79,8 +79,55 @@ public class UsersController(
         return NoContent();
     }
 
-    [HttpPut("update-photo")]
-    public async Task<ActionResult<FileDto>> AddPhoto(IFormFile file)
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult> UpdateUser(UpdateUserDto updateUserDto)
+    {
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
+        if (user == null)
+        {
+            return Unauthorized("User not found.");
+        }
+
+        mapper.Map(updateUserDto, user);
+
+        // Update photo
+        if (updateUserDto.PhotoFile != null)
+        {
+            // Delete old photo
+            foreach (var up in user.Photos)
+            {
+                if (up.PublicId != null)
+                {
+                    var deleteResult = await fileService.DeleteFileAsync(up.PublicId, ResourceType.Image);
+                    if (deleteResult.Error != null) return BadRequest(deleteResult.Error.Message);
+                }
+            }
+            user.Photos.Clear();
+
+            // Upload new photo
+            var result = await fileService.UploadImageAsync("/users/" + user.Id, updateUserDto.PhotoFile);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            var userPhoto = new UserPhoto
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId,
+                IsMain = true
+            };
+            user.Photos.Add(userPhoto);
+        }
+
+        // Update timestamp
+        user.UpdatedAt = DateTime.UtcNow;
+
+        if (!await unitOfWork.Complete()) return BadRequest("Could not update user");
+
+        return NoContent();
+    }
+
+    [HttpPatch("update-photo")]
+    public async Task<ActionResult<FileDto>> UpdatePhoto(IFormFile file)
     {
         var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("Cannot update user");
