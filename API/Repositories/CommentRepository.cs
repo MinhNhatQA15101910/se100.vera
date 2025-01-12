@@ -13,6 +13,11 @@ public class CommentRepository(DataContext context, IMapper mapper) : ICommentRe
         context.Comments.Add(comment);
     }
 
+    public void DeleteComment(Comment comment)
+    {
+        context.Comments.Remove(comment);
+    }
+
     public async Task<Comment?> GetCommentById(int id)
     {
         return await context.Comments

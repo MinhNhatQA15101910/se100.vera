@@ -7,6 +7,7 @@ namespace API.Interfaces.IRepositories;
 public interface ICommentRepository
 {
     void AddComment(Comment comment);
+    void DeleteComment(Comment comment);
     Task<Comment?> GetCommentById(int id);
     Task<PagedList<CommentDto>> GetCommentsAsync(CommentParams commentParams);
 }

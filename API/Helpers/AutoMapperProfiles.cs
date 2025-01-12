@@ -142,6 +142,8 @@ public class AutoMapperProfiles : Profile
             );
 
         CreateMap<NewCommentDto, Comment>();
+
+        CreateMap<UpdateCommentDto, Comment>();
     }
 
     static string RemoveDiacritics(string text)

@@ -8,7 +8,7 @@ namespace API.Controllers;
 
 public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
 {
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<CommentDto>> GetCommentById(int id)
     {
         var comment = await unitOfWork.CommentRepository.GetCommentById(id);
@@ -60,5 +60,64 @@ public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseAp
             new { id = comment.Id },
             mapper.Map<CommentDto>(comment)
         );
+    }
+
+    [HttpPut("{id:int}")]
+    [Authorize]
+    public async Task<ActionResult<CommentDto>> UpdateComment(int id, UpdateCommentDto updateCommentDto)
+    {
+        var comment = await unitOfWork.CommentRepository.GetCommentById(id);
+        if (comment == null)
+        {
+            return NotFound("Comment not found.");
+        }
+
+        // Check user role
+        var userId = User.GetUserId();
+        if (!User.IsInRole("Admin") && comment.PublisherId != userId)
+        {
+            return Unauthorized("You are not authorized to update this comment.");
+        }
+
+        mapper.Map(updateCommentDto, comment);
+
+        // Update timestamp
+        comment.UpdatedAt = DateTime.UtcNow;
+
+        // Save comment
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to update comment.");
+        }
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    [Authorize]
+    public async Task<ActionResult<CommentDto>> DeleteComment(int id)
+    {
+        var comment = await unitOfWork.CommentRepository.GetCommentById(id);
+        if (comment == null)
+        {
+            return NotFound("Comment not found.");
+        }
+
+        // Check user role
+        var userId = User.GetUserId();
+        if (!User.IsInRole("Admin") && comment.PublisherId != userId)
+        {
+            return Unauthorized("You are not authorized to delete this comment.");
+        }
+
+        unitOfWork.CommentRepository.DeleteComment(comment);
+
+        // Save comment
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to delete comment.");
+        }
+
+        return Ok();
     }
 }
