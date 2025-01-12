@@ -177,54 +177,54 @@ const Page: React.FC = () => {
                 )}
               </div>
 
-              <div className="p-4">
-                <div className="grid grid-cols-12 items-start gap-12 mb-8">
-                  <Image
-                    src={
-                      songDetailData?.photoUrl ||
-                      'https://picsum.photos/400/400?random=4'
-                    }
-                    alt={songDetailData?.songName || 'X'}
-                    width={268}
-                    height={268}
-                    className="col-span-3 rounded-md object-cover shadow-2xl"
-                  />
-                  <div className="flex flex-col col-span-6 text-white">
-                    <h1 className="text-3xl font-bold mb-4">
-                      {songDetailData?.songName}
-                    </h1>
-                    <div className="flex items-center space-x-4 mb-2">
-                      <DynamicImage
-                        alt="Artist Image"
-                        src={
-                          songDetailData?.publisherImageUrl ||
-                          'https://picsum.photos/400/400?random=42'
-                        }
-                        className="w-14 h-14 flex items-center rounded-full"
-                      />
-                      <div>
-                        <p className="font-bold text-white text-nowrap truncate">
-                          {songDetailData?.publisherName}
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-muted-foreground mt-2 line-clamp-4 text-white mb-4">
-                      {songDetailData?.description}
+              <div className="grid grid-cols-12 items-start gap-12 mb-8 p-4">
+                <Image
+                  src={
+                    songDetailData?.photoUrl ||
+                    'https://picsum.photos/400/400?random=4'
+                  }
+                  alt={songDetailData?.songName || 'X'}
+                  width={268}
+                  height={268}
+                  className="col-span-3 rounded-lg object-cover shadow-2xl"
+                />
+                <div className="flex flex-col col-span-6 text-white space-y-4">
+                  <h1 className="text-3xl font-bold">
+                    {songDetailData?.songName}
+                  </h1>
+                  <div className="flex items-center space-x-4">
+                    <DynamicImage
+                      alt="Artist Image"
+                      src={
+                        songDetailData?.publisherImageUrl ||
+                        'https://picsum.photos/400/400?random=42'
+                      }
+                      className="w-14 h-14 flex items-center rounded-full"
+                    />
+                    <p className="font-bold text-white text-nowrap truncate">
+                      {songDetailData?.publisherName}
                     </p>
-                    <div className="flex items-center space-x-2 mt-auto">
-                      <p className="text-lg font-bold">
-                        {'Duration: ' + songDetailData?.duration.slice(3, 8)}
-                      </p>
-                    </div>
                   </div>
-                  <div className="flex h-60 col-span-3 justify-end items-end mr-6">
-                    <button className="flex justify-center items-center space-x-2 focus:outline-none">
-                      <span className="text-lg font-medium text-[#EE10B0]">
-                        Play
-                      </span>
-                      <GoPlay className="text-6xl text-[#EE10B0]" />
-                    </button>
-                  </div>
+
+                  <p className="text-muted-foreground mt-2 line-clamp-4 text-white mb-4">
+                    {songDetailData?.description}
+                  </p>
+
+                  <p className="text-lg font-bold">
+                    {'Duration: ' + songDetailData?.duration.slice(3, 8)}
+                  </p>
+
+                </div>
+
+                <div className="flex h-60 col-span-3 justify-end items-end mr-6">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full w-auto h-auto p-4 [&_svg]:size-[30px]
+                        bg-blue-600 hover:bg-blue-700"
+                  >
+                    <PlayIcon fill="#fff" className='text-general-white' />
+                  </Button>
                 </div>
 
               </div>
