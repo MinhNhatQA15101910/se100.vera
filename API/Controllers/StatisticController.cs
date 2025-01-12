@@ -11,14 +11,14 @@ public class StatisticController(
    [Authorize(Roles = "Admin")]
    public async Task<ActionResult<StatisticDto>> GetAllStatistics()
    {
-      var totalSongs = unitOfWork.SongRepository.GetTotalSongs();
-      var totalUsers = unitOfWork.UserRepository.GetTotalUsers();
-      var totalArtists = unitOfWork.UserRepository.GetTotalArtists();
-      var totalAlbums = unitOfWork.AlbumRepository.GetTotalAlbums();
-      var totalPlaylists = unitOfWork.PlaylistRepository.GetTotalPlaylists();
-      var totalGenres = unitOfWork.GenreRepository.GetTotalGenres();
+      var totalSongs = await unitOfWork.SongRepository.GetTotalSongsAsync();
+      var totalUsers = await unitOfWork.UserRepository.GetTotalUsersAsync();
+      var totalArtists = await unitOfWork.UserRepository.GetTotalArtistsAsync();
+      var totalAlbums = await unitOfWork.AlbumRepository.GetTotalAlbumsAsync();
+      var totalPlaylists = await unitOfWork.PlaylistRepository.GetTotalPlaylistsAsync();
+      var totalGenres = await unitOfWork.GenreRepository.GetTotalGenresAsync();
 
-      var statistics = new StatisticDto
+      return new StatisticDto
       {
          totalSongs = totalSongs,
          totalUsers = totalUsers,
@@ -27,7 +27,5 @@ public class StatisticController(
          totalPlaylists = totalPlaylists,
          totalGenres = totalGenres
       };
-
-      return await Task.FromResult(Ok(statistics));
    }
 }

@@ -10,7 +10,7 @@ public class UpdateSongDto
 
    public int PublisherId { get; set; }
 
-   public List<IFormFile>? PhotoFiles { get; set; }
+   public IFormFile? PhotoFile { get; set; }
 
    public IFormFile? LyricFile { get; set; }
 
