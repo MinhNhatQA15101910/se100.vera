@@ -22,5 +22,6 @@ public class AppUser : IdentityUser<int>
     public List<SongFavorite> FavoriteSongs { get; set; } = [];
     public List<AlbumFavorite> FavoriteAlbums { get; set; } = [];
     public List<Comment> Comments { get; set; } = [];
+    public List<Download> Downloads { get; set; } = [];
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
 }

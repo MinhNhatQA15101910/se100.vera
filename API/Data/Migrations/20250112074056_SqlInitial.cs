@@ -531,6 +531,29 @@ public partial class SqlInitial : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "Downloads",
+            columns: table => new
+            {
+                UserId = table.Column<int>(type: "integer", nullable: false),
+                SongId = table.Column<int>(type: "integer", nullable: false),
+                Count = table.Column<int>(type: "integer", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_Downloads", x => new { x.UserId, x.SongId });
+                table.ForeignKey(
+                    name: "FK_Downloads_AspNetUsers_UserId",
+                    column: x => x.UserId,
+                    principalTable: "AspNetUsers",
+                    principalColumn: "Id");
+                table.ForeignKey(
+                    name: "FK_Downloads_Songs_SongId",
+                    column: x => x.SongId,
+                    principalTable: "Songs",
+                    principalColumn: "Id");
+            });
+
+        migrationBuilder.CreateTable(
             name: "FavoriteSongs",
             columns: table => new
             {
@@ -726,6 +749,11 @@ public partial class SqlInitial : Migration
             column: "SongId");
 
         migrationBuilder.CreateIndex(
+            name: "IX_Downloads_SongId",
+            table: "Downloads",
+            column: "SongId");
+
+        migrationBuilder.CreateIndex(
             name: "IX_FavoriteAlbums_AlbumId",
             table: "FavoriteAlbums",
             column: "AlbumId");
@@ -821,6 +849,9 @@ public partial class SqlInitial : Migration
 
         migrationBuilder.DropTable(
             name: "Comments");
+
+        migrationBuilder.DropTable(
+            name: "Downloads");
 
         migrationBuilder.DropTable(
             name: "FavoriteAlbums");

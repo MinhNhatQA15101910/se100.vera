@@ -553,6 +553,41 @@ public class SongsController(
         return NoContent();
     }
 
+    [HttpPost("download/{id:int}")]
+    [Authorize]
+    public async Task<ActionResult> DownloadSong(int id)
+    {
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(id);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        var userId = User.GetUserId();
+        var download = song.Downloads.FirstOrDefault(d => d.UserId == userId);
+        if (download == null)
+        {
+            download = new Download
+            {
+                UserId = userId,
+                SongId = id,
+                Count = 1
+            };
+            song.Downloads.Add(download);
+        }
+        else
+        {
+            download.Count++;
+        }
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to download song.");
+        }
+
+        return Ok();
+    }
+
     private static string GetSongDuration(IFormFile audioFile)
     {
         if (audioFile == null)

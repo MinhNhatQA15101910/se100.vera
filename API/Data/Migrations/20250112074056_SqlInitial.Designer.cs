@@ -4,7 +4,7 @@
 namespace API.Data.Migrations;
 
 [DbContext(typeof(DataContext))]
-[Migration("20250112064204_SqlInitial")]
+[Migration("20250112074056_SqlInitial")]
 partial class SqlInitial
 {
     /// <inheritdoc />
@@ -345,6 +345,24 @@ partial class SqlInitial
                 b.HasIndex("SongId");
 
                 b.ToTable("Comments");
+            });
+
+        modelBuilder.Entity("API.Entities.Download", b =>
+            {
+                b.Property<int>("UserId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("SongId")
+                    .HasColumnType("integer");
+
+                b.Property<int>("Count")
+                    .HasColumnType("integer");
+
+                b.HasKey("UserId", "SongId");
+
+                b.HasIndex("SongId");
+
+                b.ToTable("Downloads");
             });
 
         modelBuilder.Entity("API.Entities.Genre", b =>
@@ -933,6 +951,25 @@ partial class SqlInitial
                 b.Navigation("Song");
             });
 
+        modelBuilder.Entity("API.Entities.Download", b =>
+            {
+                b.HasOne("API.Entities.Song", "Song")
+                    .WithMany("Downloads")
+                    .HasForeignKey("SongId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.HasOne("API.Entities.AppUser", "User")
+                    .WithMany("Downloads")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.Navigation("Song");
+
+                b.Navigation("User");
+            });
+
         modelBuilder.Entity("API.Entities.Notification", b =>
             {
                 b.HasOne("API.Entities.AppUser", "User")
@@ -1146,6 +1183,8 @@ partial class SqlInitial
 
                 b.Navigation("Comments");
 
+                b.Navigation("Downloads");
+
                 b.Navigation("FavoriteAlbums");
 
                 b.Navigation("FavoriteSongs");
@@ -1191,6 +1230,8 @@ partial class SqlInitial
                 b.Navigation("Artists");
 
                 b.Navigation("Comments");
+
+                b.Navigation("Downloads");
 
                 b.Navigation("Genres");
 

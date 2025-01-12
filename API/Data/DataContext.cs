@@ -31,6 +31,7 @@ IdentityDbContext<
     public required DbSet<PaymentDetail> PaymentDetails { get; set; }
     public required DbSet<Comment> Comments { get; set; }
     public required DbSet<Notification> Notifications { get; set; }
+    public required DbSet<Download> Downloads { get; set; }
 
     override protected void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -136,6 +137,23 @@ IdentityDbContext<
             .WithMany(x => x.Songs)
             .HasForeignKey(x => x.GenreId)
             .OnDelete(DeleteBehavior.Cascade);
+        #endregion
+
+        #region Download
+        modelBuilder.Entity<Download>()
+            .HasKey(x => new { x.UserId, x.SongId });
+
+        modelBuilder.Entity<Download>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Downloads)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Download>()
+            .HasOne(x => x.Song)
+            .WithMany(x => x.Downloads)
+            .HasForeignKey(x => x.SongId)
+            .OnDelete(DeleteBehavior.NoAction);
         #endregion
         #endregion
 
