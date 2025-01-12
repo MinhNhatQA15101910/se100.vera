@@ -3,7 +3,7 @@ namespace API.Entities;
 public class Comment
 {
     public int Id { get; set; }
-    public string? Content { get; set; }
+    public required string Content { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
@@ -12,5 +12,4 @@ public class Comment
     public AppUser Publisher { get; set; } = null!;
     public int SongId { get; set; }
     public Song Song { get; set; } = null!;
-    public List<CommentPhoto> Photos { get; set; } = [];
 }

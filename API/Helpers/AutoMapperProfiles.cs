@@ -1,5 +1,6 @@
 using API.DTOs.Albums;
 using API.DTOs.Artists;
+using API.DTOs.Comments;
 using API.DTOs.Files;
 using API.DTOs.Genres;
 using API.DTOs.Playlists;
@@ -123,6 +124,22 @@ public class AutoMapperProfiles : Profile
             );
 
         CreateMap<UpdatePlaylistDto, Playlist>();
+
+        CreateMap<Comment, CommentDto>()
+            .ForMember(
+                c => c.PublisherName,
+                o => o.MapFrom(
+                    s => s.Publisher.FirstName + " " + s.Publisher.LastName
+                )
+            )
+            .ForMember(
+                c => c.PublisherPhotoUrl,
+                o => o.MapFrom(
+                    s => s.Publisher.Photos.FirstOrDefault(x => x.IsMain)!.Url
+                )
+            );
+
+        CreateMap<NewCommentDto, Comment>();
     }
 
     static string RemoveDiacritics(string text)

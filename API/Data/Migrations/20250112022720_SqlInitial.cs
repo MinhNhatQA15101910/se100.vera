@@ -506,7 +506,7 @@ public partial class SqlInitial : Migration
             {
                 Id = table.Column<int>(type: "integer", nullable: false)
                     .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                Content = table.Column<string>(type: "text", nullable: true),
+                Content = table.Column<string>(type: "text", nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 PublisherId = table.Column<int>(type: "integer", nullable: false),
@@ -647,28 +647,6 @@ public partial class SqlInitial : Migration
                     onDelete: ReferentialAction.Cascade);
             });
 
-        migrationBuilder.CreateTable(
-            name: "CommentPhotos",
-            columns: table => new
-            {
-                Id = table.Column<int>(type: "integer", nullable: false)
-                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                Url = table.Column<string>(type: "text", nullable: false),
-                PublicId = table.Column<string>(type: "text", nullable: true),
-                IsMain = table.Column<bool>(type: "boolean", nullable: false),
-                CommentId = table.Column<int>(type: "integer", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_CommentPhotos", x => x.Id);
-                table.ForeignKey(
-                    name: "FK_CommentPhotos_Comments_CommentId",
-                    column: x => x.CommentId,
-                    principalTable: "Comments",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
         migrationBuilder.CreateIndex(
             name: "IX_AlbumGenres_GenreId",
             table: "AlbumGenres",
@@ -735,11 +713,6 @@ public partial class SqlInitial : Migration
             table: "AspNetUsers",
             column: "NormalizedUserName",
             unique: true);
-
-        migrationBuilder.CreateIndex(
-            name: "IX_CommentPhotos_CommentId",
-            table: "CommentPhotos",
-            column: "CommentId");
 
         migrationBuilder.CreateIndex(
             name: "IX_Comments_PublisherId",
@@ -846,7 +819,7 @@ public partial class SqlInitial : Migration
             name: "AspNetUserTokens");
 
         migrationBuilder.DropTable(
-            name: "CommentPhotos");
+            name: "Comments");
 
         migrationBuilder.DropTable(
             name: "FavoriteAlbums");
@@ -874,9 +847,6 @@ public partial class SqlInitial : Migration
 
         migrationBuilder.DropTable(
             name: "AspNetRoles");
-
-        migrationBuilder.DropTable(
-            name: "Comments");
 
         migrationBuilder.DropTable(
             name: "Albums");

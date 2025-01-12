@@ -9,7 +9,8 @@ public class UnitOfWork(
     IGenreRepository genreRepository,
     IPlaylistRepository playlistRepository,
     ISongRepository songRepository,
-    IUserRepository userRepository
+    IUserRepository userRepository,
+    ICommentRepository commentRepository
 ) : IUnitOfWork
 {
     public IAlbumRepository AlbumRepository => albumRepository;
@@ -17,6 +18,7 @@ public class UnitOfWork(
     public IPlaylistRepository PlaylistRepository => playlistRepository;
     public ISongRepository SongRepository => songRepository;
     public IUserRepository UserRepository => userRepository;
+    public ICommentRepository CommentRepository => commentRepository;
 
     public async Task<bool> Complete()
     {

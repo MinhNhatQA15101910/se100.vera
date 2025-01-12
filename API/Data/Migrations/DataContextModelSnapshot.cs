@@ -314,6 +314,7 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                 b.Property<string>("Content")
+                    .IsRequired()
                     .HasColumnType("text");
 
                 b.Property<DateTime>("CreatedAt")
@@ -335,34 +336,6 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.HasIndex("SongId");
 
                 b.ToTable("Comments");
-            });
-
-        modelBuilder.Entity("API.Entities.CommentPhoto", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
-
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<int>("CommentId")
-                    .HasColumnType("integer");
-
-                b.Property<bool>("IsMain")
-                    .HasColumnType("boolean");
-
-                b.Property<string>("PublicId")
-                    .HasColumnType("text");
-
-                b.Property<string>("Url")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.HasKey("Id");
-
-                b.HasIndex("CommentId");
-
-                b.ToTable("CommentPhotos");
             });
 
         modelBuilder.Entity("API.Entities.Genre", b =>
@@ -955,17 +928,6 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Navigation("Song");
             });
 
-        modelBuilder.Entity("API.Entities.CommentPhoto", b =>
-            {
-                b.HasOne("API.Entities.Comment", "Comment")
-                    .WithMany("Photos")
-                    .HasForeignKey("CommentId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Comment");
-            });
-
         modelBuilder.Entity("API.Entities.Notification", b =>
             {
                 b.HasOne("API.Entities.AppUser", "User")
@@ -1198,11 +1160,6 @@ partial class DataContextModelSnapshot : ModelSnapshot
                 b.Navigation("SubscriptionPlans");
 
                 b.Navigation("UserRoles");
-            });
-
-        modelBuilder.Entity("API.Entities.Comment", b =>
-            {
-                b.Navigation("Photos");
             });
 
         modelBuilder.Entity("API.Entities.Genre", b =>
