@@ -8,6 +8,7 @@ public class UserParams : PaginationParams
     public string? LastName { get; set; }
     public string? ArtistName { get; set; }
     public string? Email { get; set; }
+    public string? Keyword { get; set; }
     public string? OrderBy { get; set; } = "email";
     public string? SortBy { get; set; } = "asc";
 }
