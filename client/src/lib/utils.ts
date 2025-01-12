@@ -90,3 +90,22 @@ export const formatTime = (seconds: number) => {
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
+
+export function downloadSong(
+  fileName: string,
+  data: string | ArrayBuffer | ArrayBufferView | Blob,
+  mime = "audio/mpeg",
+  bom?: string | Uint8Array,
+) {
+  const blob = bom ? new Blob([bom, data], { type: mime }) : new Blob([data], { type: mime });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }, 0);
+}

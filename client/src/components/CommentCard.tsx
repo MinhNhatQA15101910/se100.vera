@@ -8,19 +8,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { AlertDialogTrigger } from '@radix-ui/react-alert-dialog';
+} from "@/components/ui/dropdown-menu";
 import { Comment } from '@/types/global';
+import ConfirmDialog from './custom/ConfirmDialog';
 
 interface ICommentCardProps {
   comment: Comment;
@@ -129,36 +119,14 @@ const CommentCard: React.FC<ICommentCardProps> = ({
         </DropdownMenu>
       </div>
 
-      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogTrigger />
-        <AlertDialogContent className="bg-general-theme border-none">
-          <AlertDialogHeader>
-            <AlertDialogTitle
-              className='text-general-pink-hover'
-            >
-              Are you absolutely sure?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. Do you really want to delete this comment?.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              className="mr-4 px-4 py-2 rounded-lg bg-transparent border-general-pink-border text-general-pink 
-                  hover:text-general-white hover:border-transparent hover:bg-general-pink-hover"
-              onClick={handleCancelDelete}
-            >
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="px-4 py-2 bg-general-pink rounded-lg hover:bg-general-pink-hover"
-              onClick={handleConfirmDelete}
-            >
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        title="Are you absolutely sure?"
+        description="This action cannot be undone. Do you really want to delete this comment?"
+      />
     </div>
   );
 };

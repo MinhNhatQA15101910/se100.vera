@@ -27,16 +27,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowLeftIcon, Delete, Edit, PlayIcon } from 'lucide-react';
+import { ArrowLeftIcon, Delete, DownloadIcon, Edit, PlayIcon } from 'lucide-react';
 import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
-import { getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
+import { downloadMp3FromUrl, getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
 import * as commentActions from '@/actions/comment-actions';
 import CustomCommentInput from '@/components/CustomCommentInput';
 import CommentCard from '@/components/CommentCard';
 import { Comment } from '@/types/global';
 import { useAddCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from '../../../../hooks/useCommentMutation';
+import ConfirmDialog from '@/components/custom/ConfirmDialog';
 
 const Page: React.FC = () => {
   const params = useParams();
@@ -44,6 +45,7 @@ const Page: React.FC = () => {
   const { id } = params;
   const { userDetails } = useUser();
   const [comments, setComments] = useState<Comment[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { setActiveTrack, setPlaylist } = usePlayerStore();
   const { setLoadingState } = useLoading();
   const { data: songDetailData, isLoading: isSongDetailLoading } = useQuery({
@@ -127,6 +129,14 @@ const Page: React.FC = () => {
     });
   };
 
+  const handleDownloadConfirm = () => {
+    if (songDetailData?.musicUrl && songDetailData?.songName) {
+      downloadMp3FromUrl(songDetailData?.musicUrl, "[VERA]-" + songDetailData?.songName + "-" + songDetailData?.artists[0].artistName);
+    } else {
+      toast.error('Song URL or name is missing');
+    }
+  }
+
   useEffect(() => {
     setLoadingState(isLoading);
   }, [isLoading]);
@@ -189,9 +199,28 @@ const Page: React.FC = () => {
                   className="col-span-3 rounded-lg object-cover shadow-2xl"
                 />
                 <div className="flex flex-col col-span-6 text-white space-y-4">
-                  <h1 className="text-3xl font-bold">
-                    {songDetailData?.songName}
-                  </h1>
+                  <div className="flex flex-row items-center">
+                    <h1 className="text-3xl font-bold">
+                      {songDetailData?.songName}
+                    </h1>
+                    <Button
+                      variant="default"
+                      size="icon"
+                      className='rounded-full size-auto shadow-none p-3 bg-transparent hover:bg-transparent [&_svg]:size-[30px]'
+                      onClick={() => {
+                        setIsDialogOpen(true);
+                      }}
+                    >
+                      <DownloadIcon className="text-general-white" />
+                    </Button>
+                    <ConfirmDialog
+                      isOpen={isDialogOpen}
+                      onOpenChange={setIsDialogOpen}
+                      onConfirm={handleDownloadConfirm}
+                      title="Download song!"
+                      description="This action will download the song audio file to your computer."
+                    />
+                  </div>
                   <div className="flex items-center space-x-4">
                     <DynamicImage
                       alt="Artist Image"
