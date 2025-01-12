@@ -155,8 +155,6 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<Notification, NotificationDto>();
 
-        CreateMap<NewNotificationDto, Notification>();
-
         CreateMap<SubscriptionPlan, SubscriptionPlanDto>();
     }
 

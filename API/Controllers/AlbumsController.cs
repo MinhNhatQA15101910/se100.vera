@@ -648,6 +648,22 @@ public class AlbumsController(
             return BadRequest("Failed to approve album.");
         }
 
+        // Create notification to user
+        var notification = new Notification
+        {
+            UserId = album.PublisherId,
+            Title = "Album approved",
+            Content = $"Your album {album.AlbumName} has been approved by admin, come and check now.",
+            Type = NotificationType.AlbumApproved.ToString(),
+            NotifyEntityId = album.Id
+        };
+        unitOfWork.NotificationRepository.AddNotification(notification);
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to notify to album's publisher.");
+        }
+
         return NoContent();
     }
 
@@ -667,6 +683,22 @@ public class AlbumsController(
         if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to reject album.");
+        }
+
+        // Create notification to user
+        var notification = new Notification
+        {
+            UserId = album.PublisherId,
+            Title = "Album rejected",
+            Content = $"Your album {album.AlbumName} has been rejected by admin, come and check now.",
+            Type = NotificationType.AlbumRejected.ToString(),
+            NotifyEntityId = album.Id
+        };
+        unitOfWork.NotificationRepository.AddNotification(notification);
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to notify to album's publisher.");
         }
 
         return NoContent();

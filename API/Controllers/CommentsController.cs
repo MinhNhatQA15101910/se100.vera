@@ -47,6 +47,32 @@ public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseAp
             return BadRequest("Failed to add comment.");
         }
 
+        // Notify to song's publisher
+        var song = await unitOfWork.SongRepository.GetSongByIdAsync(newCommentDto.SongId);
+        if (song == null)
+        {
+            return NotFound("Song not found.");
+        }
+
+        if (song.PublisherId != userId)
+        {
+            var notification = new Notification
+            {
+                UserId = song.PublisherId,
+                Title = "New comment",
+                Content = $"User {comment.Publisher.FirstName} {comment.Publisher.LastName} commented on your song {song.SongName}.",
+                NotifyEntityId = song.Id,
+                Type = NotificationType.SongCommented.ToString(),
+            };
+            unitOfWork.NotificationRepository.AddNotification(notification);
+
+            // Save notification
+            if (!await unitOfWork.Complete())
+            {
+                return BadRequest("Failed to notify to song's publisher.");
+            }
+        }
+
         // Add publisher to comment
         var publisher = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
         if (publisher == null)
