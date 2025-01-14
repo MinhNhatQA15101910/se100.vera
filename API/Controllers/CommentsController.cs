@@ -54,14 +54,21 @@ public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseAp
             return NotFound("Song not found.");
         }
 
+        // Add publisher to comment
+        var publisher = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (publisher == null)
+        {
+            return NotFound("Publisher not found.");
+        }
+        comment.Publisher = publisher;
+
         if (song.PublisherId != userId)
         {
             var notification = new Notification
             {
-                UserId = song.PublisherId,
+                UserId = song.Id,
                 Title = "New comment",
-                Content = $"User {comment.Publisher.FirstName} {comment.Publisher.LastName} commented on your song {song.SongName}.",
-                NotifyEntityId = song.Id,
+                Content = $"User {publisher.FirstName} {publisher.LastName} commented on your song {song.SongName}.",
                 Type = NotificationType.SongCommented.ToString(),
             };
             unitOfWork.NotificationRepository.AddNotification(notification);
@@ -72,14 +79,6 @@ public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseAp
                 return BadRequest("Failed to notify to song's publisher.");
             }
         }
-
-        // Add publisher to comment
-        var publisher = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
-        if (publisher == null)
-        {
-            return NotFound("Publisher not found.");
-        }
-        comment.Publisher = publisher;
 
         return CreatedAtAction(
             nameof(GetCommentById),
