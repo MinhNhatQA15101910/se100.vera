@@ -2,6 +2,7 @@ using API.Data;
 using API.Entities;
 using API.Extensions;
 using API.Middleware;
+using API.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("hubs/notification");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
@@ -30,6 +32,7 @@ try
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
     await context.Database.MigrateAsync();
+    await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]");
     await Seed.SeedUsers(userManager, roleManager);
     await Seed.SeedGenres(context);
     await Seed.SeedSongs(context);
