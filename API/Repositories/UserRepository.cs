@@ -16,6 +16,9 @@ public class UserRepository(
     {
         var query = context.Users.AsQueryable();
 
+        // Filter by artist role
+        query = query.Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Artist"));
+
         // Remove current user
         query = query.Where(u => u.NormalizedEmail != userParams.CurrentEmail!.ToUpper());
 
