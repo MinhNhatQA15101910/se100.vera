@@ -70,6 +70,9 @@ export function useChangePasswordMutation() {
     onSuccess: () => {
       setLoadingState(false);
     },
+    onError: () => {
+      setLoadingState(false)
+    }
   });
 
   return mutation;

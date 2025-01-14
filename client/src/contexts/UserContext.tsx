@@ -99,9 +99,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         },
         body: JSON.stringify(signupCreds),
       });
+
     } catch (error) {
       console.error('Verify email failed:', error);
     } finally {
+
       setLoadingState(false);
     }
   };
@@ -149,6 +151,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true);
       setUserDetails(response.data);
       router.push('/login');
+      toast("User Sign up Successfully!")
     } catch (error) {
       console.error('Signup failed:', error);
       throw error;

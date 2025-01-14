@@ -69,6 +69,7 @@ export function useAddSongMutation() {
 
 export function useEditSongMutation() {
   const queryClient = useQueryClient();
+  const { setLoadingState } = useLoading();
 
   const mutation = useMutation({
     mutationFn: async ({
@@ -78,14 +79,15 @@ export function useEditSongMutation() {
       id: number;
       data: UpdateSongPayload;
     }) => {
+      setLoadingState(true);
       const formData = new FormData();
       if (data.songName) formData.append('songName', data.songName);
       if (data.description) formData.append('description', data.description);
       if (data.lyricFile) formData.append('lyricFile', data.lyricFile);
       if (data.musicFile) formData.append('musicFile', data.musicFile);
-      if (data.photoFiles) {
-        data.photoFiles.forEach((file, index) => {
-          formData.append(`photoFiles[${index}]`, file);
+      if (data.photoFile) {
+        data.photoFile.forEach((file, index) => {
+          formData.append(`photoFile`, file);
         });
       }
       if (data.genreIds) {
@@ -100,6 +102,7 @@ export function useEditSongMutation() {
       void queryClient.invalidateQueries({
         queryKey: ['songs'],
       });
+      setLoadingState(false);
     },
   });
 

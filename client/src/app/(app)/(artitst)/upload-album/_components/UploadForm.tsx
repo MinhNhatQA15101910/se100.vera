@@ -34,7 +34,7 @@ import { getAllGenres } from '@/actions/genre-actions';
 const formSchema = z.object({
   albumName: z.string().min(1, 'Song name is required'),
   description: z.string().optional(),
-  photoFiles: z
+  photoFile: z
     .instanceof(File, { message: 'Photo is required' })
     .refine(
       (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
@@ -92,7 +92,7 @@ export default function UploadForm() {
     };
 
     const acceptMap = {
-      photoFiles: {
+      photoFile: {
         'image/*': ['.png', '.jpg', '.jpeg', '.webp'],
       },
     };
@@ -103,14 +103,14 @@ export default function UploadForm() {
       maxFiles: 1,
     });
   };
-  const photoDropzone = CreateDropzone('photoFiles');
+  const photoDropzone = CreateDropzone('photoFile');
 
   const onSubmit = (data: FormValues) => {
     addAlbumMutation.mutate(
       {
         albumName: data.albumName,
         description: data.description || '',
-        photoFiles: [data.photoFiles],
+        photoFile: [data.photoFile],
         artistIds: data.artistIds || [],
         genreIds: data.genreIds,
       },
@@ -147,7 +147,7 @@ export default function UploadForm() {
             <div className="flex flex-row space-x-4 w-[100%]">
               <FormField
                 control={form.control}
-                name="photoFiles"
+                name="photoFile"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

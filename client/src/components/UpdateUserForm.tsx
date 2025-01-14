@@ -61,7 +61,6 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
       dateOfBirth: userDetails?.dateOfBirth
         ? new Date(userDetails.dateOfBirth)
         : undefined,
-      photoFile: undefined,
     },
   });
 
@@ -138,8 +137,8 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
                       <DynamicImage
                         alt={field.value.name}
                         src={
-                          userDetails?.photoUrl ||
                           URL.createObjectURL(field.value) ||
+                          userDetails?.photoUrl ||
                           ''
                         }
                       />
@@ -256,7 +255,7 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
           </div>
         </div>
 
-        <FormField
+        {userDetails?.roles.includes(Role.Artist) &&<FormField
           control={form.control}
           name="about"
           render={({ field }) => (
@@ -274,7 +273,7 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
               </FormControl>
             </FormItem>
           )}
-        />
+        />}
 
         <div className="flex justify-center">
           <AppButton

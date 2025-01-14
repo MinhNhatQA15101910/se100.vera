@@ -7,7 +7,7 @@ import { getAuthTokenFromCookies } from './utils';
 export interface AddAlbumPayload {
   albumName: string;
   description: string;
-  photoFiles?: File[];
+  photoFile: File[];
   artistIds: number[];
   genreIds: number[];
 }

@@ -14,7 +14,13 @@ const AddToPlaylistButton: React.FC<AddToPlaylistProps> = ({ songId }) => {
 
   return (
     <>
-      <button onClick={() => setIsModalOpen(true)} className="">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsModalOpen(true);
+        }}
+        className=""
+      >
         <PiPlaylistBold
           className="text-general-pink hover:text-pink-600 focus:outline-none"
           size={20}

@@ -56,7 +56,7 @@ const formSchema = z.object({
       (file) => file.size <= 20 * 1024 * 1024,
       'File size must be less than 20MB'
     ),
-  photoFiles: z
+  photoFile: z
     .instanceof(File, { message: 'Photo is required' })
     .refine(
       (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
@@ -67,7 +67,7 @@ const formSchema = z.object({
       'File size must be less than 5MB'
     ),
   genreIds: z.array(z.number()).min(1, 'At least one genre is required'),
-  coAritstIds: z.array(z.number()).optional(),
+  artistIds: z.array(z.number()).optional(), // Fixed typo from coAritstIds to artistIds
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -102,7 +102,7 @@ export default function UploadForm() {
     defaultValues: {
       songName: currentSong?.songName,
       genreIds: [],
-      coAritstIds: [],
+      artistIds: [],
     },
   });
 
@@ -125,7 +125,7 @@ export default function UploadForm() {
       lyricFile: {
         'text/plain': ['.lrc'],
       },
-      photoFiles: {
+      photoFile: {
         'image/*': ['.png', '.jpg', '.jpeg', '.webp'],
       },
     };
@@ -138,7 +138,7 @@ export default function UploadForm() {
   };
   const musicDropzone = CreateDropzone('musicFile');
   const lyricDropzone = CreateDropzone('lyricFile');
-  const photoDropzone = CreateDropzone('photoFiles');
+  const photoDropzone = CreateDropzone('photoFile');
 
   const onSubmit = (data: FormValues) => {
     editSongMutation.mutate(
@@ -149,14 +149,14 @@ export default function UploadForm() {
           description: data.description || '',
           lyricFile: data.lyricFile,
           musicFile: data.musicFile,
-          photoFiles: [data.photoFiles],
+          photoFile: [data.photoFile],
           genreIds: data.genreIds,
-          // artistIds: data.coAritstIds || [],
+          artistIds: data.artistIds || [],
         },
       },
       {
         onSuccess: () => {
-          toast.success('Song uploaded successfully!');
+          toast.success('Song updated successfully!');
           router.push('/manage-songs');
         },
         onError: (error) => {
@@ -263,7 +263,7 @@ export default function UploadForm() {
             <div className="flex flex-row w-[100%]">
               <FormField
                 control={form.control}
-                name="photoFiles"
+                name="photoFile"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -357,7 +357,7 @@ export default function UploadForm() {
                 {/*Specify Added Artists*/}
                 <FormField
                   control={form.control}
-                  name="coAritstIds"
+                  name="artistIds" // Fixed typo from coAritstIds to artistIds
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">
@@ -424,7 +424,7 @@ export default function UploadForm() {
                 type="submit"
                 className="bg-blue-500 hover:bg-general-pink-hover transition-colors duration-200 px-8"
               >
-                Upload
+                Update
               </AppButton>
             </div>
           </form>

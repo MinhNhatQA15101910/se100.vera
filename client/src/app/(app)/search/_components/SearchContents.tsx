@@ -4,7 +4,6 @@ import React from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Search from './Search';
-import ArtistList from './ArtistList';
 import SongList from './SongList';
 import AlbumList from './AlbumList';
 
@@ -29,12 +28,6 @@ const SearchContents = () => {
           >
             Albums
           </TabsTrigger>
-          <TabsTrigger
-            value="artists"
-            className="data-[state=active]:text-pink-500 data-[state=active]:font-semibold hover:text-pink-500 transition duration-200"
-          >
-            Artists
-          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="songs">
@@ -43,10 +36,6 @@ const SearchContents = () => {
 
         <TabsContent value="albums">
           <AlbumList keyword={keyword} />
-        </TabsContent>
-
-        <TabsContent value="artists">
-          <ArtistList keyword={keyword} />
         </TabsContent>
       </Tabs>
     </div>

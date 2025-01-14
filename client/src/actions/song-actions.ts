@@ -31,8 +31,9 @@ export interface UpdateSongPayload {
   description: string;
   lyricFile: File;
   musicFile: File;
-  photoFiles: File[];
+  photoFile: File[];
   genreIds: number[];
+  artistIds: number[]
 }
 
 export interface AddSongResponse {

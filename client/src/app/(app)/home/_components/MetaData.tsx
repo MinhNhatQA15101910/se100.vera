@@ -3,7 +3,6 @@
 import { AppButton } from '@/components/ui/AppButton';
 import AlbumCard from '@/components/ui/AlbumCard';
 import ArtistCard from '@/components/ui/ArtistCard';
-import PlaylistCard from '@/components/ui/PlaylistCard';
 
 import { Plus } from 'lucide-react';
 
@@ -14,7 +13,7 @@ import { getAllAlbums } from '@/actions/album-actions';
 import { getAllArtists } from '@/actions/user-actions';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useEffect } from 'react';
-import { Album, Playlist, User } from '@/types/global';
+import { Album, User } from '@/types/global';
 
 const ViewAllFeature = ({ link }: { link: string }) => {
   const router = useRouter();
@@ -98,27 +97,6 @@ export default function MetaData() {
           </div>
           {(albums?.albums?.length || 0) > 5 ? (
             <ViewAllFeature link={'/discover/top-albums'} />
-          ) : (
-            <div className="flex w-[10%]" />
-          )}
-        </div>
-      </section>
-      <section className="flex flex-col w-full">
-        <h2 className="text-2xl font-bold mb-4">
-          Mood <span className="text-pink-500">Playlists</span>
-        </h2>
-        <div className="flex flex-row items-center">
-          <div
-            className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full`}
-          >
-            {(playlists || [])
-              .slice(0, 5)
-              .map((playlist: Playlist, idx: number) => (
-                <PlaylistCard key={idx} playlist={playlist} />
-              ))}
-          </div>
-          {(playlists?.length || 0) >= 5 ? (
-            <ViewAllFeature link="/playlists" />
           ) : (
             <div className="flex w-[10%]" />
           )}

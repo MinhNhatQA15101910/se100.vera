@@ -58,12 +58,7 @@ export default function ArtistProfile() {
         <div className="flex flex-col w-full">
           <h2 className="font-bold text-2xl text-general-white">DESCRIPTION</h2>
           <p className="text-justify text-general-white">
-            If you&apos;re looking for random paragraphs, you&apos;ve come to
-            the right place. When a random word or a random sentence isn&apos;t
-            quite enough, the next logical step is to find a random paragraph.
-            We created the Random Paragraph Generator with you in mind. The
-            process is quite simple. Choose the number of random paragraphs
-            you&apos;d like to see and click the button.
+            {userDetails?.about}
           </p>
         </div>
       </div>

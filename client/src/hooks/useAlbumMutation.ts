@@ -78,9 +78,9 @@ export function useAddAlbumMutation() {
       const formData = new FormData();
       formData.append('albumName', data.albumName);
       formData.append('description', data.description);
-      if (data.photoFiles) {
-        data.photoFiles.forEach((file, index) => {
-          formData.append(`photoFiles[${index}]`, file);
+      if (data.photoFile) {
+        data.photoFile.forEach((file) => {
+          formData.append(`photoFile`, file);
         });
       }
       formData.append('genreIds', data.genreIds[0].toString());
