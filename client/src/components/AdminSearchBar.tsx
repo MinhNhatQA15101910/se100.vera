@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './ui/Input';
+import UserDropDown from './UserDropDown';
+import NotificationButton from './NotificationButton';
 
 interface AdminSearchSongBarProps {
   onSearchChange: (value: string) => void;
@@ -31,6 +33,8 @@ const AdminSearchSongBar: React.FC<AdminSearchSongBarProps> = ({
           onChange={(e) => handleSearch(e.target.value)}
         />
       </div>
+      <UserDropDown />
+      <NotificationButton />
     </div>
   );
 };
