@@ -31,7 +31,7 @@ export default function ArtistsPage() {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {artistsData
+                {artistsData?.artists
                   ?.slice(0, 5)
                   .map((artist, idx) => (
                     <ArtistCard key={idx} artist={artist} />
@@ -48,7 +48,7 @@ export default function ArtistsPage() {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {artistsData
+                {artistsData?.artists
                   ?.slice(0, 5)
                   .map((artist, idx) => (
                     <ArtistCard key={idx} artist={artist} />
@@ -63,10 +63,12 @@ export default function ArtistsPage() {
                 <span className="text-[#EE10B0]">Artists</span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                {artistsData
-                  ? [...artistsData, ...artistsData].map((artist, index) => (
-                      <ArtistCard key={index} artist={artist} />
-                    ))
+                {artistsData?.artists
+                  ? [...artistsData.artists, ...artistsData.artists].map(
+                      (artist, index) => (
+                        <ArtistCard key={index} artist={artist} />
+                      )
+                    )
                   : null}
               </div>
             </div>

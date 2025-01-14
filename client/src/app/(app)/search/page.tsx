@@ -23,7 +23,7 @@ export default function SearchPage() {
   ] = useQueries({
     queries: [
       {
-        queryKey: ['all_albums'],
+        queryKey: ['albums'],
         queryFn: async () => await getAllAlbums(),
       },
       {

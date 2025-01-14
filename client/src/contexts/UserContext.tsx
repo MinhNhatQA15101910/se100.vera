@@ -21,6 +21,7 @@ interface IUserContext {
   setToken: (token: string | null) => void;
   isAuthenticated: boolean;
   userDetails: UserDto | null;
+  setUserDetails: (userDetails: UserDto | null) => void;
   login: (loginCreds: LoginCredentials | null) => Promise<void>;
   validateSignup: (signupCreds: SignupCredentials) => Promise<ValidateType>;
   signup: (pincode: string) => Promise<void>;
@@ -274,6 +275,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setLoadingState(false);
   }, [router]);
 
+  useEffect(() => {
+    if (userDetails) {
+      document.cookie = `userDetails=${encodeURIComponent(
+        JSON.stringify(userDetails)
+      )}; path=/; SameSite=Strict; Secure`;
+    }
+  }, [userDetails]);
+
   const value = {
     login,
     signup,
@@ -287,6 +296,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     sendEmail,
     verifyEmailSignup,
     validateSignup,
+    setUserDetails
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

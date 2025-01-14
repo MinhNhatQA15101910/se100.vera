@@ -24,7 +24,7 @@ export default function ArtistProfile() {
     },
     {
       title: 'Gender',
-      detail: `${userDetails?.gender}`,
+      detail: `${userDetails?.gender === "male" ? "Male" : "Female"}`,
     },
     {
       title: 'Date of birth',

@@ -11,6 +11,13 @@ export interface AddAlbumPayload {
   artistIds: number[];
 }
 
+export interface EditAlbumPayload {
+  albumName: string,
+  description: string,
+  photoFiles: File[],
+  artistIds: number[]
+}
+
 export interface AlbumResponse {
   albums: Album[];
   pagination: {
@@ -163,7 +170,7 @@ export async function addAlbum(formData: FormData): Promise<void> {
 }
 
 // Only artist can add desires songs of their into an album
-export async function updateAlbum(albumId: number) {
+export async function editAlbum(albumId: number, data: FormData) {
   const token = await getAuthTokenFromCookies();
 
   try {
@@ -172,9 +179,10 @@ export async function updateAlbum(albumId: number) {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      body: data,
     });
   } catch (error) {
-    console.error('delete an album error: ', error);
+    console.error('Update an album error: ', error);
     throw error;
   }
 }

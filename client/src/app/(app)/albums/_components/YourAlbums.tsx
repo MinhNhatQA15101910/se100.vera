@@ -10,7 +10,7 @@ const YourAlbum = () => {
   const { setLoadingState } = useLoading();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['all_albums'],
+    queryKey: ['albums'],
     queryFn: async () => await getAllAlbums(),
   });
 
@@ -24,7 +24,7 @@ const YourAlbum = () => {
         All <span className="text-pink-500">Albums</span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {data?.map((album, idx) => {
+        {data?.albums?.map((album, idx) => {
           return <AlbumCard key={idx} albumCard={album} />;
         })}
       </div>

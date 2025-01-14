@@ -259,7 +259,7 @@ const MusicPlayerContent = () => {
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 border-t border-general-pink/50 bg-general-theme`}
+      className={`fixed bottom-0 left-0 right-0 border-t border-general-pink/50 bg-general-theme z-[80]`}
     >
       <div className="flex items-center justify-between py-4 px-2">
         {/* Now Playing */}
@@ -267,7 +267,7 @@ const MusicPlayerContent = () => {
           <DynamicImage
             alt="Artist Image"
             src={
-              activeSong.songPhotoUrl ||
+              activeSong.photoUrl ||
               'https://picsum.photos/400/400?random=42'
             }
             className="w-14 h-14 flex items-center"
@@ -316,7 +316,7 @@ const MusicPlayerContent = () => {
             {playlist.length > 1 && (
               <ControlButton
                 icon={SkipForward}
-                onClick={onNext}
+                onClick={onNext} 
                 tooltip="Next"
                 disabled={isLoading}
               />

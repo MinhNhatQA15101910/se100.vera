@@ -47,7 +47,7 @@ const SongListSideBar = () => {
               </div>
               <div className="w-12 h-12 relative rounded-md overflow-hidden flex">
                 <Image
-                  src={song.songPhotoUrl || 'https://picsum.photos/400/400'}
+                  src={song.photoUrl || 'https://picsum.photos/400/400'}
                   alt={song.songName}
                   fill
                   className="object-cover"

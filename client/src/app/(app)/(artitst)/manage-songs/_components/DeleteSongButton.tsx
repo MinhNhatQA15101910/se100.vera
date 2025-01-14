@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { FaTrash } from 'react-icons/fa';
-import { useDeleteSongMutation } from '../../upload-song/_hooks/useSongMutation';
+import { useDeleteSongMutation } from '@/hooks/useSongMutation';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 

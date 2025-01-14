@@ -20,56 +20,56 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { AlertDialogTrigger } from '@radix-ui/react-alert-dialog';
-
+import { Comment } from '@/types/global';
 
 interface ICommentCardProps {
-  avatar: string;
-  username: string;
-  time: string;
-  content: string;
+  comment: Comment;
+  handleDelete?: () => void;
+  handleEdit?: (content: string) => void;
 }
 
 
 const CommentCard: React.FC<ICommentCardProps> = ({
-  avatar,
-  username,
-  time,
-  content,
+  comment,
+  handleDelete,
+  handleEdit,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(content);
+  const [editedContent, setEditedContent] = useState(comment.content);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 
-  const handleEdit = () => {
+  const onEdit = () => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
+  const onSave = () => {
     setIsEditing(false);
+    if (handleEdit) {
+      handleEdit(editedContent);
+    }
   };
 
-  const handleDelete = () => {
-    console.log('Delete comment clicked');
+  const onDelete = () => {
     setIsDialogOpen(true);
   };
 
   const handleConfirmDelete = () => {
-    console.log('Confirm delete');
-    // Add your delete logic here
     setIsDialogOpen(false);
+    if (handleDelete) {
+      handleDelete();
+    }
   };
 
   const handleCancelDelete = () => {
-    console.log('Cancel delete');
     setIsDialogOpen(false);
   };
   return (
-    <div className="flex items-start text-white p-4 w-full mt-4 relative">
+    <div className="flex items-start rounded-xl bg-slate-900 text-white p-4 w-full mt-4">
       <div className="mr-3">
         <Image
-          src={avatar}
-          alt={`${username}'s avatar`}
+          src={comment.publisherPhotoUrl}
+          alt={`${comment.publisherName}'s avatar`}
           width={48}
           height={48}
           className="rounded-full"
@@ -79,8 +79,8 @@ const CommentCard: React.FC<ICommentCardProps> = ({
       {/* Content */}
       <div className="flex-1">
         <div className="flex flex-row justify-start items-baseline">
-          <h4 className="text-lg font-bold">{username}</h4>
-          <h4 className="text-sm text-gray-400 ml-4">{time}</h4>
+          <h4 className="text-lg font-bold">{comment.publisherName}</h4>
+          <h4 className="text-sm text-gray-400 ml-4">{comment.createdAt}</h4>
         </div>
         {isEditing ? (
           <div className="flex-col mt-2 items-end">
@@ -91,7 +91,7 @@ const CommentCard: React.FC<ICommentCardProps> = ({
             />
             <Button
               className="mt-2 px-4 bg-blue-600 text-white text-md font-medium rounded-lg hover:bg-blue-700 "
-              onClick={handleSave}
+              onClick={onSave}
             >
               Save
             </Button>
@@ -115,13 +115,13 @@ const CommentCard: React.FC<ICommentCardProps> = ({
           <DropdownMenuContent align="end" className="border-none bg-zinc-800 font-semibold text-general-blue p-2 rounded-lg shadow-lg">
             <DropdownMenuItem
               className="focus:bg-general-blue-hover text-md"
-              onClick={handleEdit}
+              onClick={onEdit}
             >
               Edit comment
             </DropdownMenuItem>
             <DropdownMenuItem
               className="focus:bg-general-blue-hover text-md"
-              onClick={handleDelete}
+              onClick={onDelete}
             >
               Delete comment
             </DropdownMenuItem>

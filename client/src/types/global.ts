@@ -1,4 +1,13 @@
-import { Role } from './declaration';
+export enum Role {
+  Admin = 'Admin',
+  Artist = 'Artist',
+  Listener = 'Listener',
+}
+
+export enum Gender {
+  male = "male",
+  female = "female"
+}
 
 export interface Song {
   id: number;
@@ -13,7 +22,7 @@ export interface Song {
   musicPublicId: string | null;
   lyricUrl: string | null;
   lyricPublicId: string | null;
-  songPhotoUrl: string;
+  photoUrl: string;
   songPhotoPublicId: string | null;
   artists: User[];
   createdAt: string;
@@ -26,7 +35,6 @@ export interface Genre {
   id: number;
   genreName: string;
   createdAt: string;
-
 }
 
 export interface Album {
@@ -78,6 +86,24 @@ export interface User {
   state: string;
   photos: Array<{ id: number; url: string; isMain: boolean }>;
   token: string | null;
+}
+
+export interface Comment {
+  id: number;
+  content: string;
+  publisherName: string;
+  publisherPhotoUrl: string;
+  createdAt: string;
+}
+
+export interface Notification {
+  id: number;
+  title: string;
+  content: string;
+  type: string;
+  isRead: boolean;
+  notifyEntityId: number;
+  createdAt: string;
 }
 
 export interface PaginatedResponses<T> {

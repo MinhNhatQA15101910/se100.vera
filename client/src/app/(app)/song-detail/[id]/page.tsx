@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import Image from 'next/image';
 import {
@@ -32,14 +32,18 @@ import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useA
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
 import { getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
-import CustomCommentInput from '@/components/CustumCommentInput';
+import * as commentActions from '@/actions/comment-actions';
+import CustomCommentInput from '@/components/CustomCommentInput';
 import CommentCard from '@/components/CommentCard';
+import { Comment } from '@/types/global';
+import { useAddCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from '../../../../hooks/useCommentMutation';
 
 const Page: React.FC = () => {
   const params = useParams();
   const router = useRouter();
   const { id } = params;
   const { userDetails } = useUser();
+  const [comments, setComments] = useState<Comment[]>([]);
   const { setActiveTrack, setPlaylist } = usePlayerStore();
   const { setLoadingState } = useLoading();
   const { data: songDetailData, isLoading: isSongDetailLoading } = useQuery({
@@ -61,7 +65,49 @@ const Page: React.FC = () => {
     enabled: !!songDetailData,
   });
 
+  useQuery({
+    queryKey: ['comments', id],
+    queryFn: async () => {
+      const comments = await commentActions.getComments(Number(id));
+      setComments(comments);
+      return comments;
+    },
+  });
+
   const isLoading = isSongDetailLoading || isArtistSongLoading;
+
+  const addCommentMutation = useAddCommentMutation();
+  const deleteCommentMutation = useDeleteCommentMutation();
+  const updateCommentMutation = useUpdateCommentMutation();
+
+  const handleAddComment = async (content: string) => {
+    addCommentMutation.mutate({
+      songId: Number(id),
+      content,
+    });
+  }
+
+  const handleDeleteComment = (commentId: number) => {
+    deleteCommentMutation.mutate(commentId);
+  }
+
+  const handleUpdateComment = (commentId: number, content: string) => {
+    console.log('commentId', commentId, 'content', content);
+    updateCommentMutation.mutate(
+      {
+        commentId: commentId,
+        content: content,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Update Comment Successfully!');
+        },
+        onError: () => {
+          toast.error('Server went wrong, update is not working!');
+        }
+      }
+    );
+  }
 
   const deleteAlbumMutation = useDeleteAlbumMutation();
 
@@ -134,7 +180,7 @@ const Page: React.FC = () => {
               <div className="grid grid-cols-12 items-start gap-12 mb-8 p-4">
                 <Image
                   src={
-                    songDetailData?.songPhotoUrl ||
+                    songDetailData?.photoUrl ||
                     'https://picsum.photos/400/400?random=4'
                   }
                   alt={songDetailData?.songName || 'X'}
@@ -263,7 +309,7 @@ const Page: React.FC = () => {
                           <DynamicImage
                             alt="Artist Image"
                             src={
-                              song.songPhotoUrl ||
+                              song.photoUrl ||
                               'https://picsum.photos/400/400?random=42'
                             }
                             className="w-14 h-14 flex items-center"
@@ -301,43 +347,15 @@ const Page: React.FC = () => {
               </Table>
               <h1 className="text-3xl font-bold mb-4 mt-12">Comment</h1>
               <div className="w-full">
-                <CustomCommentInput />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
-                <CommentCard
-                  avatar="https://picsum.photos/200"
-                  username="Duy vip"
-                  time="4 weeks ago"
-                  content="Ambessa's commitment to the warrior identity literally dragging Mel into danger before she was even born illustrates their dynamic more succinctly than any line of expository dialogue could have."
-                />
+                <CustomCommentInput onCommentSubmit={handleAddComment} />
+                {comments?.map((comment) => (
+                  <CommentCard
+                    key={comment.id}
+                    comment={comment}
+                    handleDelete={() => handleDeleteComment(comment.id)}
+                    handleEdit={(content) => handleUpdateComment(comment.id, content)}
+                  />
+                ))}
               </div>
             </div>
           </div>

@@ -6,13 +6,12 @@ import { Label, LabelInputContainer } from '@/components/ui/Label';
 import { Input } from '@/components/ui/Input';
 import { AppButton } from '@/components/ui/AppButton';
 import Separator from '@/components/Separator';
-import SegmentedControl from '@/app/(auth)/signup/_components/SegmentedControl';
 import ToLogin from './ToLogin';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useUser } from '@/contexts/UserContext';
 import { z } from 'zod';
 import { useState } from 'react';
-import { GenderType, UserType } from '@/types/declaration';
+import { GenderType } from '@/types/declaration';
 import GenderSelection from './GenderSelection';
 
 const signupSchema = z
@@ -45,7 +44,6 @@ const SignupForm = () => {
     gender: 'male',
     confirmPassword: '',
   });
-  const [isRole, setIsRole] = useState<UserType>('Listener');
   const [isGender, setIsGender] = useState<GenderType>('male');
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
     {}
@@ -82,7 +80,6 @@ const SignupForm = () => {
         firstName: validatedData.firstname,
         lastName: validatedData.lastname,
         gender: isGender,
-        role: isRole,
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -189,8 +186,7 @@ const SignupForm = () => {
           )}
         </LabelInputContainer>
 
-        <div className="flex flex-row items-end justify-between space-x-2 md:space-x-0">
-          <SegmentedControl isRole={isRole} setIsRole={setIsRole} />
+        <div className="flex flex-row items-end justify-between space-x-2 pt-4 md:space-x-0">
           <AppButton
             className="bg-general-pink hover:bg-general-pink-hover rounded-full h-12 w-[120px] group"
             type="submit"
