@@ -4,6 +4,7 @@ import { Song } from '@/types/global';
 import client from '@/services/client';
 
 import { getAuthTokenFromCookies } from './utils';
+import { downloadSong } from '@/lib/utils';
 
 export interface SongsResponse {
   songs: Song[];
@@ -306,5 +307,40 @@ export async function toggleFavoriteSongById(songId: number): Promise<void> {
   } catch (error) {
     console.error('Error in toggling favorite song:', error);
     throw error;
+  }
+}
+
+export async function downloadSongById(songId: number, url: string, fileName: string) {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    const response = await client(`/api/songs/download/${songId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    downloadMp3FromUrl(url, fileName);
+
+  } catch (error) {
+    console.error('Error in downloading song:', error);
+    throw error;
+  }
+}
+
+export async function downloadMp3FromUrl(url: string, fileName: string) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const blob = await response.blob();
+    downloadSong(fileName, blob, 'audio/mpeg');
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
   }
 }

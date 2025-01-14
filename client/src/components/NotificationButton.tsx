@@ -24,11 +24,11 @@ const NotificationButton: React.FC = () => {
 
   const markAsRead = async (notificationId: number) => {
     await markReadNotifyMutation.mutateAsync(notificationId);
-    // setNotifications((prevNotifications) =>
-    //   prevNotifications.map((n) =>
-    //     n.id === notificationId ? { ...n, isRead: true } : n
-    //   )
-    // );
+    setNotifications((prevNotifications) =>
+      prevNotifications.map((n) =>
+        n.id === notificationId ? { ...n, isRead: true } : n
+      )
+    );
   }
 
   useEffect(() => {
@@ -45,6 +45,7 @@ const NotificationButton: React.FC = () => {
     if (!userDetails?.id) {
       return;
     }
+
   }, [userDetails?.id]);
 
   return (
@@ -53,8 +54,8 @@ const NotificationButton: React.FC = () => {
         <Button
           variant="default"
           size="icon"
-          className={`focus:outline-none rounded-full [&_svg]:size-[20px]
-            ${notifications && notifications.some((n) => !n.isRead) ? 'text-general-pink' : 'bg-general-pink text-white'}`}
+          className={`focus:outline-none hover:bg-opacity-70 rounded-full [&_svg]:size-[20px]
+            ${notifications && notifications.some((n) => n.isRead) ? 'text-general-pink ' : 'bg-general-pink text-white'}`}
         >
           <Bell />
         </Button>
@@ -68,11 +69,16 @@ const NotificationButton: React.FC = () => {
             <DropdownMenuItem
               key={notification.id}
               className={`focus:bg-zinc-700 text-md rounded-none 
-              ${notification.isRead ? 'text-pink-600 focus:text-pink-600' : 'text-white-500 focus:text-white-500'}`}
+              ${notification.isRead ? 'text-white focus:text-white' : 'text-pink-600 focus:text-pink-600'}`}
             >
               <NotificationItem
                 notification={notification}
-                handleMarkRead={() => markAsRead(notification.id)}
+                handleMarkRead={() => {
+                  if (!notification.isRead) {
+                    markAsRead(notification.id);
+                  }
+                }
+                }
               />
             </DropdownMenuItem>
           ))

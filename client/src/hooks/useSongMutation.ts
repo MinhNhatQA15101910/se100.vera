@@ -36,8 +36,8 @@ export function useAddSongMutation() {
       formData.append('lyricFile', data.lyricFile || '');
       formData.append('musicFile', data.musicFile);
       if (data.photoFiles) {
-        data.photoFiles.forEach((file, index) => {
-          formData.append(`photoFiles[${index}]`, file);
+        data.photoFiles.forEach((file) => {
+          formData.append(`photoFile`, file);
         });
       }
       data.genreIds.forEach((id: number) => {

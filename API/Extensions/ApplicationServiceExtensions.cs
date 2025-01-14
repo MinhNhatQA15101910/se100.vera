@@ -12,6 +12,7 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
         services.AddControllers();
+        services.AddSignalR();
         services.AddDbContext<DataContext>(opt =>
         {
             opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
