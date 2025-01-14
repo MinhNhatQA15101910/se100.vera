@@ -7,6 +7,7 @@ import {
   deleteAlbum,
   editAlbum,
   EditAlbumPayload,
+  removeSongFromAlbum,
 } from '@/actions/album-actions';
 import { approveAlbum, rejectAlbum } from '@/actions/album-actions';
 import { useLoading } from '@/contexts/LoadingContext';
@@ -82,6 +83,7 @@ export function useAddAlbumMutation() {
           formData.append(`photoFiles[${index}]`, file);
         });
       }
+      formData.append('genreIds', data.genreIds[0].toString());
       if (userDetails?.id && userDetails.roles.includes(Role.Artist)) {
         formData.append('artistIds', userDetails?.id.toString());
       } else {
@@ -122,8 +124,8 @@ export function useEditAlbumMutation() {
       formData.append('albumName', data.albumName);
       formData.append('description', data.description);
       if (data.photoFiles) {
-        data.photoFiles.forEach((file, index) => {
-          formData.append(`photoFiles[${index}]`, file);
+        data.photoFiles.forEach((file) => {
+          formData.append(`photoFiles`, file);
         });
       }
       if (userDetails?.id && userDetails.roles.includes(Role.Artist)) {
@@ -181,6 +183,36 @@ export function useRejectAlbumMutation() {
     },
     onError: (error) => {
       console.error('Error rejecting the album:', error);
+    },
+  });
+
+  return mutation;
+}
+
+export function useRemoveSongFromAlbumMutation() {
+  const queryClient = useQueryClient();
+  const { setLoadingState } = useLoading();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      albumId,
+      songId,
+    }: {
+      albumId: number;
+      songId: number;
+    }) => {
+      setLoadingState(true);
+      await removeSongFromAlbum(albumId, songId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['albums'],
+      });
+      setLoadingState(false);
+    },
+    onError: (error) => {
+      console.error('Error remove song from the album:', error);
+      setLoadingState(false);
     },
   });
 

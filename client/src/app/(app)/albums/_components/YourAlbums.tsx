@@ -12,7 +12,7 @@ const YourAlbum = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['albums'],
     queryFn: async () => await getAllAlbums(),
-  });
+  }); 
 
   useEffect(() => {
     setLoadingState(isLoading);

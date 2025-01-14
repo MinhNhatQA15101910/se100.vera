@@ -9,13 +9,14 @@ export interface AddAlbumPayload {
   description: string;
   photoFiles?: File[];
   artistIds: number[];
+  genreIds: number[];
 }
 
 export interface EditAlbumPayload {
-  albumName: string,
-  description: string,
-  photoFiles: File[],
-  artistIds: number[]
+  albumName: string;
+  description: string;
+  photoFiles: File[];
+  artistIds: number[];
 }
 
 export interface AlbumResponse {
@@ -42,7 +43,8 @@ export async function getAllAlbums(
 
     if (currentPage) params.push(`pageNumber=${currentPage}`);
     if (pageSize) params.push(`pageSize=${pageSize}`);
-    if (searchKeyword) params.push(`keyword=${encodeURIComponent(searchKeyword)}`);
+    if (searchKeyword)
+      params.push(`keyword=${encodeURIComponent(searchKeyword)}`);
 
     if (params.length > 0) {
       url += `?${params.join('&')}`;
@@ -69,7 +71,7 @@ export async function getAllAlbums(
     return {
       albums: response.data,
       pagination,
-    };  
+    };
   } catch (error) {
     console.error('get all albums error: ', error);
     throw error;
@@ -107,8 +109,6 @@ export async function rejectAlbum(albumId: number): Promise<void> {
     throw error;
   }
 }
-
-
 
 export async function getAlbumById({
   albumId,
@@ -215,6 +215,28 @@ export async function deleteAlbum(albumId: number) {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    });
+  } catch (error) {
+    console.error('delete an album error: ', error);
+    throw error;
+  }
+}
+
+export async function removeSongFromAlbum(
+  albumId: number,
+  songId: number
+): Promise<void> {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    await client(`/api/albums/remove-song/${albumId}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        songId: songId,
+      }),
     });
   } catch (error) {
     console.error('delete an album error: ', error);

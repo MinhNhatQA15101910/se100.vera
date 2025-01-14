@@ -77,7 +77,7 @@ export interface User {
   lastName: string;
   email: string;
   role: Role;
-  artistName: string | null;
+  artistName: string;
   photoUrl: string;
   gender: string;
   dateOfBirth: string;

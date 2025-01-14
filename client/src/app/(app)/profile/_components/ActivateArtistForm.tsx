@@ -11,8 +11,6 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'react-toastify';
 
-import { showPlanModal } from '@/components/PlanModal';
-
 export default function ActivateArtistForm() {
   const router = useRouter();
   const { logout } = useUser();
@@ -129,8 +127,7 @@ export default function ActivateArtistForm() {
           </div>
 
           <Button
-            type={false ? `submit` : `button`}
-            onClick={true ? showPlanModal : () => {}}
+            type={'submit'}
             className="w-full bg-[#E325B6] hover:bg-[#C920A0] text-white rounded-full py-6 text-lg font-medium"
           >
             ACTIVATE

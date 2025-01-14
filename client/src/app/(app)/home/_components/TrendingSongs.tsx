@@ -72,9 +72,7 @@ export default function TrendingSongs() {
                   <div className="flex items-center space-x-4">
                     <div className="relative w-[55px] h-[55px]">
                       <Image
-                        src={
-                          song.photoUrl || 'https://via.placeholder.com/55'
-                        }
+                        src={song.photoUrl || 'https://via.placeholder.com/55'}
                         alt={song.songName}
                         fill
                         sizes="55px"
@@ -96,12 +94,7 @@ export default function TrendingSongs() {
                 </TableCell>
                 <TableCell className="text-right bg-[#2E2E2E] group-hover:bg-[#595959]">
                   <div className="flex items-center justify-end space-x-4">
-                    <div
-                      className="flex flex-col justify-center"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
+                    <div className="flex flex-col justify-center">
                       <LikeButton songId={song.id} />
                     </div>
                     <span className="text-gray-400">

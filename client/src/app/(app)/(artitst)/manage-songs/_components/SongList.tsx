@@ -29,7 +29,7 @@ const SongList = () => {
   const { setLoadingState } = useLoading();
   const { setActiveTrack, setPlaylist } = usePlayerStore();
   const { data, isLoading } = useQuery({
-    queryKey: ['mysongs'],
+    queryKey: ['songs'],
     queryFn: async () => await getArtistSongsByArtistId(userDetails?.id || -1),
   });
 

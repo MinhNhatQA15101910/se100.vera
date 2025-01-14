@@ -35,6 +35,7 @@ import { Delete, Edit } from 'lucide-react';
 import { useDeleteAlbumMutation } from '@/hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
+import RemoveSongFromAlbum from '@/components/RemoveSongFromAlbum';
 
 const Page: React.FC = () => {
   const params = useParams();
@@ -44,7 +45,7 @@ const Page: React.FC = () => {
   const { setActiveTrack, setPlaylist } = usePlayerStore();
   const { setLoadingState } = useLoading();
   const { data: albumDetailData, isLoading } = useQuery({
-    queryKey: ['albumdetail'],
+    queryKey: ['albums'],
     queryFn: async () => {
       const album = await getAlbumById({ albumId: Number(id) });
       return album;
@@ -74,7 +75,7 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     if (albumDetailData?.songs) {
-      const updatedPlaylist = albumDetailData.songs.map(({ song }) => song);  
+      const updatedPlaylist = albumDetailData.songs.map(({ song }) => song);
       setPlaylist(updatedPlaylist);
     }
   }, [albumDetailData]);
@@ -90,7 +91,7 @@ const Page: React.FC = () => {
                   <Link href="/albums">
                     <IoArrowBack className="text-4xl text-white" />
                   </Link>
-                  {userDetails?.roles[0] === "Artist" && (
+                  {userDetails?.roles[0] === 'Artist' && (
                     <DropdownMenu>
                       <DropdownMenuTrigger>
                         <FiMoreHorizontal className="text-4xl text-white hover:text-general-pink-hover" />
@@ -217,7 +218,7 @@ const Page: React.FC = () => {
                   </TableHead>
                 </TableHeader>
                 <TableBody>
-                  {albumDetailData?.songs.map((song, index) => (
+                  {albumDetailData && albumDetailData?.songs.map((song, index) => (
                     <TableRow
                       key={index}
                       className="border-none cursor-pointer hover:bg-transparent group"
@@ -264,7 +265,11 @@ const Page: React.FC = () => {
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-gray-400 bg-[#2E2E2E] md:flex-row group-hover:bg-[#595959]">
                         <div className="flex flex-row h-full items-center justify-around">
-                          <LikeButton songId={3} />
+                          <LikeButton songId={song.song.id} />
+                          <RemoveSongFromAlbum
+                            albumId={albumDetailData.id}
+                            songId={song.song.id}
+                          />
                         </div>
                       </TableCell>
                     </TableRow>

@@ -26,9 +26,6 @@ const AlbumToAddModal = ({ songId }: { songId: number }) => {
           toast.success('Add successfully!');
           router.refresh();
         },
-        onError: () => {
-          toast.error('Failed');
-        },
       }
     );
   };
@@ -39,26 +36,29 @@ const AlbumToAddModal = ({ songId }: { songId: number }) => {
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {albums?.map((album, index) => {
-        return (
-          <div
-            key={index}
-            onClick={() => handleAddSongToAlbum(album.id)}
-            className="flex flex-row justify-between items-center bg-transparent hover:bg-slate-500/40 rounded-md space-x-6 p-2 transition-colors duration-200 cursor-pointer"
-          >
-            <DynamicImage
-              src={album.photoUrl || 'https://picsum.photos/400/400?random=42'}
-              alt={album.albumName || ''}
-              className="w-14 h-14"
-            />
+      {albums &&
+        albums?.map((album, index) => {
+          return (
+            <div
+              key={index}
+              onClick={() => handleAddSongToAlbum(album.id)}
+              className="flex flex-row justify-between items-center bg-transparent hover:bg-slate-500/40 rounded-md space-x-6 p-2 transition-colors duration-200 cursor-pointer"
+            >
+              <DynamicImage
+                src={
+                  album.photoUrl || 'https://picsum.photos/400/400?random=42'
+                }
+                alt={album.albumName || ''}
+                className="w-14 h-14"
+              />
 
-            <span className="text-general-pink">{album.albumName}</span>
-            <span className="text-general-white text-nowrap truncate">
-              {album.totalSongs} songs
-            </span>
-          </div>
-        );
-      })}
+              <span className="text-general-pink">{album.albumName}</span>
+              <span className="text-general-white text-nowrap truncate">
+                {album.totalSongs} songs
+              </span>
+            </div>
+          );
+        })}
     </div>
   );
 };

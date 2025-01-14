@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Input } from './ui/Input';
 
@@ -10,7 +11,17 @@ interface ISearchBarBoxProps {
   onSearchChange?: (value: string) => void;
 }
 
-const SearchBarBox: React.FC<ISearchBarBoxProps> = ({ className, searchKeyword, onSearchChange }) => {
+const SearchBarBox: React.FC<ISearchBarBoxProps> = ({ className }) => {
+  const router = useRouter();
+
+  const [searchKeyword, setSearchKeyword] = useState<string>();
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      router.push(`/search?keyword=${encodeURIComponent(searchKeyword || '')}`);
+    }
+  };
+
   return (
     <div className="relative flex-1 pr-10">
       <Input
@@ -21,7 +32,8 @@ const SearchBarBox: React.FC<ISearchBarBoxProps> = ({ className, searchKeyword, 
         placeholder="🔍 Search For Musics, Artists..."
         type="search"
         value={searchKeyword}
-        onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+        onChange={(e) => setSearchKeyword(e.target.value)}
+        onKeyDown={handleKeyDown}
       />
     </div>
   );

@@ -28,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ArrowLeftIcon, Delete, Edit, PlayIcon } from 'lucide-react';
-import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useAlbumMutation';
+import { useDeleteAlbumMutation } from '@/hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
 import { getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
@@ -36,7 +36,11 @@ import * as commentActions from '@/actions/comment-actions';
 import CustomCommentInput from '@/components/CustomCommentInput';
 import CommentCard from '@/components/CommentCard';
 import { Comment } from '@/types/global';
-import { useAddCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from '../../../../hooks/useCommentMutation';
+import {
+  useAddCommentMutation,
+  useDeleteCommentMutation,
+  useUpdateCommentMutation,
+} from '../../../../hooks/useCommentMutation';
 
 const Page: React.FC = () => {
   const params = useParams();
@@ -44,7 +48,7 @@ const Page: React.FC = () => {
   const { id } = params;
   const { userDetails } = useUser();
   const [comments, setComments] = useState<Comment[]>([]);
-  const { setActiveTrack, setPlaylist } = usePlayerStore();
+  const { setActiveTrack } = usePlayerStore();
   const { setLoadingState } = useLoading();
   const { data: songDetailData, isLoading: isSongDetailLoading } = useQuery({
     queryKey: ['songdetail'],
@@ -85,11 +89,11 @@ const Page: React.FC = () => {
       songId: Number(id),
       content,
     });
-  }
+  };
 
   const handleDeleteComment = (commentId: number) => {
     deleteCommentMutation.mutate(commentId);
-  }
+  };
 
   const handleUpdateComment = (commentId: number, content: string) => {
     console.log('commentId', commentId, 'content', content);
@@ -104,10 +108,10 @@ const Page: React.FC = () => {
         },
         onError: () => {
           toast.error('Server went wrong, update is not working!');
-        }
+        },
       }
     );
-  }
+  };
 
   const deleteAlbumMutation = useDeleteAlbumMutation();
 
@@ -162,7 +166,7 @@ const Page: React.FC = () => {
                       <DropdownMenuSeparator className="bg-general-pink-border" />
                       <DropdownMenuItem
                         className="hover:bg-general-pink-hover"
-                        onClick={() => { }}
+                        onClick={() => {}}
                       >
                         <Edit className="mr-2 h-4 w-4" />
                         Edit
@@ -213,7 +217,6 @@ const Page: React.FC = () => {
                   <p className="text-lg font-bold">
                     {'Duration: ' + songDetailData?.duration.slice(3, 8)}
                   </p>
-
                 </div>
 
                 <div className="flex h-60 col-span-3 justify-end items-end mr-6">
@@ -223,12 +226,10 @@ const Page: React.FC = () => {
                     className="rounded-full w-auto h-auto p-4 [&_svg]:size-[30px]
                         bg-blue-600 hover:bg-blue-700"
                   >
-                    <PlayIcon fill="#fff" className='text-general-white' />
+                    <PlayIcon fill="#fff" className="text-general-white" />
                   </Button>
                 </div>
-
               </div>
-
             </div>
             <div className="w-full flex flex-col bg-transparent text-general-white items-start custom1-table p-4">
               <h1 className="text-3xl font-bold mb-4 mt-4">
@@ -353,7 +354,9 @@ const Page: React.FC = () => {
                     key={comment.id}
                     comment={comment}
                     handleDelete={() => handleDeleteComment(comment.id)}
-                    handleEdit={(content) => handleUpdateComment(comment.id, content)}
+                    handleEdit={(content) =>
+                      handleUpdateComment(comment.id, content)
+                    }
                   />
                 ))}
               </div>
@@ -361,7 +364,7 @@ const Page: React.FC = () => {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

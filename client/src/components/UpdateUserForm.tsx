@@ -27,12 +27,12 @@ import GenderSelect from './GenderSelect';
 import { Textarea } from './ui/textarea';
 
 const formSchema = z.object({
-  artistName: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
+  artistName: z.string().optional(),
+  firstName: z.string().nonempty('First name is required'),
+  lastName: z.string().nonempty('Last name is required'),
   gender: z.enum(['male', 'female']),
-  about: z.string(),
-  dateOfBirth: z.date(),
+  about: z.string().optional(),
+  dateOfBirth: z.date().optional(),
   photoFile: z
     .instanceof(File, { message: 'Photo is required' })
     .refine(
@@ -42,15 +42,27 @@ const formSchema = z.object({
     .refine(
       (file) => file.size <= 5 * 1024 * 1024,
       'File size must be less than 5MB'
-    ),
+    )
+    .optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
-  const { userDetails, setUserDetails } = useUser();
+  const { userDetails, logout } = useUser();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      artistName: userDetails?.artistName || '',
+      firstName: userDetails?.firstName || '',
+      lastName: userDetails?.lastName || '',
+      gender: userDetails?.gender || Gender.male,
+      about: userDetails?.about || '',
+      dateOfBirth: userDetails?.dateOfBirth
+        ? new Date(userDetails.dateOfBirth)
+        : undefined,
+      photoFile: undefined,
+    },
   });
 
   const updateUserMutation = useUpdateUserMutation();
@@ -85,18 +97,17 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
         firstName: data.firstName,
         lastName: data.lastName,
         artistName: data.artistName || '',
-        photoFile: data.photoFile,
-        about: '',
-        gender: 'male',
-        dateOfBirth: data.dateOfBirth,
+        photoFile: data.photoFile || new File([], ''),
+        about: data.about || '',
+        gender: data.gender,
+        dateOfBirth: data.dateOfBirth || new Date(),
       },
       {
         onSuccess: () => {
-          toast.success('User Updated Successfully!');
-          setUserDetails({
-            ...userDetails!,
-            photoUrl: URL.createObjectURL(data.photoFile),
-          });
+          toast.success(
+            'User Updated Successfully!, Please log in again to take Effects'
+          );
+          logout();
           closeModal();
         },
       }
@@ -126,7 +137,11 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
                     {field.value ? (
                       <DynamicImage
                         alt={field.value.name}
-                        src={URL.createObjectURL(field.value)}
+                        src={
+                          userDetails?.photoUrl ||
+                          URL.createObjectURL(field.value) ||
+                          ''
+                        }
                       />
                     ) : (
                       <div className="flex flex-col items-center gap-4">
@@ -148,7 +163,6 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
               <FormField
                 control={form.control}
                 name="artistName"
-                defaultValue={userDetails?.artistName || ''}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">Artist name</FormLabel>
@@ -167,7 +181,6 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
               <FormField
                 control={form.control}
                 name="firstName"
-                defaultValue={userDetails?.firstName}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">First name</FormLabel>
@@ -184,7 +197,6 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
               <FormField
                 control={form.control}
                 name="lastName"
-                defaultValue={userDetails?.lastName}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">Last name</FormLabel>
@@ -202,7 +214,6 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
             <FormField
               control={form.control}
               name="gender"
-              defaultValue={userDetails?.gender || Gender.male}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">Gender</FormLabel>
@@ -216,11 +227,6 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
               <FormField
                 control={form.control}
                 name="dateOfBirth"
-                defaultValue={
-                  userDetails?.dateOfBirth
-                    ? new Date(userDetails.dateOfBirth)
-                    : undefined
-                }
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">Date of birth</FormLabel>
@@ -233,9 +239,16 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
                             ? new Date(field.value).toISOString().split('T')[0]
                             : ''
                         }
+                        onChange={(e) => {
+                          const selectedDate = e.target.value;
+                          field.onChange(
+                            selectedDate ? new Date(selectedDate) : undefined
+                          );
+                        }}
                         className="bg-background border-input"
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -246,10 +259,11 @@ const UpdateUserForm = ({ closeModal }: { closeModal: () => void }) => {
         <FormField
           control={form.control}
           name="about"
-          defaultValue={userDetails?.about || ''}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">Describe What is all about You</FormLabel>
+              <FormLabel className="text-sm">
+                Describe What is all about You
+              </FormLabel>
               <FormControl>
                 <Textarea
                   {...field}

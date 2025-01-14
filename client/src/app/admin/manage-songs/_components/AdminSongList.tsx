@@ -36,7 +36,6 @@ const AdminSongList: React.FC<AdminSongListProps> = ({ searchKeyword }) => {
   const [sortBy, setSortBy] = useState<string>('createAt');
   const [sortOrder, setSortOrder] = useState<string>('asc');
   const pageSize = 10;
-  const { userDetails } = useUser();
   const { setLoadingState } = useLoading();
 
   // Update query to include sorting parameters

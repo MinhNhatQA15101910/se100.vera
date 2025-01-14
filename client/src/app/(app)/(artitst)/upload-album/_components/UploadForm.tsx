@@ -28,6 +28,8 @@ import { useEffect } from 'react';
 import { useAddAlbumMutation } from '@/hooks/useAlbumMutation';
 import ArtistSelect from './ArtistSelect';
 import { toast } from 'react-toastify';
+import GenreSelect from './GenreSelect';
+import { getAllGenres } from '@/actions/genre-actions';
 
 const formSchema = z.object({
   albumName: z.string().min(1, 'Song name is required'),
@@ -43,6 +45,7 @@ const formSchema = z.object({
       'File size must be less than 5MB'
     ),
   artistIds: z.array(z.number()).optional(),
+  genreIds: z.array(z.number()).min(1, 'At least one genre is required'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -52,9 +55,16 @@ export default function UploadForm() {
   const { setLoadingState } = useLoading();
 
   const { data: artistsData, isLoading } = useQuery({
-    queryKey: ['user_artist', 'upload_song'],
+    queryKey: ['artists'],
     queryFn: async () => {
       return await getAllArtists();
+    },
+  });
+
+  const { data: genresData } = useQuery({
+    queryKey: ['genres'],
+    queryFn: async () => {
+      return await getAllGenres();
     },
   });
 
@@ -66,6 +76,7 @@ export default function UploadForm() {
       description: '',
       artistIds: [],
       albumName: '',
+      genreIds: [],
     },
   });
 
@@ -75,7 +86,7 @@ export default function UploadForm() {
         form.setValue(fieldName, acceptedFiles[0], {
           shouldValidate: true,
           shouldDirty: true,
-          shouldTouch: true,
+          shouldTouch: true,  
         });
       }
     };
@@ -101,6 +112,7 @@ export default function UploadForm() {
         description: data.description || '',
         photoFiles: [data.photoFiles],
         artistIds: data.artistIds || [],
+        genreIds: data.genreIds,
       },
       {
         onSuccess: () => {
@@ -141,7 +153,7 @@ export default function UploadForm() {
                     <FormControl>
                       <div
                         {...photoDropzone.getRootProps()}
-                        className={` h-[400px] w-[400px] border-2 border-dashed border-gray-600 rounded-lg p-6 flex items-center justify-center cursor-pointer ${
+                        className={` h-[500px] w-[500px] border-2 border-dashed border-gray-600 rounded-lg p-6 flex items-center justify-center cursor-pointer ${
                           photoDropzone.isDragActive
                             ? 'border-general-pink'
                             : ''
@@ -187,6 +199,48 @@ export default function UploadForm() {
                   )}
                 />
                 {/* Specify Added Genres */}
+                <FormField
+                  control={form.control}
+                  name="genreIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base">
+                        Co-artists (Optional)
+                      </FormLabel>
+                      {/* Display selected artists */}
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {field.value?.map((artistId) => {
+                          const artistName = genresData?.genres?.find(
+                            (artist) => artist.id === artistId
+                          )?.genreName;
+                          return (
+                            <Badge
+                              key={artistId}
+                              variant="secondary"
+                              className="gap-1"
+                            >
+                              {artistName}
+                              <X
+                                className="h-3 w-3 cursor-pointer"
+                                onClick={() => {
+                                  field.onChange(
+                                    field.value?.filter(
+                                      (id) => id !== artistId
+                                    ) || []
+                                  );
+                                }}
+                              />
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                      <GenreSelect
+                        genresData={genresData?.genres || []}
+                        field={field}
+                      />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}

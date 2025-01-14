@@ -27,6 +27,7 @@ const GenderSelect = ({ field }: GenderSelectProps) => {
 
   return (
     <Select
+      {...field}
       options={options}
       value={selectedValue}
       onChange={handleChange}

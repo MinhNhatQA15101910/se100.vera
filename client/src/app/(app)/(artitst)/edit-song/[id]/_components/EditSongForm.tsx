@@ -28,6 +28,9 @@ import { useEditSongMutation } from '@/hooks/useSongMutation';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import { getSongById } from '@/actions/song-actions';
+import { useEffect } from 'react';
+import { useLoading } from '@/contexts/LoadingContext';
 
 const formSchema = z.object({
   songName: z.string().min(1, 'Song name is required'),
@@ -72,17 +75,24 @@ type FormValues = z.infer<typeof formSchema>;
 export default function UploadForm() {
   const router = useRouter();
   const params = useParams();
+  const { setLoadingState } = useLoading();
   const { id } = params;
 
-  const { data: genresData } = useQuery({
+  const { data: currentSong, isLoading } = useQuery({
+    queryKey: ['song'],
+    queryFn: async () => {
+      const song = await getSongById(Number(id!));
+      return song;
+    },
+  });
+  const { data: genresData, isLoading: isLoadingGenres } = useQuery({
     queryKey: ['genres'],
     queryFn: async () => {
       return await getAllGenres();
     },
   });
-
-  const { data: artistsData } = useQuery({
-    queryKey: ['user_artist', 'upload_song'],
+  const { data: artistsData, isLoading: isLoadingArtists } = useQuery({
+    queryKey: ['artists'],
     queryFn: async () => await getAllArtists(),
   });
   const editSongMutation = useEditSongMutation();
@@ -90,7 +100,7 @@ export default function UploadForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      songName: '',
+      songName: currentSong?.songName,
       genreIds: [],
       coAritstIds: [],
     },
@@ -156,6 +166,10 @@ export default function UploadForm() {
     );
   };
 
+  useEffect(() => {
+    setLoadingState(isLoadingArtists || isLoadingGenres || isLoading);
+  }, [isLoading, isLoadingGenres, isLoadingArtists]);
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col w-full">
       <div className="flex flex-col w-full mx-auto p-4 space-y-4">
@@ -163,7 +177,7 @@ export default function UploadForm() {
         <div className="rounded-lg overflow-hidden">
           <div className="flex from-purple-600 via-pink-500 to-yellow-500 p-4 justify-center items-center bg-[url('/music-landing-bg.webp')] bg-cover bg-center">
             <h1 className="text-2xl font-bold">
-              UPLOAD A <span className="text-pink-500">SONG</span>
+              EDIT A <span className="text-pink-500">SONG</span>
             </h1>
           </div>
         </div>
@@ -290,6 +304,7 @@ export default function UploadForm() {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          defaultValue={currentSong?.songName}
                           placeholder="Enter song title"
                           {...field}
                           className="bg-background border-input"
@@ -351,7 +366,7 @@ export default function UploadForm() {
                       {/* Display selected artists */}
                       <div className="flex flex-wrap gap-2 mb-2">
                         {field?.value?.map((artistId) => {
-                          const genreName = artistsData?.find(
+                          const genreName = artistsData?.artists?.find(
                             (genre) => genre.id === artistId
                           )?.artistName;
                           return (
@@ -376,7 +391,7 @@ export default function UploadForm() {
                         })}
                       </div>
                       <ArtistSelect
-                        artistsData={artistsData || []}
+                        artistsData={artistsData?.artists || []}
                         field={field}
                       />
                     </FormItem>
@@ -394,6 +409,7 @@ export default function UploadForm() {
                     <Textarea
                       placeholder="Describe your song Why - When - How - Where - What - Who should be fine."
                       className="flex flex-col w-full min-h-[25vh] border-general-pink/30 rounded-lg text-general-white"
+                      defaultValue={currentSong?.description || ''}
                       {...field}
                     />
                   </FormControl>

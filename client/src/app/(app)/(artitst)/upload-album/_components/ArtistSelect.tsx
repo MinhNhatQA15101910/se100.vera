@@ -20,7 +20,7 @@ const ArtistSelect = ({ artistsData, field }: ArtistsSelectProps) => {
     if (selectedOption) {
       field.onChange([...field.value, selectedOption.value]);
     } else {
-      field.onChange([]);
+      field.onChange([]); 
     }
   };
 
@@ -32,7 +32,7 @@ const ArtistSelect = ({ artistsData, field }: ArtistsSelectProps) => {
     <Select
       options={options}
       value={selectedValue}
-      onChange={() => handleChange}
+      onChange={handleChange}
       placeholder="Who's your collaborators ?"
       className=""
       classNamePrefix="select"

@@ -32,7 +32,7 @@ const ArtistSelect = ({ artistsData, field }: ArtistsSelectProps) => {
     <Select
       options={options}
       value={selectedValue}
-      onChange={() => handleChange}
+      onChange={handleChange}
       placeholder="Who's your collaborators ?"
       className=""
       classNamePrefix="select"

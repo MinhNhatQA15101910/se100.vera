@@ -63,7 +63,7 @@ const formSchema = z.object({
       'File size must be less than 5MB'
     ),
   genreIds: z.array(z.number()).min(1, 'At least one genre is required'),
-  artistIds: z.array(z.number()).optional(),
+  artistIds: z.array(z.number()),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -78,7 +78,7 @@ export default function UploadForm() {
   });
 
   const { data: artistsData } = useQuery({
-    queryKey: ['user_artist', 'upload_song'],
+    queryKey: ['artists'],
     queryFn: async () => await getAllArtists(),
   });
   const addSongMutation = useAddSongMutation();
@@ -135,7 +135,7 @@ export default function UploadForm() {
         musicFile: data.musicFile,
         photoFiles: [data.photoFiles],
         genreIds: data.genreIds,
-        artistIds: data.artistIds || [],
+        artistIds: data.artistIds,
       },
       {
         onSuccess: () => {
@@ -300,10 +300,9 @@ export default function UploadForm() {
                       <FormLabel className="text-base">
                         Genre <span className="text-destructive">*</span>
                       </FormLabel>
-                      {/* Display selected genres */}
                       <div className="flex flex-wrap gap-2 mb-2">
-                        {field.value.map((genreId) => {
-                          const genreName = genresData?.genres.find(
+                        {field?.value?.map((genreId: number) => {
+                          const genreName = genresData?.genres?.find(
                             (genre) => genre.id === genreId
                           )?.genreName;
                           return (
@@ -315,9 +314,12 @@ export default function UploadForm() {
                               {genreName}
                               <X
                                 className="h-3 w-3 cursor-pointer"
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   field.onChange(
-                                    field.value.filter((id) => id !== genreId)
+                                    field.value.filter(
+                                      (id: number) => id !== genreId
+                                    )
                                   );
                                 }}
                               />
@@ -332,7 +334,6 @@ export default function UploadForm() {
                     </FormItem>
                   )}
                 />
-                {/*Specify Added Artists*/}
                 <FormField
                   control={form.control}
                   name="artistIds"
@@ -341,11 +342,10 @@ export default function UploadForm() {
                       <FormLabel className="text-base">
                         Co-artists (Optional)
                       </FormLabel>
-                      {/* Display selected artists */}
                       <div className="flex flex-wrap gap-2 mb-2">
-                        {field?.value?.map((artistId) => {
-                          const genreName = artistsData?.artists?.find(
-                            (genre) => genre.id === artistId
+                        {field.value.map((artistId: number) => {
+                          const artistName = artistsData?.artists?.find(
+                            (artist) => artist.id === artistId
                           )?.artistName;
                           return (
                             <Badge
@@ -353,13 +353,14 @@ export default function UploadForm() {
                               variant="secondary"
                               className="gap-1"
                             >
-                              {genreName}
+                              {artistName}
                               <X
                                 className="h-3 w-3 cursor-pointer"
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   field.onChange(
-                                    field?.value?.filter(
-                                      (id) => id !== artistId
+                                    field.value.filter(
+                                      (id: number) => id !== artistId
                                     )
                                   );
                                 }}

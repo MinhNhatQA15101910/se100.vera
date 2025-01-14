@@ -85,12 +85,13 @@ export function useUpdateUserMutation() {
 
       const formData = new FormData();
 
-      formData.append('firstName', data.firstName);
-      formData.append('lastName', data.lastName);
-      formData.append('artistName', data.artistName);
-      formData.append('gender', data.gender);
-      formData.append('about', data.about);
-      formData.append('photoFile', data.photoFile);
+      if (data.firstName) formData.append('firstName', data.firstName);
+      if (data.lastName) formData.append('lastName', data.lastName);
+      if (data.artistName) formData.append('artistName', data.artistName);
+      if (data.gender) formData.append('gender', data.gender);
+      if (data.about) formData.append('about', data.about);
+      if (data.photoFile) formData.append('photoFile', data.photoFile);
+      // if (data.dateOfBirth) formData.append('dateOfBirth', data.dateOfBirth.toISOString());
 
       await updateUser(formData);
     },

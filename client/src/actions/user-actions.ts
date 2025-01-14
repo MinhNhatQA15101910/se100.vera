@@ -6,6 +6,12 @@ import { User } from '@/types/global';
 
 export interface ArtistsReponse {
   artists: User[];
+  pagination: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
 }
 
 export interface ActivateArtistAccountProps {
@@ -36,7 +42,7 @@ export async function getAllArtists(
   pageNumber?: number,
   pageSize?: number,
   keyword?: string
-): Promise<{ artists: User[]; pagination: any }> {
+): Promise<ArtistsReponse> {
   const token = await getAuthTokenFromCookies();
 
   try {
@@ -78,7 +84,6 @@ export async function getAllArtists(
     throw error;
   }
 }
-
 
 export async function activateArtistAccount(
   artistName: string,

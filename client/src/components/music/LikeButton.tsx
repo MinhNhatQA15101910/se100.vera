@@ -40,7 +40,13 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
   };
 
   return (
-    <button onClick={handleLike} className="relative">
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        handleLike();
+      }}
+      className="relative"
+    >
       {data ? (
         <MdFavorite
           size={size}

@@ -57,7 +57,8 @@ export async function getAllSongs(
     if (sortBy) queryParams.push(`orderBy=${sortBy}`);
     if (sortOrder) queryParams.push(`sortBy=${sortOrder}`);
 
-    const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+    const queryString =
+      queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
 
     const response = await client<Song[]>(`/api/songs${queryString}`, {
       method: 'GET',
@@ -87,11 +88,15 @@ export async function getAllSongs(
   }
 }
 
-
 export async function getSongById(songId: number): Promise<Song> {
+  const token = await getAuthTokenFromCookies();
+
   try {
     const response = await client<Song>(`/api/songs/${songId}`, {
       method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     return response.data;
@@ -176,7 +181,6 @@ export async function rejectSong(songId: number): Promise<void> {
     throw error;
   }
 }
-
 
 // Only Artist can delete a song
 export async function deleteSong(songId: number): Promise<void> {

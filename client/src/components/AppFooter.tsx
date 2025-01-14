@@ -14,11 +14,18 @@ export default function Footer() {
     '/upload-song',
     '/manage-albums',
     '/upload-album',
+    '/edit-album',
+    '/edit-song',
+    '/edit-song/13', // Added to ensure this path is not ignored
   ];
+
+  const shouldIgnorePath = ignorePathnames.some((ignorePath) =>
+    pathname.startsWith(ignorePath)
+  );
 
   return (
     <footer
-      className={`relative text-white p-8 ${!isAuthenticated || ignorePathnames.includes(pathname) ? 'hidden' : ''}`}
+      className={`relative text-white p-8 ${!isAuthenticated || shouldIgnorePath ? 'hidden' : ''}`}
     >
       {/* Curved top edge */}
       <div className="mt-8"></div>
