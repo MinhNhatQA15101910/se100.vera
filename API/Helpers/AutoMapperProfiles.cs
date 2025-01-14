@@ -6,6 +6,7 @@ using API.DTOs.Genres;
 using API.DTOs.Notifications;
 using API.DTOs.Playlists;
 using API.DTOs.Songs;
+using API.DTOs.SubscriptionPlans;
 using API.DTOs.Users;
 using API.Entities;
 
@@ -32,6 +33,12 @@ public class AutoMapperProfiles : Profile
                 d => d.Roles,
                 o => o.MapFrom(
                     s => s.UserRoles.Select(x => x.Role.Name)
+                )
+            )
+            .ForMember(
+                d => d.Plans,
+                o => o.MapFrom(
+                    s => s.Plans.Select(p => p.Plan)
                 )
             );
 
@@ -148,7 +155,7 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<Notification, NotificationDto>();
 
-        CreateMap<NewNotificationDto, Notification>();
+        CreateMap<SubscriptionPlan, SubscriptionPlanDto>();
     }
 
     static string RemoveDiacritics(string text)

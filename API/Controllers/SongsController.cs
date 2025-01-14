@@ -529,6 +529,21 @@ public class SongsController(
             return BadRequest("Failed to approve song.");
         }
 
+        var notification = new Notification
+        {
+            UserId = song.PublisherId,
+            Title = "Song approved",
+            Content = $"Your song {song.SongName} has been approved by admin, come and check now.",
+            Type = NotificationType.SongApproved.ToString(),
+            NotifyEntityId = song.Id
+        };
+        unitOfWork.NotificationRepository.AddNotification(notification);
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to notify to song's publisher.");
+        }
+
         return NoContent();
     }
 
@@ -548,6 +563,21 @@ public class SongsController(
         if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to reject song.");
+        }
+
+        var notification = new Notification
+        {
+            UserId = song.PublisherId,
+            Title = "Song rejected",
+            Content = $"Your song {song.SongName} has been rejected by admin, come and check now.",
+            Type = NotificationType.SongRejected.ToString(),
+            NotifyEntityId = song.Id
+        };
+        unitOfWork.NotificationRepository.AddNotification(notification);
+
+        if (!await unitOfWork.Complete())
+        {
+            return BadRequest("Failed to notify to song's publisher.");
         }
 
         return NoContent();
