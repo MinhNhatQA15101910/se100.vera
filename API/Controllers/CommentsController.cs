@@ -66,7 +66,7 @@ public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseAp
         {
             var notification = new Notification
             {
-                UserId = song.Id,
+                UserId = song.PublisherId,
                 Title = "New comment",
                 Content = $"User {publisher.FirstName} {publisher.LastName} commented on your song {song.SongName}.",
                 Type = NotificationType.SongCommented.ToString(),

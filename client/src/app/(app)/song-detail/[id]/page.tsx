@@ -28,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ArrowLeftIcon, Delete, DownloadIcon, Edit, PlayIcon } from 'lucide-react';
-import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useAlbumMutation';
+import { useDeleteAlbumMutation } from '@/hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
 import { downloadSongById, getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
