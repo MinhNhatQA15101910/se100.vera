@@ -1,11 +1,6 @@
-import {
-  useApproveAlbumMutation,
-  useRejectAlbumMutation,
-} from '@/app/(app)/(artitst)/upload-song/_hooks/useAlbumMutation';
-import {
-  useApproveSongMutation,
-  useRejectSongMutation,
-} from '@/app/(app)/(artitst)/upload-song/_hooks/useSongMutation';
+
+import { useApproveAlbumMutation, useRejectAlbumMutation } from '@/hooks/useAlbumMutation';
+import { useApproveSongMutation, useRejectSongMutation } from '@/hooks/useSongMutation';
 import React, { useState } from 'react';
 
 interface StatusToggleButtonProps {
@@ -108,9 +103,8 @@ const StatusToggleButton: React.FC<StatusToggleButtonProps> = ({
         <>
           <button
             onClick={() => setIsDropdownVisible((prev) => !prev)}
-            className={`w-[140px] px-4 py-2 bg-yellow-500 text-white rounded-3xl hover:bg-yellow-600 ${
-              isProcessing ? 'cursor-not-allowed opacity-50' : ''
-            }`}
+            className={`w-[140px] px-4 py-2 bg-yellow-500 text-white rounded-3xl hover:bg-yellow-600 ${isProcessing ? 'cursor-not-allowed opacity-50' : ''
+              }`}
             disabled={isProcessing}
           >
             {isProcessing ? 'Processing...' : 'Pending'}
@@ -135,11 +129,10 @@ const StatusToggleButton: React.FC<StatusToggleButtonProps> = ({
       ) : (
         <button
           onClick={toggleState}
-          className={`w-[140px] px-4 py-2 rounded-3xl text-white ${
-            state === 'Approved'
+          className={`w-[140px] px-4 py-2 rounded-3xl text-white ${state === 'Approved'
               ? 'bg-green-500 hover:bg-green-600'
               : 'bg-red-500 hover:bg-red-600'
-          } ${isProcessing ? 'cursor-not-allowed opacity-50' : ''}`}
+            } ${isProcessing ? 'cursor-not-allowed opacity-50' : ''}`}
           disabled={isProcessing}
         >
           {isProcessing ? 'Processing...' : state}

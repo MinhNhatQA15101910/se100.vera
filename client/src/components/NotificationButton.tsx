@@ -14,7 +14,6 @@ import {
 import { Notification } from '@/types/global';
 import { getNotifications } from '@/actions/notify-actions';
 import { useMarkReadNotifyMutation } from '@/hooks/useNotifyMutation';
-import * as signalR from '@microsoft/signalr';
 
 const NotificationButton: React.FC = () => {
   const { userDetails } = useUser();
@@ -47,20 +46,6 @@ const NotificationButton: React.FC = () => {
       return;
     }
 
-    const connection = new signalR.HubConnectionBuilder()
-      .withUrl('/notifications') // Replace with your SignalR hub URL
-      .withAutomaticReconnect()
-      .build();
-
-    connection.start().catch(err => console.error('SignalR Connection Error: ', err));
-
-    connection.on('ReceiveNotification', (notification: Notification) => {
-      setNotifications(prevNotifications => [notification, ...prevNotifications]);
-    });
-
-    return () => {
-      connection.stop().catch(err => console.error('SignalR Disconnection Error: ', err));
-    };
   }, [userDetails?.id]);
 
   return (
