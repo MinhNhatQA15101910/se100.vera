@@ -2,12 +2,14 @@ import client from "@/services/client";
 import { getAuthTokenFromCookies } from "./utils";
 
 export interface StatisticResponse {
-  totalUsers: number;
-  totalSongs: number;
-  totalArtists: number;
-  totalAlbums: number;
-  totalPlaylists: number;
-  totalGenres: number;
+    totalUsers: number,
+    totalSongs: number,
+    totalArtists: number,
+    totalAlbums: number,
+    totalPlaylists: number,
+    totalGenres: number,
+    totalViews: number,
+    totalDownloads: number
 }
 
 export async function getStatistic(): Promise<StatisticResponse> {

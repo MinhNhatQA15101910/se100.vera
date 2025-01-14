@@ -4,7 +4,7 @@ import React from 'react';
 import { FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
-import { useDeleteAlbumMutation } from '../../upload-album/_hooks/useAlbumMutation';
+import { useDeleteAlbumMutation } from '@/hooks/useAlbumMutation';
 
 const DeleteAlbumButton = ({ albumId }: { albumId: number }) => {
   const router = useRouter();

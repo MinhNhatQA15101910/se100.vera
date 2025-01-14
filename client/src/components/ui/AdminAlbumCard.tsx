@@ -3,7 +3,7 @@
 import React from 'react';
 import DynamicImage from '../custom/DynamicImage';
 import { Album } from '@/types/global';
-import { useDeleteAlbumMutation } from '@/app/(app)/(artitst)/upload-song/_hooks/useAlbumMutation';
+import { useDeleteAlbumMutation } from '@/hooks/useAlbumMutation';
 
 type AdminAlbumCardProps = {
   albumCard: Album;
