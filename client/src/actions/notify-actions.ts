@@ -42,22 +42,3 @@ export async function markNotificationAsRead(notifyId: number): Promise<void> {
       throw error;
    }
 }
-
-export async function CreateNotification(payload: CreateNotificationPayload): Promise<Notification> {
-   const token = await getAuthTokenFromCookies();
-   try {
-      const response = await client<Notification>('/api/notifications', {
-         method: 'POST',
-         headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify(payload),
-      });
-
-      return response.data;
-   } catch (error) {
-      console.error('Create notification error: ', error);
-      throw error;
-   }
-}

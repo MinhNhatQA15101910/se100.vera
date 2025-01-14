@@ -31,7 +31,7 @@ import { ArrowLeftIcon, Delete, DownloadIcon, Edit, PlayIcon } from 'lucide-reac
 import { useDeleteAlbumMutation } from '../../(artitst)/upload-album/_hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
-import { downloadMp3FromUrl, getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
+import { downloadSongById, getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
 import * as commentActions from '@/actions/comment-actions';
 import CustomCommentInput from '@/components/CustomCommentInput';
 import CommentCard from '@/components/CommentCard';
@@ -131,7 +131,7 @@ const Page: React.FC = () => {
 
   const handleDownloadConfirm = () => {
     if (songDetailData?.musicUrl && songDetailData?.songName) {
-      downloadMp3FromUrl(songDetailData?.musicUrl, "[VERA]-" + songDetailData?.songName + "-" + songDetailData?.artists[0].artistName);
+      downloadSongById(songDetailData.id, songDetailData?.musicUrl, "[VERA]-" + songDetailData?.songName + "-" + songDetailData?.artists[0].artistName);
     } else {
       toast.error('Song URL or name is missing');
     }

@@ -267,6 +267,27 @@ export async function toggleFavoriteSongById(songId: number): Promise<void> {
   }
 }
 
+export async function downloadSongById(songId: number, url: string, fileName: string) {
+  const token = await getAuthTokenFromCookies();
+
+  try {
+    const response = await client(`/api/songs/download/${songId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    downloadMp3FromUrl(url, fileName);
+
+  } catch (error) {
+    console.error('Error in downloading song:', error);
+    throw error;
+  }
+}
 
 export async function downloadMp3FromUrl(url: string, fileName: string) {
   try {
