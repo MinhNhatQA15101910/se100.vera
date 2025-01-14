@@ -1,17 +1,20 @@
 using API.DTOs.Albums;
 using API.DTOs.Files;
+using API.DTOs.Notifications;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces.IRepositories;
 using API.Interfaces.IServices;
+using API.SignalR;
 
 namespace API.Controllers;
 
 public class AlbumsController(
     IUnitOfWork unitOfWork,
     IFileService fileService,
-    IMapper mapper
+    IMapper mapper,
+    IHubContext<NotificationHub> notificationHub
 ) : BaseApiController
 {
     [HttpGet("{id:int}")]
@@ -664,6 +667,11 @@ public class AlbumsController(
             return BadRequest("Failed to notify to album's publisher.");
         }
 
+        if (NotificationHub.UserConnections.TryGetValue(album.Id.ToString(), out string? userConnectionId))
+        {
+            await notificationHub.Clients.Client(userConnectionId).SendAsync("ReceiveNotification", mapper.Map<NotificationDto>(notification));
+        }
+
         return NoContent();
     }
 
@@ -699,6 +707,11 @@ public class AlbumsController(
         if (!await unitOfWork.Complete())
         {
             return BadRequest("Failed to notify to album's publisher.");
+        }
+
+        if (NotificationHub.UserConnections.TryGetValue(album.Id.ToString(), out string? userConnectionId))
+        {
+            await notificationHub.Clients.Client(userConnectionId).SendAsync("ReceiveNotification", mapper.Map<NotificationDto>(notification));
         }
 
         return NoContent();
