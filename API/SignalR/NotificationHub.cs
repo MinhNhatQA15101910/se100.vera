@@ -5,7 +5,7 @@ namespace API.SignalR;
 public class NotificationHub(IUnitOfWork unitOfWork) : Hub
 {
     // Dictionary to store user and connection ID mappings
-    private static readonly ConcurrentDictionary<string, string> UserConnections = new();
+    public static readonly ConcurrentDictionary<string, string> UserConnections = new();
 
     // When a user connects
     public override Task OnConnectedAsync()

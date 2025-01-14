@@ -1,12 +1,14 @@
 using API.DTOs.Comments;
+using API.DTOs.Notifications;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces.IRepositories;
+using API.SignalR;
 
 namespace API.Controllers;
 
-public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
+public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper, IHubContext<NotificationHub> notificationHub) : BaseApiController
 {
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CommentDto>> GetCommentById(int id)
@@ -77,6 +79,11 @@ public class CommentsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseAp
             if (!await unitOfWork.Complete())
             {
                 return BadRequest("Failed to notify to song's publisher.");
+            }
+
+            if (NotificationHub.UserConnections.TryGetValue(song.Id.ToString(), out string? userConnectionId))
+            {
+                await notificationHub.Clients.Client(userConnectionId).SendAsync("ReceiveNotification", mapper.Map<NotificationDto>(notification));
             }
         }
 
