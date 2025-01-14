@@ -105,7 +105,9 @@ const Page: React.FC = () => {
                         <DropdownMenuSeparator className="bg-general-pink-border" />
                         <DropdownMenuItem
                           className="hover:bg-general-pink-hover"
-                          onClick={() => {}}
+                          onClick={() => {
+                            router.push(`/edit-album/${albumDetailData?.id}`)
+                          }}
                         >
                           <Edit className="mr-2 h-4 w-4" />
                           Edit

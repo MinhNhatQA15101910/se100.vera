@@ -67,7 +67,7 @@ const formSchema = z.object({
       'File size must be less than 5MB'
     ),
   genreIds: z.array(z.number()).min(1, 'At least one genre is required'),
-  artistIds: z.array(z.number()).optional(), // Fixed typo from coAritstIds to artistIds
+  artistIds: z.array(z.number()).optional(), // Fixed typo from artistIds to artistIds
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -357,7 +357,7 @@ export default function UploadForm() {
                 {/*Specify Added Artists*/}
                 <FormField
                   control={form.control}
-                  name="artistIds" // Fixed typo from coAritstIds to artistIds
+                  name="artistIds" // Fixed typo from artistIds to artistIds
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">

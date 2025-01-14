@@ -15,8 +15,9 @@ export interface AddAlbumPayload {
 export interface EditAlbumPayload {
   albumName: string;
   description: string;
-  photoFiles: File[];
+  photoFile: File[];
   artistIds: number[];
+  genreIds: number[];
 }
 
 export interface AlbumResponse {
@@ -164,7 +165,7 @@ export async function addAlbum(formData: FormData): Promise<void> {
       body: formData,
     });
   } catch (error) {
-    console.error('Error in addSong:', error);
+    console.error('Error in add album:', error);
     throw error;
   }
 }
@@ -175,7 +176,7 @@ export async function editAlbum(albumId: number, data: FormData) {
 
   try {
     await client<Album[]>(`/api/albums/${albumId}`, {
-      method: 'GET',
+      method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
       },

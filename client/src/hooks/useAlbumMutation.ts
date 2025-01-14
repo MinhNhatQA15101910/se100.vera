@@ -123,8 +123,8 @@ export function useEditAlbumMutation() {
       const formData = new FormData();
       formData.append('albumName', data.albumName);
       formData.append('description', data.description);
-      if (data.photoFiles) {
-        data.photoFiles.forEach((file) => {
+      if (data.photoFile) {
+        data.photoFile.forEach((file) => {
           formData.append(`photoFiles`, file);
         });
       }
@@ -136,6 +136,7 @@ export function useEditAlbumMutation() {
       data.artistIds.forEach((id: number) => {
         formData.append('artistIds', id.toString());
       });
+      formData.append('genreIds', data.genreIds[0].toString());
 
       await editAlbum(albumId, formData);
     },
@@ -143,6 +144,7 @@ export function useEditAlbumMutation() {
       void queryClient.invalidateQueries({
         queryKey: ['albums'],
       });
+      setLoadingState(false)
     },
   });
 

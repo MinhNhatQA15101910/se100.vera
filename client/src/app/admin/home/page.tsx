@@ -1,6 +1,8 @@
 'use client';
 
 import { getStatistic } from '@/actions/statistic-actions';
+import TrendingSongs from '@/app/(app)/home/_components/TrendingSongs';
+import AdminNoSearchBar from '@/components/AdminNoSearchBar';
 import { AppButton } from '@/components/ui/AppButton';
 import { CustomBarChart } from '@/components/ui/CustomBarChart';
 import { DonutPieChart } from '@/components/ui/DonutPieChart';
@@ -37,88 +39,78 @@ const Home = () => {
   ];
 
   const barChartData = [
-    { day: 'Sunday', visitors: 120 },
-    { day: 'Monday', visitors: 200 },
-    { day: 'Tuesday', visitors: 150 },
-    { day: 'Wednesday', visitors: 180 },
-    { day: 'Thursday', visitors: 220 },
-    { day: 'Friday', visitors: 300 },
-    { day: 'Saturday', visitors: 250 },
+    { day: 'Sunday', visitors: 10 },
+    { day: 'Monday', visitors: 17 },
+    { day: 'Tuesday', visitors: 8 },
+    { day: 'Wednesday', visitors: 2 },
+    { day: 'Thursday', visitors: 5 },
+    { day: 'Friday', visitors: 4 },
+    { day: 'Saturday', visitors: 15 },
   ];
 
-  // Hiển thị tổng quan dữ liệu
-  const overviewData = [
-    { label: 'Songs', value: data?.totalSongs || 0 },
-    { label: 'Albums', value: data?.totalAlbums || 0 },
+  const overviewData1 = [
     { label: 'Users', value: data?.totalUsers || 0 },
+    { label: 'Songs', value: data?.totalSongs || 0 },
+    { label: 'Artists', value: data?.totalArtists || 0 },
+    { label: 'Albums', value: data?.totalAlbums || 0 },
+    { label: 'Playlists', value: data?.totalPlaylists || 0 },
     { label: 'Genres', value: data?.totalGenres || 0 },
+    { label: 'Views', value: data?.totalViews || 0 },
+    { label: 'Downloads', value: data?.totalDownloads || 0 },
   ];
 
   return (
     <div className="flex-col min-h-screen text-white px-8 py-6">
-      <div className="flex items-center justify-center h-screen w-full">
-        <div
-          className="flex p-4 flex-col w-full h-full text-white rounded-lg bg-[linear-gradient(91deg,rgba(0,0,0,0)_13.23%,rgba(0,0,0,0.8)_64.01%),linear-gradient(90deg,rgba(0,0,0,0)_50%,rgba(0,0,0,0.8)_101.37%),url('/music-landing-bg.webp')] bg-[50%] bg-cover bg-no-repeat"
-          style={{ backgroundImage: `url('/music-landing-bg.webp')` }}
-        >
-          <nav className="container mx-auto p-4 flex items-center justify-between"></nav>
-
-          {/* Hero Section */}
-          <div className="container mx-auto px-4 mt-20">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                <h1 className="text-5xl lg:text-5xl font-bold leading-tight">
-                  Welcome back <span className="text-pink-600">Admin!</span>
-                </h1>
-                <p className="text-lg text-muted-foreground max-w-[500px] text-justify">
-                  On our website, you can manage an extensive collection of
-                  popular and new songs with ease. Oversee high-quality
-                  streaming to ensure users enjoy their favorite tracks without
-                  interruptions. No matter the music preference of your
-                  audience, we provide a comprehensive library to cater to every
-                  taste! Take full control of the platform to deliver an
-                  exceptional listening experience.
-                </p>
-                <div className="flex gap-4">
-                  <AppButton className="flex h-10 items-center justify-center rounded px-6 bg-[#EE10B0] hover:bg-pink-700 text-white gap-5">
-                    Manage Songs
-                  </AppButton>
-                  <AppButton className="flex h-10 items-center justify-center rounded px-6 border border-[#0E9EEF] text-[#0E9EEF] hover:bg-[#0E9EEF] hover:text-white">
-                    Manage Artists
-                  </AppButton>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="w-full pt-10">
+        <AdminNoSearchBar />
       </div>
 
-      <section>
-        <h2 className="text-2xl font-bold mb-4 mt-16">
-          Reports & <span className="text-pink-500">Statistics</span>
-        </h2>
-      </section>
+      <div className="grid grid-cols-4 gap-6 mb-6 mt-8">
+        {overviewData1.map((item, index) => {
+          const colors = [
+            '#FF006E',
+            '#3A86FF',
+            '#EE10B0',
+            '#85F4FA',
+            '#3A57E8',
+            '#9837EC',
+            '#F5A1EF',
+            '#F55659',
+          ];
 
-      {/* Overview Section */}
-      <div className="grid grid-cols-4 gap-6 mb-8">
-        {overviewData.map((item, index) => (
-          <div
-            key={index}
-            className="p-6 rounded-lg text-center border border-general-pink"
-          >
-            <div className="text-4xl font-bold text-general-pink">
-              {item.value}
+          const color = colors[index % colors.length];
+
+          return (
+            <div
+              key={index}
+              className="p-6 h-[120px] rounded-lg text-center border"
+              style={{
+                borderColor: color, // Màu viền
+              }}
+            >
+              <div
+                className="text-4xl font-bold"
+                style={{
+                  color, // Màu chữ giống màu viền
+                }}
+              >
+                {item.value}
+              </div>
+              <div
+                className="text-lg"
+                style={{
+                  color, // Màu chữ giống màu viền
+                }}
+              >
+                {item.label}
+              </div>
             </div>
-            <div className="text-lg text-general-pink">{item.label}</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-2 gap-6">
-        {/* Pie Chart */}
         <DonutPieChart chartData={pieChartData} />
-
-        {/* Bar Chart */}
         <CustomBarChart chartData={barChartData} />
       </div>
     </div>

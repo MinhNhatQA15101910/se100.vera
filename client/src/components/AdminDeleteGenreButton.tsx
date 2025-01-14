@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeleteGenreMutation } from '@/app/(app)/(artitst)/upload-song/_hooks/useGenreMutation';
+import { useDeleteGenreMutation } from '@/hooks/useGenreMutation';
 import React, { useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 

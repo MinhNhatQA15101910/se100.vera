@@ -86,7 +86,7 @@ export function useEditSongMutation() {
       if (data.lyricFile) formData.append('lyricFile', data.lyricFile);
       if (data.musicFile) formData.append('musicFile', data.musicFile);
       if (data.photoFile) {
-        data.photoFile.forEach((file, index) => {
+        data.photoFile.forEach((file) => {
           formData.append(`photoFile`, file);
         });
       }

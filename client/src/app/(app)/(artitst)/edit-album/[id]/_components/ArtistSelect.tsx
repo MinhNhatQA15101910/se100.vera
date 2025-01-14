@@ -5,7 +5,7 @@ import { ControllerRenderProps } from 'react-hook-form';
 
 interface ArtistsSelectProps {
   artistsData: User[];
-  field: ControllerRenderProps<any, 'coAritstIds'>;
+  field: ControllerRenderProps<any, 'artistIds'>;
 }
 
 const ArtistSelect = ({ artistsData, field }: ArtistsSelectProps) => {
@@ -32,7 +32,7 @@ const ArtistSelect = ({ artistsData, field }: ArtistsSelectProps) => {
     <Select
       options={options}
       value={selectedValue}
-      onChange={() => handleChange}
+      onChange={handleChange}
       placeholder="Who's your collaborators ?"
       className=""
       classNamePrefix="select"

@@ -8,7 +8,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Comment } from '@/types/global';
 import ConfirmDialog from './custom/ConfirmDialog';
 
@@ -18,7 +29,6 @@ interface ICommentCardProps {
   handleEdit?: (content: string) => void;
 }
 
-
 const CommentCard: React.FC<ICommentCardProps> = ({
   comment,
   handleDelete,
@@ -27,7 +37,6 @@ const CommentCard: React.FC<ICommentCardProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
 
   const onEdit = () => {
     setIsEditing(true);
@@ -93,16 +102,20 @@ const CommentCard: React.FC<ICommentCardProps> = ({
 
       {/* More options */}
       <div className="ml-3 text-gray-400 cursor-pointer self-center hover:text-gray-200 relative ">
-
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-auto w-auto p-0 rounded-full [&_svg]:size-[30px]
+            <Button
+              variant="ghost"
+              className="h-auto w-auto p-0 rounded-full [&_svg]:size-[30px]
                   hover:text-general-blue-hover hover:bg-transparent"
             >
               <EllipsisVertical />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="border-none bg-zinc-800 font-semibold text-general-blue p-2 rounded-lg shadow-lg">
+          <DropdownMenuContent
+            align="end"
+            className="border-none bg-zinc-800 font-semibold text-general-blue p-2 rounded-lg shadow-lg"
+          >
             <DropdownMenuItem
               className="focus:bg-general-blue-hover text-md"
               onClick={onEdit}
@@ -119,14 +132,35 @@ const CommentCard: React.FC<ICommentCardProps> = ({
         </DropdownMenu>
       </div>
 
-      <ConfirmDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-        title="Are you absolutely sure?"
-        description="This action cannot be undone. Do you really want to delete this comment?"
-      />
+      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <AlertDialogTrigger />
+        <AlertDialogContent className="bg-general-theme border-none">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-general-pink-hover">
+              Are you absolutely sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. Do you really want to delete this
+              comment?.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="mr-4 px-4 py-2 rounded-lg bg-transparent border-general-pink-border text-general-pink 
+                  hover:text-general-white hover:border-transparent hover:bg-general-pink-hover"
+              onClick={handleCancelDelete}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="px-4 py-2 bg-general-pink rounded-lg hover:bg-general-pink-hover"
+              onClick={handleConfirmDelete}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

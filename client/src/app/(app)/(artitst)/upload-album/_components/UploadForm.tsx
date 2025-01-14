@@ -86,7 +86,7 @@ export default function UploadForm() {
         form.setValue(fieldName, acceptedFiles[0], {
           shouldValidate: true,
           shouldDirty: true,
-          shouldTouch: true,  
+          shouldTouch: true,
         });
       }
     };
@@ -205,28 +205,28 @@ export default function UploadForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">
-                        Co-artists (Optional)
+                        Genre <span className="text-destructive">*</span>
                       </FormLabel>
-                      {/* Display selected artists */}
                       <div className="flex flex-wrap gap-2 mb-2">
-                        {field.value?.map((artistId) => {
-                          const artistName = genresData?.genres?.find(
-                            (artist) => artist.id === artistId
+                        {field?.value?.map((genreId: number) => {
+                          const genreName = genresData?.genres?.find(
+                            (genre) => genre.id === genreId
                           )?.genreName;
                           return (
                             <Badge
-                              key={artistId}
+                              key={genreId}
                               variant="secondary"
                               className="gap-1"
                             >
-                              {artistName}
+                              {genreName}
                               <X
                                 className="h-3 w-3 cursor-pointer"
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   field.onChange(
-                                    field.value?.filter(
-                                      (id) => id !== artistId
-                                    ) || []
+                                    field.value.filter(
+                                      (id: number) => id !== genreId
+                                    )
                                   );
                                 }}
                               />

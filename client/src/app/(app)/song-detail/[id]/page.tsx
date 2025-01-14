@@ -28,7 +28,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ArrowLeftIcon, Delete, DownloadIcon, Edit, PlayIcon } from 'lucide-react';
-import { useDeleteAlbumMutation } from '@/hooks/useAlbumMutation';
 import { toast } from 'react-toastify';
 import { useUser } from '@/contexts/UserContext';
 import { downloadSongById, getArtistSongsByArtistId, getSongById } from '@/actions/song-actions';
@@ -36,7 +35,12 @@ import * as commentActions from '@/actions/comment-actions';
 import CustomCommentInput from '@/components/CustomCommentInput';
 import CommentCard from '@/components/CommentCard';
 import { Comment } from '@/types/global';
-import { useAddCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from '../../../../hooks/useCommentMutation';
+import {
+  useAddCommentMutation,
+  useDeleteCommentMutation,
+  useUpdateCommentMutation,
+} from '../../../../hooks/useCommentMutation';
+import { useDeleteAlbumMutation } from '@/hooks/useAlbumMutation';
 import ConfirmDialog from '@/components/custom/ConfirmDialog';
 
 const Page: React.FC = () => {

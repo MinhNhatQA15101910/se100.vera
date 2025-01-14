@@ -21,7 +21,7 @@ const TopAlbums = () => {
   return (
     <div className="h-fit flex w-[90%] flex-col">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {data?.map((album, idx) => {
+        {data?.albums.map((album, idx) => {
           return <AlbumCard key={idx} albumCard={album} />;
         })}
       </div>
