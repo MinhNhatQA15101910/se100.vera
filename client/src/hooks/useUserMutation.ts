@@ -8,6 +8,8 @@ import {
   EditUserPayload,
   ChangePasswordPayload,
   changePassword,
+  UpdateUserPayload,
+  updateUser,
 } from '@/actions/user-actions';
 
 export function useActivateArtistAccountMutation() {
@@ -66,6 +68,36 @@ export function useChangePasswordMutation() {
       await changePassword(data);
     },
     onSuccess: () => {
+      setLoadingState(false);
+    },
+  });
+
+  return mutation;
+}
+
+export function useUpdateUserMutation() {
+  const queryClient = useQueryClient(); 
+  const { setLoadingState } = useLoading();
+
+  const mutation = useMutation({
+    mutationFn: async (data: UpdateUserPayload) => {
+      setLoadingState(true);
+
+      const formData = new FormData();
+
+      formData.append('firstName', data.firstName);
+      formData.append('lastName', data.lastName);
+      formData.append('artistName', data.artistName);
+      formData.append('gender', data.gender);
+      formData.append('about', data.about);
+      formData.append('photoFile', data.photoFile);
+
+      await updateUser(formData);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['artists'],
+      });
       setLoadingState(false);
     },
   });

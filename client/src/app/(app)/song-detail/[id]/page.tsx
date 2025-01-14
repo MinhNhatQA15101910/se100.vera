@@ -190,7 +190,7 @@ const Page: React.FC = () => {
               <div className="grid grid-cols-12 items-start gap-12 mb-8 p-4">
                 <Image
                   src={
-                    songDetailData?.songPhotoUrl ||
+                    songDetailData?.photoUrl ||
                     'https://picsum.photos/400/400?random=4'
                   }
                   alt={songDetailData?.songName || 'X'}
@@ -338,7 +338,7 @@ const Page: React.FC = () => {
                           <DynamicImage
                             alt="Artist Image"
                             src={
-                              song.songPhotoUrl ||
+                              song.photoUrl ||
                               'https://picsum.photos/400/400?random=42'
                             }
                             className="w-14 h-14 flex items-center"

@@ -12,7 +12,7 @@ const SearchBar = () => {
     <div className="flex flex-row items-center justify-between bg-[url('/music-landing-bg.webp')] bg-cover bg-center w-[95%] rounded-lg p-2">
       <SearchBarBox />
       <UserDropDown />
-      <NotificationButton userId={1} />
+      <NotificationButton />
     </div>
   );
 };

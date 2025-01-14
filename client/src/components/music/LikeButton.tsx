@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-
-import { useUser } from '@/contexts/UserContext';
-import { useLikeSongMutation } from '@/app/(app)/(artitst)/upload-song/_hooks/useSongMutation';
+import { useLikeSongMutation } from '@/hooks/useSongMutation';
 import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
@@ -16,12 +14,11 @@ interface LikeButtonProps {
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
-  const { userDetails } = useUser();
   const { setLoadingState } = useLoading();
   const likeSongMutation = useLikeSongMutation();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['is_fav_song', `${songId}`],
+    queryKey: ['fav_song', `${songId}`],
     queryFn: async () => await isFavoriteSong(songId),
   });
 
@@ -29,23 +26,21 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId, size = 20 }) => {
     setLoadingState(isLoading);
   }, [isLoading]);
 
-  useEffect(() => {
-    if (!userDetails?.id) {
-      return;
-    }
-  }, [songId]);
-
   const handleLike = async () => {
-    likeSongMutation.mutate(userDetails?.id || -1, {
-      onSuccess: () => {},
-      onError: (error) => {
-        toast.error(error.message);
+    likeSongMutation.mutate(songId, {
+      onSuccess: () => {
+        toast.success(
+          !data ? 'Song added to Favorites!' : 'Song removed from Favorites!'
+        );
+      },
+      onError: () => {
+        toast.error('Something went wrong with Server!');
       },
     });
   };
 
   return (
-    <button onClick={handleLike}>
+    <button onClick={handleLike} className="relative">
       {data ? (
         <MdFavorite
           size={size}

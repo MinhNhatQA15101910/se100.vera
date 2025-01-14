@@ -66,23 +66,29 @@ export async function getAllGenresNopage(): Promise<GenreResponse> {
 
 export async function getAllGenres(
   pageNumber?: number,
-  pageSize?: number
+  pageSize?: number,
+  keyword?: string
 ): Promise<GenreResponse> {
   const token = await getAuthTokenFromCookies();
 
   try {
-    const response = await client<Genre[]>(
-      !pageNumber || !pageSize
-        ? `/api/genres`
-        : `/api/genres?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    let url = `/api/genres`;
+    const params: string[] = [];
 
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    if (pageNumber) params.push(`pageNumber=${pageNumber}`);
+    if (pageSize) params.push(`pageSize=${pageSize}`);
+    if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+
+    const response = await client<Genre[]>(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     const paginationHeader = response.headers.get('Pagination');
     if (!paginationHeader) {
@@ -104,6 +110,7 @@ export async function getAllGenres(
     throw error;
   }
 }
+
 
 export async function addGenre(genreName: string): Promise<AddGenreResponse> {
   const token = await getAuthTokenFromCookies(); // Retrieve auth token
@@ -150,7 +157,7 @@ export async function updateGenre(
 export async function deleteGenre(genreId: number): Promise<void> {
   const token = await getAuthTokenFromCookies();
   try {
-    await client(`/api/songs/${genreId}`, {
+    await client(`/api/gernes/${genreId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,

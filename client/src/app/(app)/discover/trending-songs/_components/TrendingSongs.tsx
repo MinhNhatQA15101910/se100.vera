@@ -22,7 +22,7 @@ export default function TrendingSongs() {
   const { setLoadingState } = useLoading();
   const { setPlaylist, setActiveTrack } = usePlayerStore();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const pageSize = 10;
+  const pageSize = 6;
 
   const { data, isLoading } = useQuery({
     queryKey: ['songs', currentPage, pageSize],
@@ -62,7 +62,7 @@ export default function TrendingSongs() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.songs?.slice(0, 7).map((song, idx) => {
+          {data?.songs?.map((song, idx) => {
             return (
               <TableRow
                 key={song.id}
@@ -75,7 +75,7 @@ export default function TrendingSongs() {
                     <div className="relative w-[55px] h-[55px]">
                       <Image
                         src={
-                          song.songPhotoUrl || 'https://via.placeholder.com/55'
+                          song.photoUrl || 'https://via.placeholder.com/55'
                         }
                         alt={song.songName}
                         fill

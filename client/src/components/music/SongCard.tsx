@@ -19,7 +19,7 @@ const SongCard = ({ song }: { song: Song }) => {
       <div className="p-4">
         <div className="aspect-square relative mb-3 rounded-md overflow-hidden">
           <Image
-            src={song.songPhotoUrl || 'https://picsum.photos/400/400?random=13'}
+            src={song.photoUrl || 'https://picsum.photos/400/400?random=13'}
             alt={song.songPhotoPublicId || "X"}
             fill
             className="object-cover"

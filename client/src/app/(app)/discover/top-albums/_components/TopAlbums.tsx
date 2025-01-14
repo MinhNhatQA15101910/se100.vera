@@ -10,7 +10,7 @@ const TopAlbums = () => {
   const { setLoadingState } = useLoading();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['all_albums'],
+    queryKey: ['albums'],
     queryFn: async () => await getAllAlbums(),
   });
 
